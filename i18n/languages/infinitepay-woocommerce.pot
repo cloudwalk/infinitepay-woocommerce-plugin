@@ -1,0 +1,112 @@
+# Copyright (C) 2022 Infinite Pay
+# This file is distributed under the same license as the InfinitePay payments for WooCommerce plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: InfinitePay payments for WooCommerce 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-infinitepay\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2022-04-06T14:14:44+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.6.0\n"
+"X-Domain: infinitepay-woocommerce\n"
+
+#. Plugin Name of the plugin
+msgid "InfinitePay payments for WooCommerce"
+msgstr ""
+
+#. Author of the plugin
+msgid "Infinite Pay"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://infinitepay.io/"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:71
+msgid "Accept credit cards payments with InfinitePay"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:81
+msgid "Enabled/Disabled"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:83
+msgid "Enable payments with InfinitePay"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:87
+msgid "Payment Title"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:89
+msgid "Title that will be shown for the customers on your checkout page"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:90
+msgid "Credit Card"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:94
+msgid "Description"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:96
+msgid "Description that will be shown for the customers on your checkout page"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:101
+msgid "Instructions"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:103
+msgid "Instructions that will be shown on thank you page and will be sent on email"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:108
+msgid "Maximum number of installments"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:110
+msgid "Maximum number of installments that a customer can split the final amount"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:115
+msgid "Maximum number of installments without interest"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:117
+msgid "Maximum number of installments that a customer can split the final amount without interest"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:122
+msgid "API Key"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:124
+msgid "Key to connect with InfinitePay"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:348
+msgid "Installments"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:349
+msgid "Final amount"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:350
+msgid "NSU"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:360
+#: includes/class-wc-wooinfinitepay-init.php:366
+msgid "Please review your card information and try again"
+msgstr ""
+
+#: includes/class-wc-wooinfinitepay-init.php:363
+msgid "Ooops, an internal error has occurred, contact an administrator!"
+msgstr ""
