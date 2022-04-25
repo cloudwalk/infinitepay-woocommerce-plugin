@@ -60,9 +60,9 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 		$this->max_installments      = sanitize_key( $this->get_option( 'max_installments', 12 ) );
 		$this->max_installments_free = sanitize_key( $this->get_option( 'max_installments_free', 12 ) );
 		$this->enabled               = sanitize_key( $this->get_option( 'enabled' ) );
-		$this->api_key               = sanitize_key( $this->get_option( 'api_key' ) );
+		$this->api_key               = $this->get_option( 'api_key' );
 		$this->sandbox               = sanitize_key( $this->get_option( 'sandbox', 'no' ) );
-		$this->sandbox_api_key       = sanitize_key( $this->get_option( 'sandbox_api_key' ) );
+		$this->sandbox_api_key       = $this->get_option( 'sandbox_api_key' );
 
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
 			$this,
@@ -381,8 +381,9 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 			} else {
 				wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
 			}
+		} else {
+			wc_add_notice( __( 'Please review your card information and try again', 'infinitepay-woocommerce' ), 'error' );
 		}
-		wc_add_notice( __( 'Please review your card information and try again', 'infinitepay-woocommerce' ), 'error' );
 	}
 
 	public function change_payment_complete_order_status( $status, $order_id = 0, $order = false ) {
