@@ -2,7 +2,7 @@
 	"name": "woocommerce-infinitepay",
 	"title": "woocommerce-infinitepay",
 	"license": "GPL-3.0-or-later",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "woocommerce-infinitepay",
 	"scripts": {
 		"build": "wp-scripts build",
