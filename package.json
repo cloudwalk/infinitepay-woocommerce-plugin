@@ -21,9 +21,9 @@
 		"release": "standard-version"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^12.2.1",
-		"@woocommerce/eslint-plugin": "1.1.0",
 		"@woocommerce/dependency-extraction-webpack-plugin": "1.6.0",
+		"@woocommerce/eslint-plugin": "1.1.0",
+		"@wordpress/scripts": "^22.5.0",
 		"standard-version": "^9.3.2"
 	}
 }
