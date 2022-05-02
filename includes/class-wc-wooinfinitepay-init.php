@@ -376,7 +376,14 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 						'redirect' => $order->get_checkout_order_received_url(),
 					);
 				} else {
-					wc_add_notice( __( 'Please review your card information and try again', 'infinitepay-woocommerce' ), 'error' );
+                    $code = '';
+                    if ( $body['data'] && $body['data']['attributes'] && $body['data']['attributes']['authorization_code'] ) {
+                        $code = $body['data']['attributes']['authorization_code'];
+                    }
+					wc_add_notice( __( 'Please review your card information and try again', 'infinitepay-woocommerce' ) . ' - ' . $code, 'error' );
+                    if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
+                        wc_add_notice( json_encode( $body ), 'error' );
+                    }
 				}
 			} else {
 				wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
