@@ -297,3 +297,8 @@ wp-config.php
 
 
 # End of https://www.toptal.com/developers/gitignore/api/phpstorm,wordpress,node
+
+/wordpress
+/plugins
+/db_data
+/woocommerce-infinitepay/node_modules

@@ -1,7 +1,0 @@
-{
-    "name": "cloudwalk/infinitepay-woocommerce-plugin",
-    "description": "Offer to your clients the best interest in e-Commerce by using InfinitePay as your payment method.",
-    "require": {
-        "php": ">=5.6"
-    }
-}
