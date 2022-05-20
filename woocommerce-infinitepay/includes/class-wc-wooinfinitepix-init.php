@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WC_InfinitePay_Module extends WC_Payment_Gateway {
+class WC_InfinitePix_Module extends WC_Payment_Gateway {
 	public $infinite_pay_tax = [
 		1,
 		1.3390,
@@ -29,16 +29,20 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 		2.2111
 	];
 
+	/**
+	 * Load translations from i18n
+	 */
 	public static function load_plugin_textdomain() {
-		$text_domain = 'infinitepay-woocommerce';
+		$text_domain = 'infinitepix-woocommerce';
 		$locale      = apply_filters( 'plugin_locale', get_locale(), $text_domain );
-
-		$original_language_file = dirname( __FILE__ ) . '/../i18n/languages/infinitepay-woocommerce-' . $locale . '.mo';
-
+		$original_language_file = dirname( __FILE__ ) . '/../i18n/languages/infinitepix-woocommerce-' . $locale . '.mo';
 		unload_textdomain( $text_domain );
 		load_textdomain( $text_domain, $original_language_file );
 	}
 
+	/**
+	 * Displays plugin version
+	 */	
 	public static function update_plugin_version() {
 		$old_version = get_option( '_ip_version', '0' );
 		if ( version_compare( WC_InfinitePay_Constants::VERSION, $old_version, '>' ) ) {
@@ -46,6 +50,9 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 		}
 	}
 
+	/**
+	 * Constructtor
+	 */
 	public function __construct() {
 		self::load_plugin_textdomain();
 
@@ -54,87 +61,77 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 		$this->init_form_fields();
 		$this->init_settings();
 
-		$this->title                 = sanitize_text_field( $this->get_option( 'title' ) );
-		$this->description           = sanitize_text_field( $this->get_option( 'description' ) );
-		$this->instructions          = sanitize_textarea_field( $this->get_option( 'instructions', $this->description ) );
-		$this->max_installments      = sanitize_key( $this->get_option( 'max_installments', 12 ) );
-		$this->max_installments_free = sanitize_key( $this->get_option( 'max_installments_free', 12 ) );
-		$this->enabled               = sanitize_key( $this->get_option( 'enabled' ) );
-		$this->api_key               = $this->get_option( 'api_key' );
-		$this->sandbox               = sanitize_key( $this->get_option( 'sandbox', 'no' ) );
-		$this->sandbox_api_key       = $this->get_option( 'sandbox_api_key' );
+		$this->title                 = sanitize_text_field($this->get_option('title'));
+		$this->enabled               = sanitize_key($this->get_option('enabled'));
+		$this->discount              = sanitize_key($this->get_option('discount', 10));
+		$this->min_amount            = sanitize_key($this->get_option('min_amount', 2));
+		$this->cumulative_discount   = sanitize_key( $this->get_option('cumulative_discount', 'no' ));
+		$this->api_key               = $this->get_option('api_key');
+		$this->sandbox               = sanitize_key($this->get_option('sandbox', 'no'));
+		$this->sandbox_api_key       = $this->get_option('sandbox_api_key');
 
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
-			$this,
-			'process_admin_options'
-		) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
-		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thank_you_page' ) );
-		add_filter( 'woocommerce_payment_complete_order_status', array(
-			$this,
-			'change_payment_complete_order_status'
-		), 10, 3 );
-		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array($this,'process_admin_options'));
+		add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ));
+		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thank_you_page' ));
+		add_filter( 'woocommerce_payment_complete_order_status', array($this,	'change_payment_complete_order_status'), 10, 3);
+		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3);
 	}
 
 	protected function setup_properties() {
-		$this->id                 = 'infinitepay';
+		$this->id                 = 'infinitepix';
 		$this->icon               = apply_filters( 'woocommerce_offline_icon', '' );
-		$this->method_title       = 'InfinitePay';
-		$this->method_description = __( 'Accept credit cards payments with InfinitePay', 'infinitepay-woocommerce' );
+		$this->method_title       = 'InfinitePix';
+		$this->method_description = __( 'Accept PIX with InfinitePay', 'infinitepix-woocommerce' );
 		$this->has_fields         = true;
-		$this->supports           = array(
-			'products',
-		);
+		$this->supports           = array('products');
 	}
 
 	public function init_form_fields() {
-		$this->form_fields = apply_filters( 'wc_infinitepay_form_fields', array(
-			'enabled'               => array(
-				'title'   => __( 'Enabled/Disabled', 'infinitepay-woocommerce' ),
-				'type'    => 'checkbox',
-				'label'   => __( 'Enable payments with InfinitePay', 'infinitepay-woocommerce' ),
-				'default' => 'yes',
+		$this->form_fields = apply_filters('wc_infinitepix_form_fields', array(
+			'enabled'     => array(
+				'title'       => __( 'Enabled/Disabled', 'infinitepix-woocommerce' ),
+				'type'        => 'checkbox',
+				'label'       => __( 'Enable payments with InfinitePay', 'infinitepix-woocommerce' ),
+				'default'     => 'yes',
 			),
 			'title'                 => array(
-				'title'       => __( 'Payment Title', 'infinitepay-woocommerce' ),
+				'title'       => __( 'Payment Title', 'infinitepix-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Title that will be shown for the customers on your checkout page', 'infinitepay-woocommerce' ),
-				'default'     => __( 'Credit Card', 'infinitepay-woocommerce' ),
+				'description' => __( 'Title that will be shown for the customers on your checkout page', 'infinitepix-woocommerce' ),
+				'default'     => __( 'Credit Card', 'infinitepix-woocommerce' ),
 				'desc_tip'    => true,
 			),
 			'description'           => array(
-				'title'       => __( 'Description', 'infinitepay-woocommerce' ),
+				'title'       => __( 'Description', 'infinitepix-woocommerce' ),
 				'type'        => 'textarea',
-				'description' => __( 'Description that will be shown for the customers on your checkout page', 'infinitepay-woocommerce' ),
-				'default'     => __( '', 'infinitepay-woocommerce' ),
+				'description' => __( 'Description that will be shown for the customers on your checkout page', 'infinitepix-woocommerce' ),
+				'default'     => __( '', 'infinitepix-woocommerce' ),
 				'desc_tip'    => true,
 			),
-			'instructions'          => array(
-				'title'       => __( 'Instructions', 'infinitepay-woocommerce' ),
-				'type'        => 'textarea',
-				'description' => __( 'Instructions that will be shown on thank you page and will be sent on email', 'infinitepay-woocommerce' ),
-				'default'     => __( '', 'infinitepay-woocommerce' ),
-				'desc_tip'    => true,
-			),
-			'max_installments'      => array(
-				'title'       => __( 'Maximum number of installments', 'infinitepay-woocommerce' ),
+			'discount'      => array(
+				'title'       => __( 'Discount percentage', 'infinitepix-woocommerce' ),
 				'type'        => 'number',
-				'description' => __( 'Maximum number of installments that a customer can split the final amount', 'infinitepay-woocommerce' ),
+				'description' => __( 'Discount to pix payments', 'infinitepix-woocommerce' ),
 				'default'     => '12',
 				'desc_tip'    => true,
 			),
-			'max_installments_free' => array(
-				'title'       => __( 'Maximum number of installments without interest', 'infinitepay-woocommerce' ),
+			'cumulative_discount' => array(
+				'title'   => 'Ativo/Inativo',
+				'type'    => 'checkbox',
+				'label'   => 'Habilitar desconto cumulativo',
+				'default' => 'no',
+			),
+			'min_amount'      => array(
+				'title'       => __( 'Min order amount', 'infinitepix-woocommerce' ),
 				'type'        => 'number',
-				'description' => __( 'Maximum number of installments that a customer can split the final amount without interest', 'infinitepay-woocommerce' ),
+				'description' => __( 'Min order amount for pix payments', 'infinitepix-woocommerce' ),
 				'default'     => '12',
 				'desc_tip'    => true,
 			),
 			'api_key'               => array(
-				'title'       => __( 'API Key', 'infinitepay-woocommerce' ),
+				'title'       => __( 'API Key', 'infinitepix-woocommerce' ),
 				'type'        => 'password',
-				'description' => __( 'Key to connect with InfinitePay', 'infinitepay-woocommerce' ),
+				'description' => __( 'Key to connect with InfinitePay', 'infinitepix-woocommerce' ),
 				'default'     => '',
 			),
 			'sandbox'               => array(
@@ -150,29 +147,6 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 				'default'     => '',
 			),
 		) );
-	}
-
-	private function calculate_installments(): array {
-		$amount             = $this->get_order_total();
-		$installments_value = [];
-		for (
-			$i = 1;
-			$i <= (int) $this->max_installments;
-			$i ++
-		) {
-			$tax      = ! ( (int) $this->max_installments_free >= $i ) && $i > 1;
-			$interest = 1;
-			if ( $tax ) {
-				$interest = $this->infinite_pay_tax[ $i - 1 ] / 100;
-			}
-			$value                = ! $tax ? $amount / $i : $amount * ( $interest / ( 1 - pow( 1 + $interest, - $i ) ) );
-			$installments_value[] = array(
-				'value'    => $value,
-				'interest' => $tax,
-			);
-		}
-
-		return $installments_value;
 	}
 
 	public function payment_scripts() {
@@ -218,7 +192,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 
 	public function payment_fields() {
 		if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
-			$this->description .= ' TEST MODE ENABLED. In test mode, you can use the any card numbers.';
+			$this->description .= ' TEST MODE ENABLED. In test mode, PIX without getting billed.';
 			$this->description = trim( $this->description );
 		}
 		if ( ! empty( $this->description ) ) {
@@ -227,15 +201,14 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 
 		// Credit card settings
 		$parameters = array(
-			'max_installments'   => $this->max_installments,
+			'title'              => 'PIX',
 			'amount'             => $this->get_order_total(),
-			'id'                 => $this->id,
-			'installments_value' => $this->calculate_installments(),
+			'id'                 => "infinitepix"
 		);
 
 		// Add credit card transparent component to checkout
 		wc_get_template(
-			'checkout/credit-card.php',
+			'checkout/pix.php',
 			$parameters,
 			'woo/infinite/pay/module/',
 			plugin_dir_path( __FILE__ ) . '../templates/'
@@ -367,9 +340,9 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 				if ( $body['data']['attributes']['authorization_code'] === '00' ) {
 					$order->payment_complete();
 					$order->add_order_note( '
-						' . __( 'Installments', 'infinitepay-woocommerce' ) . ': ' . $installments . '
-						' . __( 'Final amount', 'infinitepay-woocommerce' ) . ': R$ ' . number_format( $order->get_total(), 2, ",", "." ) . '
-						' . __( 'NSU', 'infinitepay-woocommerce' ) . ': ' . $body['data']['id'] . '
+						' . __( 'Installments', 'infinitepix-woocommerce' ) . ': ' . $installments . '
+						' . __( 'Final amount', 'infinitepix-woocommerce' ) . ': R$ ' . number_format( $order->get_total(), 2, ",", "." ) . '
+						' . __( 'NSU', 'infinitepix-woocommerce' ) . ': ' . $body['data']['id'] . '
 					' );
 
 					WC()->cart->empty_cart();
@@ -383,16 +356,16 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
                     if ( $body['data'] && $body['data']['attributes'] && $body['data']['attributes']['authorization_code'] ) {
                         $code = $body['data']['attributes']['authorization_code'];
                     }
-					wc_add_notice( __( 'Please review your card information and try again', 'infinitepay-woocommerce' ) . ' - ' . $code, 'error' );
+					wc_add_notice( __( 'Please review your card information and try again', 'infinitepix-woocommerce' ) . ' - ' . $code, 'error' );
                     if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
                         wc_add_notice( json_encode( $body ), 'error' );
                     }
 				}
 			} else {
-				wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
+				wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepix-woocommerce' ), 'error' );
 			}
 		} else {
-			wc_add_notice( __( 'Please review your card information and try again', 'infinitepay-woocommerce' ), 'error' );
+			wc_add_notice( __( 'Please review your card information and try again', 'infinitepix-woocommerce' ), 'error' );
 		}
 	}
 

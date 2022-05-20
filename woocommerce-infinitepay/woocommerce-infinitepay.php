@@ -29,15 +29,26 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wc_infinitepa
 
 function wc_infiintepay_init() {
 	if ( class_exists( 'WC_Payment_Gateway' ) ) {
-		require_once dirname( __FILE__ ) . '/includes/class-wc-wooinfinitepay-init.php';
-		require_once dirname( __FILE__ ) . '/includes/class-wc-wooinifnitepay-constants.php';
+
+		// Credit card and its contants method
+		require_once dirname(__FILE__) . '/includes/class-wc-wooinfinitepay-init.php';
+		require_once dirname(__FILE__) . '/includes/class-wc-wooinifnitepay-constants.php';
+
+		// PIX mwthod
+		require_once dirname(__FILE__) . '/includes/class-wc-wooinfinitepix-init.php';
+
+		// Plugin methods (sstart class)
 		WC_InfinitePay_Module::update_plugin_version();
+		WC_InfinitePix_Module::update_plugin_version();
 	}
 }
 
 function wc_infinitepay_add_to_gateway( $gateways ) {
+	// Append payment methods
 	$gateways[] = 'WC_InfinitePay_Module';
+	array_push($gateways, 'WC_InfinitePix_Module');
 
+	// Return plugin avalable methods
 	return $gateways;
 }
 
