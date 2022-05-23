@@ -210,18 +210,18 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 	public function process_payment( $order_id ) {
 		$order = wc_get_order( $order_id );
 
-		if ( ! isset( $_POST['infinitepay_custom'] ) ) {
+		if (!isset($_POST['infinitepay_custom'])) {
 			return false;
 		}
 
-		if ( $order->get_total() > 0 ) {
-			return $this->process_infinitepay_payment( $order );
+		if ($order->get_total() > 0) {
+			return $this->process_infinitepay_payment($order);
 		}
 
 		return false;
 	}
 
-	private function process_infinitepay_payment( $order ) {
+	private function process_infinitepay_payment($order) {
 		// Retrieve order items
 		$order_items = [];
 		if ( count( $order->get_items() ) > 0 ) {
@@ -265,8 +265,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 
 		return array(
 			'result'    => 'success',
-			'redirect'  => $order->get_checkout_order_received_url(),
-			'qrcodeSrc' => 'https://gerarqrcodepix.com.br/api/v1?brcode=00020101021226670014BR.GOV.BCB.PIX0120ryccapetloja@meu.pix0221Pagamento20%infinitepay520400005303986540580.985802BR5909Rycca20%Pet6009FORTALEZA61086042548262290525TIMcVZlncAgctIxSrbr9EMu4763047E43'
+			'redirect'  => $order->get_checkout_order_received_url()
 		);
 
 		// Check transaction create response
@@ -313,7 +312,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 
 	public function change_payment_complete_order_status( $status, $order_id = 0, $order = false ) {
 		if ( $order && $order->get_payment_method() === 'infinitepix' ) {
-			$status = 'pending';
+			$status = 'on-hold';
 		}
 		return $status;
 	}
