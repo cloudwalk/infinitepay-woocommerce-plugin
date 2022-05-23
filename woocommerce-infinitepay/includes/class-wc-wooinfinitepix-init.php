@@ -61,8 +61,9 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$this->init_form_fields();
 		$this->init_settings();
 
-		$this->title                 = sanitize_text_field($this->get_option('title'));
 		$this->enabled               = sanitize_key($this->get_option('enabled'));
+		$this->title                 = sanitize_text_field($this->get_option('title'));
+		$this->description           = sanitize_text_field($this->get_option( 'description'));
 		$this->discount              = sanitize_key($this->get_option('discount', 10));
 		$this->min_amount            = sanitize_key($this->get_option('min_amount', 2));
 		$this->cumulative_discount   = sanitize_key( $this->get_option('cumulative_discount', 'no' ));
@@ -81,7 +82,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$this->id                 = 'infinitepix';
 		$this->icon               = apply_filters( 'woocommerce_offline_icon', '' );
 		$this->method_title       = 'InfinitePix';
-		$this->method_description = __( 'Accept PIX with InfinitePay', 'infinitepix-woocommerce' );
+		$this->method_description = __('Accept PIX with InfinitePay', 'infinitepix-woocommerce');
 		$this->has_fields         = true;
 		$this->supports           = array('products');
 	}
@@ -151,17 +152,10 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 
 	public function payment_scripts() {
 		if (
-			(
-				! is_cart()
-				&& ! is_checkout()
-				&& ! isset( $_GET['pay_for_order'] )
-			)
+			(!is_cart() && ! is_checkout() && ! isset( $_GET['pay_for_order']))
 			|| $this->enabled === 'no'
 			|| empty( $this->api_key )
-			|| ( (
-				     ! isset( $this->sandbox ) || $this->sandbox === 'no'
-			     ) && ! is_ssl()
-			)
+			|| ((!isset( $this->sandbox ) || $this->sandbox === 'no') && ! is_ssl())
 		) {
 			return;
 		}
@@ -174,19 +168,17 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$script_url        = plugins_url( $script_path, __FILE__ );
 
 		wp_register_script(
-			'woocommerce_infinitepay',
+			'woocommerce_infinitepix',
 			$script_url,
 			$script_asset['dependencies'],
 			$script_asset['version'],
 			true
 		);
-		wp_enqueue_script( 'woocommerce_infinitepay' );
+		wp_enqueue_script( 'woocommerce_infinitepix' );
 		wp_localize_script(
-			'woocommerce_infinitepay',
+			'woocommerce_infinitepix',
 			'wc_infinitepay_params',
-			array(
-				'uuid' => vsprintf( '%s%s-%s-%s-%s-%s%s%s', str_split( bin2hex( random_bytes( 16 ) ), 4 ) ),
-			)
+			array('uuid' => vsprintf( '%s%s-%s-%s-%s-%s%s%s', str_split( bin2hex( random_bytes( 16 ) ), 4 ) ))
 		);
 	}
 
@@ -230,22 +222,17 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 	}
 
 	private function process_infinitepay_payment( $order ) {
-		if ( isset( $_POST['infinitepay_custom'] ) &&
-		     isset( $_POST['infinitepay_custom']['token'] ) && ! empty( $_POST['infinitepay_custom']['token'] ) &&
-		     isset( $_POST['infinitepay_custom']['uuid'] ) && ! empty( $_POST['infinitepay_custom']['uuid'] ) &&
-		     isset( $_POST['infinitepay_custom']['doc_number'] ) && ! empty( $_POST['infinitepay_custom']['doc_number'] ) &&
-		     isset( $_POST['infinitepay_custom']['installments'] ) && ! empty( $_POST['infinitepay_custom']['installments'] ) &&
-		     - 1 !== (int) $_POST['infinitepay_custom']['installments']
-		) {
+		// if (
+		// 	isset( $_POST['infinitepay_custom'] ) &&
+		//   isset( $_POST['infinitepay_custom']['token'] ) && ! empty( $_POST['infinitepay_custom']['token'] ) &&
+		//   isset( $_POST['infinitepay_custom']['uuid'] ) && ! empty( $_POST['infinitepay_custom']['uuid'] )
+		// ) {
+
+			// Retrieve parameters from checkout
 			$token        = sanitize_text_field( $_POST['infinitepay_custom']['token'] );
 			$uuid         = sanitize_key( $_POST['infinitepay_custom']['uuid'] );
-			$installments = sanitize_text_field( $_POST['infinitepay_custom']['installments'] );
-			$doc_number   = sanitize_text_field( $_POST['infinitepay_custom']['doc_number'] );
 
-			$card_info       = explode( ':', $token );
-			$card_expiration = explode( '/', $card_info[1] );
-
-
+			// Retrieve order items
 			$order_items = [];
 			if ( count( $order->get_items() ) > 0 ) {
 				foreach ( $order->get_items() as $item ) {
@@ -258,68 +245,13 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 				}
 			}
 
+			// PIX Transaction request body
 			$body = array(
-				'payment'         => array(
-					'amount'         => $order-> get_total() * 100,
-					'installments'   => (int) sanitize_text_field( $installments ),
-					'capture_method' => 'ecommerce',
-					'origin'         => 'woocommerce',
-					'payment_method' => 'credit'
-				),
-				'card'            => array(
-					'cvv'                   => $card_info[2],
-					'card_number'           => $card_info[0],
-					'card_holder_name'      => sanitize_text_field( $order->get_billing_first_name() ) . ' ' . sanitize_text_field( $order->get_billing_last_name() ),
-					'card_expiration_month' => str_pad( $card_expiration[0], 2, '0', STR_PAD_LEFT ),
-					'card_expiration_year'  => str_pad( $card_expiration[1], 4, '20', STR_PAD_LEFT ),
-				),
-				'order'           => array(
-					'id'               => (string) $order->get_id(),
-					'amount'           => (float) $order->get_total(),
-					'items'            => $order_items,
-					'delivery_details' => array(
-						'email'        => sanitize_text_field( $order->get_billing_email() ),
-						'name'         => sanitize_text_field( $order->get_shipping_first_name() ) . ' ' . sanitize_text_field( $order->get_shipping_last_name() ),
-						'phone_number' => sanitize_text_field( $order->get_shipping_phone() ) ?: sanitize_text_field( $order->get_billing_phone() ),
-						'address'      => array(
-							'line1'   => sanitize_text_field( $order->get_billing_address_1() ),
-							'line2'   => sanitize_text_field( $order->get_billing_address_2() ),
-							'city'    => sanitize_text_field( $order->get_billing_city() ),
-							'state'   => sanitize_text_field( $order->get_billing_state() ),
-							'zip'     => sanitize_text_field( $order->get_billing_postcode() ),
-							'country' => sanitize_text_field( $order->get_billing_country() ),
-						)
-					)
-				),
-				'customer'        => array(
-					'document_number' => $doc_number,
-					'email'           => sanitize_email( $order->get_billing_email() ),
-					'first_name'      => sanitize_text_field( $order->get_shipping_first_name() ),
-					'last_name'       => sanitize_text_field( $order->get_billing_last_name() ),
-					'phone_number'    => sanitize_text_field( $order->get_billing_phone() ),
-					'address'         => sanitize_text_field( $order->get_shipping_address_1() ),
-					'complement'      => sanitize_text_field( $order->get_shipping_address_2() ),
-					'city'            => sanitize_text_field( $order->get_shipping_city() ),
-					'state'           => sanitize_text_field( $order->get_shipping_state() ),
-					'zip'             => sanitize_key( $order->get_shipping_postcode() ),
-					'country'         => sanitize_text_field( $order->get_shipping_country() ),
-				),
-				'billing_details' => array(
-					'address' => array(
-						'line1'   => sanitize_text_field( $order->get_billing_address_1() ),
-						'line2'   => sanitize_text_field( $order->get_billing_address_2() ),
-						'city'    => sanitize_text_field( $order->get_billing_city() ),
-						'state'   => sanitize_text_field( $order->get_billing_state() ),
-						'zip'     => sanitize_key( $order->get_billing_postcode() ),
-						'country' => sanitize_text_field( $order->get_billing_country() ),
-					)
-				),
-				'metadata'        => array(
-					'risk' => array(
-						'session_id' => $uuid
-					)
-				)
+				'amount'         => $order-> get_total() * 100,
+				'capture_method' => 'pix'
 			);
+
+			// PIX Transaction request
 			$args = array(
 				'body'    => json_encode( $body ),
 				'headers' => array(
@@ -327,69 +259,87 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 					'Content-Type'  => 'application/json'
 				)
 			);
+
+			// Following IP docks inform "mock" value on headers if is sandbox
 			if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
 				$args['headers']['Env'] = 'mock';
 			}
 
+			// Transaction create request (POST)
 			$response = wp_remote_post(
-				( isset( $this->sandbox ) && $this->sandbox === 'yes' ) ? 'https://authorizer-staging.infinitepay.io/v2/transactions' : 'https://api.infinitepay.io/v2/transactions',
+				(isset( $this->sandbox ) && $this->sandbox === 'yes')
+					? 'https://authorizer-staging.infinitepay.io/v2/transactions'
+					: 'https://api.infinitepay.io/v2/transactions',
 				$args
 			);
-			if ( ! is_wp_error( $response ) && $response['response']['code'] < 500 ) {
-				$body = json_decode( $response['body'], true );
-				if ( $body['data']['attributes']['authorization_code'] === '00' ) {
-					$order->payment_complete();
-					$order->add_order_note( '
-						' . __( 'Installments', 'infinitepix-woocommerce' ) . ': ' . $installments . '
-						' . __( 'Final amount', 'infinitepix-woocommerce' ) . ': R$ ' . number_format( $order->get_total(), 2, ",", "." ) . '
-						' . __( 'NSU', 'infinitepix-woocommerce' ) . ': ' . $body['data']['id'] . '
-					' );
 
+			return array(
+				'result'    => 'success',
+				'redirect'  => $order->get_checkout_order_received_url(),
+				'qrcodeSrc' => 'https://gerarqrcodepix.com.br/api/v1?brcode=00020101021226670014BR.GOV.BCB.PIX0120ryccapetloja@meu.pix0221Pagamento20%infinitepay520400005303986540580.985802BR5909Rycca20%Pet6009FORTALEZA61086042548262290525TIMcVZlncAgctIxSrbr9EMu4763047E43'
+			);
+
+			// Check transaction create response
+			if (!is_wp_error( $response ) && $response['response']['code'] < 500) {
+				$body = json_decode( $response['body'], true);
+
+				// !Move this to a job that tracks pix callbacks
+				if ($body['data']['attributes']['br_code']) {
+					
+					// Complete woocommerce payment
+					// $order->payment_complete();
+					// $order->add_order_note( '
+					// 	' . __( 'Installments', 'infinitepix-woocommerce' ) . ': ' . 1 . '
+					// 	' . __( 'Final amount', 'infinitepix-woocommerce' ) . ': R$ ' . number_format( $order->get_total(), 2, ",", "." ) . '
+					// ' );
+
+					// Generate pix QRCODE
+					$pixQrCode = 'https://gerarqrcodepix.com.br/api/v1?brcode=';
+					$qrcodeSrc = $pixQrCode.$body['data']['attributes']['br_code'];
+
+					// Clear user cart
 					WC()->cart->empty_cart();
 
+					// Return that your transaction was successfully created
 					return array(
 						'result'   => 'success',
 						'redirect' => $order->get_checkout_order_received_url(),
 					);
+
 				} else {
-                    $code = '';
-                    if ( $body['data'] && $body['data']['attributes'] && $body['data']['attributes']['authorization_code'] ) {
-                        $code = $body['data']['attributes']['authorization_code'];
-                    }
+          $code = '';
+          if ( $body['data'] && $body['data']['attributes'] && $body['data']['attributes']['authorization_code'] ) {
+            $code = $body['data']['attributes']['authorization_code'];
+          }
 					wc_add_notice( __( 'Please review your card information and try again', 'infinitepix-woocommerce' ) . ' - ' . $code, 'error' );
-                    if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
-                        wc_add_notice( json_encode( $body ), 'error' );
-                    }
+          if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
+            wc_add_notice( json_encode( $body ), 'error' );
+          }
 				}
 			} else {
 				wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepix-woocommerce' ), 'error' );
 			}
-		} else {
-			wc_add_notice( __( 'Please review your card information and try again', 'infinitepix-woocommerce' ), 'error' );
-		}
+		// } else {
+		// 	wc_add_notice( __( 'Please review your card information and try again', 'infinitepix-woocommerce' ), 'error' );
+		// }
 	}
 
 	public function change_payment_complete_order_status( $status, $order_id = 0, $order = false ) {
-		if ( $order && $order->get_payment_method() === 'infinitepay' ) {
-			$status = 'completed';
+		if ( $order && $order->get_payment_method() === 'infinitepix' ) {
+			$status = 'pending';
 		}
-
 		return $status;
 	}
 
 	public function thank_you_page() {
-		if ( ! empty( $this->instructions ) ) {
-			echo wpautop( wptexturize( esc_html( $this->instructions ) ) );
+		if (!empty( $this->instructions ) ) {
+			echo wpautop(wptexturize(esc_html($this->instructions)));
 		}
 	}
 
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-		if (
-			$this->instructions
-			&& ! $sent_to_admin
-			&& $this->id === $order->payment_method
-		) {
-			echo wp_kses_post( wpautop( wptexturize( esc_html( $this->instructions ) ) ) . PHP_EOL );
+		if ($this->instructions	&& ! $sent_to_admin	&& $this->id === $order->payment_method) {
+			echo wp_kses_post(wpautop(wptexturize(esc_html($this->instructions))) . PHP_EOL );
 		}
 	}
 }

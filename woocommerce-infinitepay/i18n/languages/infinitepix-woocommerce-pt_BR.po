@@ -6,7 +6,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-"
 "infinitepay\n"
 "POT-Creation-Date: 2022-04-06T14:14:44+00:00\n"
-"PO-Revision-Date: 2022-05-20 14:34-0300\n"
+"PO-Revision-Date: 2022-05-20 16:40-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -51,7 +51,7 @@ msgstr ""
 
 #: includes/class-wc-wooinfinitepay-init.php:90
 msgid "Credit Card"
-msgstr "PIX"
+msgstr "PIX InfinitePay"
 
 #: includes/class-wc-wooinfinitepay-init.php:94
 msgid "Description"
@@ -118,4 +118,4 @@ msgstr "Por favor revise os dados do pagamento e tente novamente"
 msgid "Ooops, an internal error has occurred, contact an administrator!"
 msgstr ""
 "Ops, um erro inesperado ocorreu, por favor entre em contato com algum "
-"administrador."
+"administrador"
