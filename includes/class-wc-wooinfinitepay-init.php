@@ -183,7 +183,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 				&& ! isset( $_GET['pay_for_order'] )
 			)
 			|| $this->enabled === 'no'
-			|| empty( $this->api_key )
+			|| empty( $this->api_key ?: $this->sandbox_api_key )
 			|| ( (
 				     ! isset( $this->sandbox ) || $this->sandbox === 'no'
 			     ) && ! is_ssl()
@@ -218,7 +218,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 
 	public function payment_fields() {
 		if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
-			$this->description .= ' TEST MODE ENABLED. In test mode, you can use the any card numbers.';
+			$this->description .= ' TEST MODE ENABLED. In test mode, you can use any card numbers.';
 			$this->description = trim( $this->description );
 		}
 		if ( ! empty( $this->description ) ) {
@@ -265,6 +265,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 			$uuid         = sanitize_key( $_POST['infinitepay_custom']['uuid'] );
 			$installments = sanitize_text_field( $_POST['infinitepay_custom']['installments'] );
 			$doc_number   = sanitize_text_field( $_POST['infinitepay_custom']['doc_number'] );
+            $nsu          = vsprintf( '%s%s-%s-%s-%s-%s%s%s', str_split( bin2hex( random_bytes( 16 ) ), 4 ) );
 
 			$card_info       = explode( ':', $token );
 			$card_expiration = explode( '/', $card_info[1] );
@@ -288,7 +289,8 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 					'installments'   => (int) sanitize_text_field( $installments ),
 					'capture_method' => 'ecommerce',
 					'origin'         => 'woocommerce',
-					'payment_method' => 'credit'
+					'payment_method' => 'credit',
+                    'nsu'            => $nsu
 				),
 				'card'            => array(
 					'cvv'                   => $card_info[2],
@@ -303,7 +305,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 					'items'            => $order_items,
 					'delivery_details' => array(
 						'email'        => sanitize_text_field( $order->get_billing_email() ),
-						'name'         => sanitize_text_field( $order->get_shipping_first_name() ) . ' ' . sanitize_text_field( $order->get_shipping_last_name() ),
+						'name'         => sanitize_text_field( $order->get_shipping_first_name() ?: $order->get_billing_first_name() ) . ' ' . sanitize_text_field( $order->get_shipping_last_name() ?: $order->get_billing_last_name() ),
 						'phone_number' => sanitize_text_field( $order->get_shipping_phone() ) ?: sanitize_text_field( $order->get_billing_phone() ),
 						'address'      => array(
 							'line1'   => sanitize_text_field( $order->get_billing_address_1() ),
@@ -318,15 +320,15 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 				'customer'        => array(
 					'document_number' => $doc_number,
 					'email'           => sanitize_email( $order->get_billing_email() ),
-					'first_name'      => sanitize_text_field( $order->get_shipping_first_name() ),
-					'last_name'       => sanitize_text_field( $order->get_billing_last_name() ),
+					'first_name'      => sanitize_text_field( $order->get_shipping_first_name() ?: $order->get_billing_first_name() ),
+					'last_name'       => sanitize_text_field( $order->get_shipping_last_name() ?: $order->get_billing_last_name() ),
 					'phone_number'    => sanitize_text_field( $order->get_billing_phone() ),
-					'address'         => sanitize_text_field( $order->get_shipping_address_1() ),
-					'complement'      => sanitize_text_field( $order->get_shipping_address_2() ),
-					'city'            => sanitize_text_field( $order->get_shipping_city() ),
-					'state'           => sanitize_text_field( $order->get_shipping_state() ),
-					'zip'             => sanitize_key( $order->get_shipping_postcode() ),
-					'country'         => sanitize_text_field( $order->get_shipping_country() ),
+					'address'         => sanitize_text_field( $order->get_shipping_address_1() ?: $order->get_billing_address_1() ),
+					'complement'      => sanitize_text_field( $order->get_shipping_address_2() ?: $order->get_billing_address_2() ),
+					'city'            => sanitize_text_field( $order->get_shipping_city() ?: $order->get_billing_city() ),
+					'state'           => sanitize_text_field( $order->get_shipping_state() ?: $order->get_billing_state() ),
+					'zip'             => sanitize_text_field( $order->get_shipping_postcode() ?: $order->get_billing_postcode() ),
+					'country'         => sanitize_text_field( $order->get_shipping_country() ?: $order->get_billing_country() ),
 				),
 				'billing_details' => array(
 					'address' => array(
@@ -339,11 +341,17 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 					)
 				),
 				'metadata'        => array(
-					'risk' => array(
-						'session_id' => $uuid
+                    'origin'     => 'woocommerce',
+                    'store_url'  => $_SERVER['SERVER_NAME'],
+					'risk'       => array(
+						'session_id' => $uuid,
+                        'payer_ip'   => $_SERVER['HTTP_CLIENT_IP']
+                                              ?? ($_SERVER['HTTP_X_FORWARDED_FOR']
+                                              ?? $_SERVER['REMOTE_ADDR']),
 					)
 				)
 			);
+            wc_add_notice( json_encode( $body ), 'error' );
 			$args = array(
 				'body'    => json_encode( $body ),
 				'headers' => array(
