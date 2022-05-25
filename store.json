@@ -1,0 +1,531 @@
+{
+  "pages/contato.json": {
+    "meta_description": "Contato",
+    "body": "",
+    "meta_title": "Contato",
+    "title": "Contato"
+  },
+  "widgets/fb-pixel.json": {
+    "enableCheckout": true,
+    "bodyAppend": "src/append/body",
+    "options": {
+      "fbqContainerId": "1103186253511510",
+      "debug": false
+    },
+    "active": true,
+    "headAppend": "src/append/head",
+    "pkg": "@ecomplus/widget-fb-pixel",
+    "desktopOnly": false
+  },
+  "widgets/analytics.json": {
+    "options": {
+      "gaTrackingId": ""
+    },
+    "active": false,
+    "headAppend": "src/append/head",
+    "enableCheckout": true,
+    "pkg": "@ecomplus/widget-analytics",
+    "desktopOnly": false
+  },
+  "search.json": {
+    "sections": [
+      {
+        "type": "search-engine",
+        "enabled": true
+      }
+    ]
+  },
+  "widgets/search.json": {
+    "options": {},
+    "active": true,
+    "pkg": "@ecomplus/widget-search",
+    "sections": [
+      {
+        "type": "search-engine",
+        "enabled": true
+      }
+    ],
+    "desktopOnly": true
+  },
+  "widgets/tawkto.json": {
+    "enableCheckout": false,
+    "bodyAppend": "src/append/body",
+    "options": {
+      "tawktoPropertyId": "",
+      "tawktoChatWidget": "default"
+    },
+    "active": false,
+    "disablePages": true,
+    "pkg": "@ecomplus/widget-tawkto",
+    "desktopOnly": false
+  },
+  "pages/pagamentos.json": {
+    "meta_description": "Formas de pagamento",
+    "body": "",
+    "meta_title": "Formas de pagamento",
+    "title": "Formas de pagamento"
+  },
+  "pages/privacidade.json": {
+    "meta_description": "Política de privacidade",
+    "body": "Nos comprometemos a preservar os dados de todos os clientes, informações importantes como senha e CPF são criptografadas no momento do cadastro, antes de serem salvas. A finalização da sua compra será realizada em ambiente seguro e nenhuma informação relacionada a cartões de crédito ou contas bancárias será armazenada em nossos bancos de dados. Os dados cadastrais dos clientes não são vendidos, trocados ou divulgados para terceiros, exceto quando essas informações são necessárias para o processo de entrega, para cobrança, ou para participação em promoções solicitadas pelos clientes. Seus dados pessoais são peça fundamental para que seu pedido chegue em segurança, na sua casa, de acordo com nosso prazo de entrega. Nosso site utiliza cookies e informações de sua navegação (sessão do browser) com o objetivo de traçar um perfil do público que visita o site e aperfeiçoar sempre nossos serviços, produtos, conteúdos e garantir as melhores ofertas e promoções para você. Estas informações são registradas automaticamente e serão mantidas em sigilo absoluto. Qualquer alteração sobre nossa política de privacidade será devidamente informada nesta página.",
+    "meta_title": "Política de privacidade",
+    "title": "Política de privacidade"
+  },
+  "widgets/compre-confie.json": {
+    "enableCheckout": true,
+    "stampsAppend": "src/append/stamps",
+    "options": {
+      "compreConfieStoreId": ""
+    },
+    "active": false,
+    "disablePages": true,
+    "pkg": "@ecomplus/widget-compre-confie",
+    "desktopOnly": false
+  },
+  "code.json": {
+    "css": "",
+    "html_body": "<a href=\"https://wa.me/5583987067391\" style=\"position:fixed;width:60px;height:60px;bottom:40px;background-color:#25d366;color:#FFF;border-radius:50px;text-align:center;font-size:30px;box-shadow: 1px 1px 2px #888;z-index:1000;right:40px;\" target=\"_blank\">\n<i style=\"margin-top:16px\" class=\"fab fa-whatsapp\"></i>\n</a><a href=\"https://wa.me/5583987067391\" style=\"position:fixed;width:60px;height:60px;bottom:40px;background-color:#25d366;color:#FFF;border-radius:50px;text-align:center;font-size:30px;box-shadow: 1px 1px 2px #888;z-index:1000;right:40px;\" target=\"_blank\">\n<i style=\"margin-top:16px\" class=\"fab fa-whatsapp\"></i>\n</a><a href=\"https://wa.me/5583987067391\" style=\"position:fixed;width:60px;height:60px;bottom:40px;background-color:#25d366;color:#FFF;border-radius:50px;text-align:center;font-size:30px;box-shadow: 1px 1px 2px #888;z-index:1000;right:40px;\" target=\"_blank\">\n<i style=\"margin-top:16px\" class=\"fab fa-whatsapp\"></i>\n</a>",
+    "html_head": "<meta name=\"facebook-domain-verification\" content=\"a54x2sytlwrwt7ngc94k8q56rkg5qw\" />\n<a href=\"https://wa.me/5583987067391\" style=\"position:fixed;width:60px;height:60px;bottom:40px;background-color:#25d366;color:#FFF;border-radius:50px;text-align:center;font-size:30px;box-shadow: 1px 1px 2px #888;z-index:1000;right:40px;\" target=\"_blank\"><i style=\"margin-top:16px\" class=\"fab fa-whatsapp\"></i></a>"
+  },
+  "settings.json": {
+    "store_id": 7493,
+    "currency_symbol": "R$",
+    "favicon": "/img/uploads/lily2.jpg",
+    "icon": "/img/uploads/7493-lily2.jpg",
+    "description": "Te proporcionamos auto estima ✨\nPara a sua liberdade de se vestir de você ✨\nModa feminina - contemporânea e atemporal ✨",
+    "large_icon": "/img/uploads/lily.png",
+    "primary_color": "#f86d6d",
+    "bg_color": "#ffffff",
+    "country_code": "BR",
+    "mini_logo": "",
+    "domain": "lilyboutique.com.br",
+    "name": "Lily Boutique",
+    "logo": "https://ecoms1.com/7493/@v3/1638206906005-lily.png",
+    "currency": "BRL",
+    "secondary_color": "#e64141",
+    "short_name": "Lily Boutique ",
+    "theme": {
+      "bootswatch": "_",
+      "custom": "_"
+    },
+    "lang": "pt_br",
+    "template": true,
+    "font_family": "Open Sans"
+  },
+  "widgets/product-card.json": {
+    "options": {
+      "buyText": "",
+      "footer": "",
+      "buy": ""
+    },
+    "active": true,
+    "pkg": "@ecomplus/widget-product-card",
+    "desktopOnly": false
+  },
+  "footer.json": {
+    "payment_methods": {
+      "boleto": false,
+      "elo": true,
+      "mastercard": true,
+      "amex": true,
+      "hiper": true,
+      "visa": true
+    },
+    "links_2": {
+      "list": [],
+      "list_categories": true
+    },
+    "credits": "",
+    "links_1": {
+      "list": [],
+      "list_pages": true
+    },
+    "description": {
+      "title": "",
+      "text": ""
+    },
+    "stamps": [
+      {
+        "alt": "Secure connection",
+        "src": "/img/uploads/ssl-safe.png"
+      }
+    ],
+    "contacts": {
+      "phone_wpp": true,
+      "address": true,
+      "socials": true,
+      "title": "Contatos",
+      "email": true
+    }
+  },
+  "pages/faq.json": {
+    "meta_description": "Dúvidas frequentes",
+    "body": "",
+    "meta_title": "Dúvidas frequentes",
+    "title": "Dúvidas frequentes"
+  },
+  "info.json": {
+    "promo": {
+      "show": true,
+      "text": "Diferentes promoções ao longo do ano!"
+    },
+    "exchange": {
+      "show": true,
+      "text": "Não gostou? A primeira troca é gratuita"
+    },
+    "shipping": {
+      "show": true,
+      "text": "Entregamos para todo o Brasil"
+    },
+    "installments": {
+      "show": true,
+      "text": "Parcele em até 12x sem juros"
+    }
+  },
+  "brands.json": {
+    "sections": [
+      {
+        "type": "breadcrumbs",
+        "enabled": true
+      },
+      {
+        "type": "page-title"
+      },
+      {
+        "type": "document-banner",
+        "enabled": true
+      },
+      {
+        "type": "brand-retail",
+        "enabled": true,
+        "sort": "sales"
+      },
+      {
+        "type": "document-description",
+        "enabled": true
+      }
+    ]
+  },
+  "home.json": {
+    "meta_title": "Lily Boutique",
+    "meta_description": "Lily Boutique",
+    "sections": [
+      {
+        "type": "info-bar",
+        "enabled": true
+      },
+      {
+        "page": 1,
+        "title": "Mais vendidos",
+        "shuffle": true,
+        "headless": false,
+        "type": "collection-shelf",
+        "link": "Mais vendidos",
+        "limit": 22,
+        "collection_id": "5eceb1aa126b0d057215de06:collections:Acessórios:/acessorios",
+        "sort": "sales"
+      },
+      {
+        "type": "dynamic-showcase",
+        "load_more": true,
+        "sort": "news"
+      },
+      {
+        "type": "blog",
+        "enabled": true
+      }
+    ]
+  },
+  "menu.json": {
+    "socials": true,
+    "phone_wpp": true,
+    "sort_categories": []
+  },
+  "products.json": {
+    "sections": [
+      {
+        "type": "breadcrumbs",
+        "enabled": true
+      },
+      {
+        "type": "product-block",
+        "enabled": true
+      },
+      {
+        "type": "product-description",
+        "enabled": true
+      },
+      {
+        "type": "product-specifications",
+        "enabled": true
+      },
+      {
+        "title": "Produtos relacionados",
+        "type": "related-products"
+      },
+      {
+        "type": "product-reviews",
+        "enabled": true
+      }
+    ]
+  },
+  "widgets/ebit.json": {
+    "enableCheckout": true,
+    "stampsAppend": "src/append/stamps",
+    "options": {
+      "ebitStoreId": ""
+    },
+    "active": false,
+    "disablePages": true,
+    "pkg": "@ecomplus/widget-ebit",
+    "desktopOnly": false
+  },
+  "social.json": {
+    "fb_app_id": "",
+    "twitter_username": "",
+    "og_image": "/img/uploads/7493-lily.png"
+  },
+  "widgets/user.json": {
+    "active": true,
+    "pkg": "@ecomplus/widget-user",
+    "desktopOnly": true
+  },
+  "widgets/tag-manager.json": {
+    "enableCheckout": true,
+    "bodyAppend": "src/append/body",
+    "options": {
+      "gtmContainerId": "",
+      "dataLayerVar": "dataLayer"
+    },
+    "active": false,
+    "headAppend": "src/append/head",
+    "pkg": "@ecomplus/widget-tag-manager",
+    "desktopOnly": false
+  },
+  "pages/trocas.json": {
+    "meta_description": "Trocas e devoluções",
+    "body": "# POLÍTICA DE TROCA E DEVOLUÇÃO\n\nOlá, a **Lily Boutique** deseja manter ter uma parceria de sucesso com seus clientes. Por esta Política explicamos os procedimentos necessários, caso deseje desistir de sua compra realizada de forma não presencial além de descrever as condições de substituição dos produtos caso seja constatada alguma falha.\n\nPedimos que leia com atenção e entre em contato conosco caso tenha alguma dúvida.\n\n### **Como solicitar uma troca ou devolução**\n\nPara solicitar a troca ou a devolução de um produto você deverá entrar em contato pelo e-mail [lily.boutique_@hotmail.com](mailto:lily.boutique_@hotmail.com)\n\n### **Confira abaixo as condições de troca e devolução:**\n\n#### **Devolução por Arrependimento**\n\nDe acordo com o Código de Defesa do Consumidor, é possível devolver um produto por desistência no prazo de até 7 (sete) dias corridos após o seu recebimento.\n\nO pedido de devolução deve ser feito também através de e-mail. Após a solicitação, será realizada a coleta do produto no endereço indicado ou indicado outro meio para envio pelo cliente, de forma gratuita. Recebido o produto, ele será analisado para verificar se encontra-se em perfeitas condições de uso e, se este for o caso,  o valor pago será estornado seguindo as condições descritas no item “Estorno dos Valores” a seguir. \n\n#### **Produto com defeito**\n\nOs nossos produtos possuem **X dias de garantia.**\n\nDurante este período, caso algum problema seja constatado, a troca poderá ser solicitada pelo cliente. Lembrando que nossa equipe poderá solicitar evidências que comprovem defeito no produto e/ou a realização de testes prévios.\n\nApós a solicitação de troca de um produto com defeito, será realizada a coleta no endereço indicado ou indicado outro meio para envio pelo cliente, de forma gratuita.\n\nRecebido o produto, será analisado se o defeito é resultante de mau uso, caso positivo, enviaremos ao cliente um orçamento para análise prévia e autorização do conserto. O custo da manutenção deverá ser pago integralmente pelo cliente.\n\nJá em relação a defeito de fabricação, nos responsabilizaremos pelo reparo no prazo estabelecido pelo Código de Defesa do Consumidor ou pela substituição do produto por outro da mesma espécie e características e, havendo indisponibilidade deste, poderá será restituído o valor ou substituição por produto semelhante.\n\nA garantia do novo produto entregue será igual ao período de garantia restante do produto inicialmente adquirido pelo cliente, ou equivalente ao prazo de 90 (noventa) dias, prevalecendo o que for maior. \n\n#### **Estorno dos valores**\n\nO estorno dos valores será realizado em até 7 (sete) dias úteis após análise do produto.\n\nO prazo para reembolso na fatura do cliente varia de banco para banco, e após a solicitação de estorno fica sob responsabilidade exclusiva do banco emissor do cartão.",
+    "meta_title": "Trocas e devoluções",
+    "title": "Trocas e devoluções"
+  },
+  "widgets/opinioes-verificadas.json": {
+    "productCardSlots": "src/append/product-card-slots",
+    "bodyAppend": "src/append/body",
+    "active": false,
+    "productDescriptionAppend": "src/append/product-block",
+    "productSlots": "src/append/product-slots",
+    "pkg": "@ecomplus/widget-opinioes-verificadas",
+    "enableCheckout": false,
+    "stampsAppend": "src/append/stamps",
+    "options": {
+      "stamp": "",
+      "tagJs": ""
+    },
+    "headAppend": "src/append/head",
+    "disablePages": true,
+    "useJquery": true,
+    "desktopOnly": false
+  },
+  "contacts.json": {
+    "whatsapp": "(83) 9 8706-7391",
+    "youtube": false,
+    "twitter": false,
+    "address": "Av Comendador Renato Ribeiro Coutinho, 1582, Sala 14, Centro, Sapé (Paraíba)",
+    "phone": "83987067391",
+    "facebook": "https://www.facebook.com/lilyboutique1",
+    "doc_number": "42989924000102",
+    "pinterest": "https://br.pinterest.com/lilyboutique_",
+    "instagram": "https://www.instagram.com/lily.boutique_/",
+    "email": "sac@lilyboutique.com.br",
+    "financial_email": "lily.boutique_@hotmail.com",
+    "tiktok": "https://www.tiktok.com/@lily.boutique_"
+  },
+  "collections.json": {
+    "sections": [
+      {
+        "type": "breadcrumbs",
+        "enabled": true
+      },
+      {
+        "type": "page-title"
+      },
+      {
+        "type": "document-banner",
+        "enabled": true
+      },
+      {
+        "type": "collection-retail",
+        "enabled": true,
+        "sort": "sales"
+      },
+      {
+        "type": "document-description",
+        "enabled": true
+      }
+    ]
+  },
+  "categories.json": {
+    "sections": [
+      {
+        "type": "breadcrumbs",
+        "enabled": true
+      },
+      {
+        "type": "page-title"
+      },
+      {
+        "type": "document-banner",
+        "enabled": true
+      },
+      {
+        "type": "category-retail",
+        "enabled": true,
+        "sort": "sales"
+      },
+      {
+        "type": "document-description",
+        "enabled": true
+      }
+    ]
+  },
+  "pages/termos.json": {
+    "meta_description": "Termos de serviço",
+    "body": "Pelo nosso e-commerce você pode realizar a compra de seus produtos preferidos da moda feminina da Lily Boutique.\n\nAo utilizar nossa plataforma ou ao realizar a compra de nossos produtos você concorda expressa e integralmente com os presentes Termos de Uso e Condições do Site.\n\nLeia atentamente a nossa política de vendas, conhecê-la vai facilitar a sua experiência dentro do nosso site.\n\n 1)      Fique atenta à descrição do produto, onde disponibilizamos todas as informações do modelo e prazo de entrega após a autorização do pagamento.\n\n 2)      Todas as imagens são de uso exclusivo da marca.\n\n 3)      Possíveis faltas de Estoque: Mesmo em casos raros e apesar de um controle rígido em nossos estoques, algum item pode não ser localizado e seu pedido não poderá ser atendido em sua totalidade. Não se preocupe, entraremos em contato, pelos dados disponibilizados no ato da compra, para informar a situação. Para os pagamentos através de Boleto ou Transferência Bancária, há a opção de devolução/estorno do valor pago. Os pagamentos parcelados serão corrigidos, as parcelas serão emitidas com valor corrigido, desconsiderando o item em questão. Há sempre a opção de substituição daquele item, por outro tamanho, cor, estampa ou modelo que teremos disponível para compra.\n\n 4)      As medidas disponibilizadas na descrição dos produtos na Tabela de Medidas são uma média do modelo de prova da marca. Podem haver pequenas variações dependendo da cor e estampa dos tecidos, mesmo sendo da mesma composição.\n\n 5)      Na página de finalização de pagamento fique atento aos valores e produtos selecionados, para ter certeza que eles são exatamente o que você deseja. Coloque o endereço de entrega corretamente para que a entrega possa ser feita, o seu pedido será entregue nesse endereço.\n\n 6)      Caso seu o pagamento do seu pedido não seja autorizado, ou o prazo do boleto bancário vencer, ou ainda se ,o pagamento não for realizado dentro de 5 dias, seu pedido será automaticamente cancelado. Caso queira é possível realizar a compra novamente tentando outro método de pagamento ou pedindo o boleto novamente.\n\n7)      As formas de disponível para pagamento são as intermediárias de pagamento (InfinityPay). O pedido só será despachado quando houver aprovação de pagamento dessas instituições em nosso sistema, não sendo aceito nenhum outro comprovante de pagamento para despacho de pedido. O tempo de liberação de pagamento geralmente é imediato nas compras por cartão de crédito, podendo haver discrepâncias caso a intermediária caso esteja com algum problema de processamento. O pagamento de boleto tem tempo de liberação de até 2 dias úteis. \n\n***FIQUE ATENTO, SIGA NOSSAS DICAS***\n\n* Na hora da compra é sempre essencial que você leia atentamente a descrição do produto.\n* Observe todas as características da mercadoria, use a tabela de medidas e fique atento aos cuidados que devem ser tomados com as peças.\n* Antes de finalizar a compra tenha certeza se todos os produtos selecionados estão listados no seu carrinho de compras e se eles são os que você deseja adquirir.\n* Confirme o endereço de entrega e o valor a ser pago.\n* Fique atenta ao prazo de entrega.\n\nQualquer dúvida, estamos à sua disposição.\n\n***Politica de Oferta:***\n\nAs ofertas e preços dentro do site valem apenas para as compras realizadas pelo site.\n\nTodos os produtos serão exibidos de forma clara, com as especificações de suas características pertinentes, como por exemplo: preço, material, tamanho.\n\nAs imagens dos produtos e promoções são meramente ilustrativas e de propriedade  exclusiva da marca, a utilização para outros fins só poderá ser feita com autorização prévia da marca.\n\nAs promoções tem tempo limitado e pré-determinado para ficarem no ar e estão limitadas ao estoque dos produtos do site ou numero limitado de códigos de desconto.\n\nOs preços dos produtos podem mudar sem aviso prévio. Os produtos anunciados não incluem o valor do frete. Os descontos em produtos não estão ligados aos valores do frete. \n\nEm caso de dúvida entre em contato conosco através de nosso e-mail:\n\nsac@lilyboutique.com.br\n\nEsperamos que tenha um experiencia prazerosa na nossa loja de roupas online, onde disponibilizamos uma moda feminina descomplicada e confortável para seu dia a dia.",
+    "meta_title": "Termos de serviço",
+    "title": "Termos de serviço"
+  },
+  "widgets/search-engine.json": {
+    "options": {},
+    "active": true,
+    "pkg": "@ecomplus/widget-search-engine",
+    "desktopOnly": false
+  },
+  "widgets/gmc-ratings.json": {
+    "enableCheckout": true,
+    "stampsAppend": "src/append/stamps",
+    "options": {
+      "dialogPosition": "CENTER_DIALOG",
+      "badgePosition": "BOTTOM_LEFT"
+    },
+    "active": false,
+    "disablePages": true,
+    "pkg": "@ecomplus/widget-gmc-ratings",
+    "desktopOnly": false
+  },
+  "widgets/offers-notification.json": {
+    "options": {
+      "enableOutOfStock": true,
+      "enablePriceChange": true,
+      "popupOptions": "location=yes,height=400,width=320,status=yes"
+    },
+    "active": false,
+    "productSlots": "src/append/product-slots",
+    "pkg": "@ecomplus/widget-offers-notification",
+    "desktopOnly": false
+  },
+  "widgets/trustvox.json": {
+    "enableCheckout": false,
+    "productCardSlots": "src/append/product-card-slots",
+    "stampsAppend": "src/append/stamps",
+    "bodyAppend": "src/append/body",
+    "options": {
+      "trustvoxStoreId": ""
+    },
+    "active": false,
+    "productDescriptionAppend": "src/append/product-block",
+    "productSlots": "src/append/product-slots",
+    "disablePages": true,
+    "pkg": "@ecomplus/widget-trustvox",
+    "desktopOnly": false
+  },
+  "header.json": {
+    "categories_list": {
+      "featured": [],
+      "random": 6,
+      "full_width": false
+    },
+    "search_input": true,
+    "contacts_stripe": {
+      "socials": true,
+      "phone_wpp": true,
+      "pages": []
+    },
+    "marketing_stripe": {
+      "text": "",
+      "link": "/promotion"
+    }
+  },
+  "blog.json": {
+    "meta_description": "Blog",
+    "meta_title": "Blog",
+    "title": "Blog",
+    "sections": [
+      {
+        "type": "breadcrumbs",
+        "enabled": true
+      },
+      {
+        "type": "page-title"
+      },
+      {
+        "type": "blog",
+        "enabled": true
+      }
+    ]
+  },
+  "widgets/minicart.json": {
+    "options": {},
+    "active": true,
+    "pkg": "@ecomplus/widget-minicart",
+    "desktopOnly": false
+  },
+  "pages/sobre-nos.json": {
+    "meta_description": "Sobre nós",
+    "body": "A Lily Boutique é uma empresa situada na cidade de Sapé, desde 2016, no interior da Paraíba.\n\nUm dos principais diferencias da Lily é a empatia que se está impregnada, por toda a empresa. Imaginamos que, sem sentimentos e afeto, nada pode ser atingido. No entanto, acima de qualquer coisa, a empatia é algo que não necessariamente pode ser vista como um diferencial, tendo em vista que é obrigação. Desta forma, torna-se plausível afirmar que a Lily deseja construir relações. E as manter. Além disso, a Lily deseja mostrar para toda e qualquer mulher que ela é forte, apenas por ser quem se é. Toda mulher merece e deve ser amada, inclusive por si mesmo. E é justamente por isso que vendemos peças de alta costura. A alta costura pode ser delicada como uma rosa, quando vemos as rendas, ou nos trajar com uma armadura, quando partimos para a alfaiaria; para que possamos ir para o campo de batalha, que chamamos vida, todos os dias, como as mulheres fortes e empoderadas que somos.\n\nConheça um pouco mais da Lily através do nosso instagram: [www.instagram.com/lily.boutique_](www.instagram.com/lily.boutique_)",
+    "meta_title": "Sobre nós",
+    "title": "Sobre nós"
+  },
+  "pages/entrega.json": {
+    "meta_description": "Condições de entrega",
+    "body": "",
+    "meta_title": "Condições de entrega",
+    "title": "Condições de entrega"
+  },
+  "widgets/product.json": {
+    "options": {
+      "buyText": "",
+      "buy": ""
+    },
+    "active": true,
+    "pkg": "@ecomplus/widget-product",
+    "desktopOnly": false
+  },
+  "posts/como-ser-chic-e-elegante.json": {
+    "date": "2022-05-22T15:51:23.509Z",
+    "title": "Como ser chic e elegante?",
+    "thumbnail": "/img/uploads/como-ser-chic.png",
+    "description": "Veja as nossas dicas para estar sempre chic e elegante",
+    "body": "## Conheça o seu corpo\n\nSaber o que te cai bem é o primeiro passo para entender e conhecer seu estilo. Além de te ajudar a se vestir melhor, otimiza tempo. \n\n\n## Tons escuros são mais chics\n\nPreto, azul marinho, verde militar... Tons escuros costumam ser mais glamourosos e passam a ideia de sofisticação\n\n## Tecidos que não amassam\n\nEscolher roupas com tecidos que não amassam sempre é uma boa escolha por você sempre se manter elegante durante todo o evento em que esteja\n\n## Peças com modelagens mais largas\n\nMas cuidado! Existe uma tênue entre o chic e o desleixado. Mulheres chics dificilmente mostram muito o corpo.\n\n## Monocromático\n\nEstilo e chic... combinação perfeita!\n\nE, por mais que seja óbvio, um look monocromático traz muito mais sofisticação do que um único elemento (como vestido) da mesma cor\n\n## Conheça sua cartela de cor\n\nA coloração pessoal deve ser incorporado no nosso dia. Nos ajuda, desde a escolha da maquiagem, até a escolha dos looks e acessórios\n\n\n\n#### Não conhece nosso instagram? Corre lá que sempre tem conteúdo quentinho: [www.instagram.com/lily.boutique_](www.instagram.com/lily.boutique_)"
+  },
+  "posts/como-ter-uma-cintura-visualmente-mais-fina.json": {
+    "date": "2022-05-22T16:20:27.761Z",
+    "title": "Como ter uma cintura visualmente mais fina ",
+    "thumbnail": "/img/uploads/1.png",
+    "body": "## Vestidos com decote em V\n\n São indicados para quem deseja alongar a silhueta e valorizar os seios. E é justamente por isso que se há uma sensação de que a cintura é mais fina. Caso queira passar uma imagem mais discreta, os vestidos longos são uma ótima escolha. Já se quiser chamar mais atenção, aposte nos vestidos curtos. \n\n## Vestidos com cinto\n\nCostumam ser utilizados em ocasiões mais formais, como reunião de trabalho ou, até mesmo, um passeio no shopping. O cinto deve estar na altura da cintura, pois esse acessório proporciona uma cintura mais fina, de forma discreta\n\n## Vestidos soltos\n\nSão uma excelente opção para quem deseja ter uma cintura mais fina, tendo em vista que eles costumam ter um corte em formato de A.  Esse tipo de vestido também evidência os quadros e proporciona uma barriga delineada\n\n## Vestidos com espartilhos embutidos\n\nSão recomendados para ocasiões formais, como eventos sociais. No entanto, também podem ser adaptados para serem utilizados no dia a dia, em diversas situações. O espartilho ajuda a afinar a cintura, tendo em vista que aperta a região da barriga\n\n\n\n#### Não conhece nosso instagram? Corre lá que sempre tem conteúdo quentinho: [www.instagram.com/lily.boutique_](www.instagram.com/lily.boutique_)",
+    "description": "Venha aprender qual tipo de roupa usar para ficar com a cintura visualmente mais fina "
+  },
+  "widgets/avise-me.json": {
+    "options": {
+      "enableOutOfStock": true,
+      "enablePriceChange": true
+    },
+    "active": true
+  },
+  "posts/como-ser-chic-e-elegante-1.json": {
+    "date": "2022-05-24T17:59:57.092Z",
+    "title": "Erros que te deixam deselegante",
+    "thumbnail": "/img/uploads/7493-1.png",
+    "description": "",
+    "body": "## Estampa de má qualidade\n\nNem sempre o valor da peça significa elegância ou esteja ligado à qualidade. No momento da compra, deve ser avaliado a qualidade da estampa e se a pronuncia condiz com sua personalidade. Sempre verifique a qualidade da peça com atenção, tendo uma avaliação especial para a estampa.\n\n## Jeans com muita informação\n\nMuito manchado, muito rasgado, muito strass... Lembre-se: menos é mais! Substitua os jeans com muita informação pelos lisos e de lavagem simples, como a escura.\n\n## Peças muito apertadas\n\nQuanto mais apertada a peça, mais marcada ela ficará e menos elegância irá passar. Busque peças amplas, distantes do corpo e que tenham um bom caimento.\n\n## Lingerie aparente\n\nA menos que seja proposital, roupas intimas não devem ficar a mostra. Se atente ao sutiã e à blusa escolhida, certifique-se de que tudo esteja no seu devido lugar.\n\n## Rasgos ou defeitos\n\nRasgou? Está na hora de sair do seu guarda-roupa. Conserte ou livre-se da peça.\n\n## Roupa falsificada\n\nVocê não precisa usar Dior para ser elegante. Não é sobre a marca, é sobre o visual. E uma peça falsificada, na maioria das vezes, entrega que aquele visual não é original. Então ao invés de gastar o seu dinheiro com uma blusa falsa da Dior, compre uma camiseta bacana de uma confecção original. Lembre-se: é sobre estilo e visual, não sobre a marca\n\n#### Confira nosso instagram para sempre ter acesso a conteúdos: [](www.lilyboutique.com.br)[www.instagram.com/lily.boutique_](www.instagram.com/lily.boutique_)"
+  }
+}

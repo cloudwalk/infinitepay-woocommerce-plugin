@@ -14,21 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class WC_InfinitePix_Module extends WC_Payment_Gateway {
-	public $infinite_pay_tax = [
-		1,
-		1.3390,
-		1.5041,
-		1.5992,
-		1.6630,
-		1.7057,
-		2.3454,
-		2.3053,
-		2.2755,
-		2.2490,
-		2.2306,
-		2.2111
-	];
-
 	/**
 	 * Load translations from i18n
 	 */
@@ -56,11 +41,12 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 	public function __construct() {
 		self::load_plugin_textdomain();
 
+		// Start gateway
 		$this->setup_properties();
-
 		$this->init_form_fields();
 		$this->init_settings();
 
+		// Config fields
 		$this->enabled               = sanitize_key($this->get_option('enabled'));
 		$this->title                 = sanitize_text_field($this->get_option('title'));
 		$this->description           = sanitize_text_field($this->get_option( 'description'));
@@ -71,11 +57,13 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$this->sandbox               = sanitize_key($this->get_option('sandbox', 'no'));
 		$this->sandbox_api_key       = $this->get_option('sandbox_api_key');
 
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array($this,'process_admin_options'));
-		add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ));
-		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thank_you_page' ));
-		add_filter( 'woocommerce_payment_complete_order_status', array($this,	'change_payment_complete_order_status'), 10, 3);
-		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3);
+		// Function exec order
+		add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this,'process_admin_options'));
+		add_action('wp_enqueue_scripts', array( $this, 'payment_scripts' ));
+		add_action('woocommerce_thankyou_' . $this->id, array( $this, 'thank_you_page' ));
+		add_filter('woocommerce_payment_complete_order_status', array($this,	'change_payment_complete_order_status'), 10, 3);
+		// add_filter('woocommerce_payment_pix_code', array($this,	'woocommerce_payment_pix_code'), 10, 3);
+		add_action('woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3);
 	}
 
 	protected function setup_properties() {
@@ -191,11 +179,10 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			echo wpautop( wp_kses_post( $this->description ) );
 		}
 
-		// Credit card settings
+		// PIX settings
 		$parameters = array(
-			'title'              => 'PIX',
-			'amount'             => $this->get_order_total(),
-			'id'                 => "infinitepix"
+			'amount'	=> $this->get_order_total(),
+			'id'     	=> $this->id
 		);
 
 		// Add credit card transparent component to checkout
@@ -257,12 +244,16 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 
 		// Transaction create request (POST)
 		$response = wp_remote_post(
-			(isset( $this->sandbox ) && $this->sandbox === 'yes')
+			(isset($this->sandbox) && $this->sandbox === 'yes')
 				? 'https://authorizer-staging.infinitepay.io/v2/transactions'
 				: 'https://api.infinitepay.io/v2/transactions',
 			$args
 		);
 
+		$test = '00020101021226670014BR.GOV.BCB.PIX0120ryccapetloja@meu.pix0221Pagamento infinitepay520400005303986540580.985802BR5909Rycca Pet6009FORTALEZA61086042548262290525TIMcVZlncAgctIxSrbr9EMu4763047E43';
+		$order->add_order_note('
+			' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . $test . '
+		');
 		return array(
 			'result'    => 'success',
 			'redirect'  => $order->get_checkout_order_received_url()
@@ -276,11 +267,11 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			if ($body['data']['attributes']['br_code']) {
 					
 				// Complete woocommerce payment
-				// $order->payment_complete();
-				// $order->add_order_note( '
-				// 	' . __( 'Installments', 'infinitepix-woocommerce' ) . ': ' . 1 . '
-				// 	' . __( 'Final amount', 'infinitepix-woocommerce' ) . ': R$ ' . number_format( $order->get_total(), 2, ",", "." ) . '
-				// ' );
+				$order->payment_complete();
+				$order->add_order_note( '
+					' . __( 'Installments', 'infinitepix-woocommerce' ) . ': ' . 1 . '
+					' . __( 'Final amount', 'infinitepix-woocommerce' ) . ': R$ ' . number_format( $order->get_total(), 2, ",", "." ) . '
+				' );
 
 				// Generate pix QRCODE
 				$pixQrCode = 'https://gerarqrcodepix.com.br/api/v1?brcode=';
@@ -317,15 +308,54 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		return $status;
 	}
 
-	public function thank_you_page() {
-		if (!empty( $this->instructions ) ) {
-			echo wpautop(wptexturize(esc_html($this->instructions)));
+	public function pix_checkout_html($order_id) {
+		// Retrieve order
+		$order = wc_get_order($order_id);
+		if ($order->get_payment_method() != 'infinitepix') {
+			return '';
 		}
+
+		// Retrieve order comments
+		remove_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
+		$haha = get_comments(array(
+			'post_id' => $order_id,
+			'orderby' => 'comment_ID',
+			'order'   => 'DESC',
+			'approve' => 'approve',
+			'type'    => 'order_note',
+			'number'  => 1
+		));
+		add_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
+
+		var_dump($haha);
+
+		// Create html structure
+		$html = '<div style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
+		$html .= '<img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode='. urlencode($order->br_code) .'"	alt="QR Code"/>';
+		$html .= '<div>';
+		$html .= '<p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ 80,98</strong></p>';
+		$html .= '<div style="word-wrap: break-word; max-width: 450px;">';
+		$html .= '<small>Código de transação</small><br>';
+		$html .= '<code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">00020101021226670014BR.GOV.BCB.PIX0120ryccapetloja@meu.pix0221Pagamento infinitepay520400005303986540580.985802BR5909Rycca Pet6009FORTALEZA61086042548262290525TIMcVZlncAgctIxSrbr9EMu4763047E43</code>';
+		$html .= '</div>';
+		$html .= '</div>';
+		$html .= '</div>';
+
+		// Return html
+		return $html;
+	}
+ 
+	public function thank_you_page($order_id) {
+		$checkoutHtml = $this->pix_checkout_html($order_id);
+		echo $checkoutHtml;
+		// if (!empty( $this->instructions ) ) {
+		// 	echo wpautop(wptexturize(esc_html($this->instructions)));
+		// }
 	}
 
-	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-		if ($this->instructions	&& ! $sent_to_admin	&& $this->id === $order->payment_method) {
-			echo wp_kses_post(wpautop(wptexturize(esc_html($this->instructions))) . PHP_EOL );
-		}
+	public function email_instructions($order, $sent_to_admin, $plain_text = false) {
+		// if ($this->instructions	&& ! $sent_to_admin	&& $this->id === $order->payment_method) {
+		// 	echo wp_kses_post(wpautop(wptexturize(esc_html($this->instructions))) . PHP_EOL );
+		// }
 	}
 }
