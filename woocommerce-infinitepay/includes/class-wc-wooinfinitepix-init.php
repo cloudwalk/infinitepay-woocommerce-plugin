@@ -316,8 +316,8 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		}
 
 		// Retrieve order comments
-		remove_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
-		$haha = get_comments(array(
+		remove_filter('comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1);
+		$orderComments = get_comments(array(
 			'post_id' => $order_id,
 			'orderby' => 'comment_ID',
 			'order'   => 'DESC',
@@ -325,18 +325,16 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			'type'    => 'order_note',
 			'number'  => 1
 		));
-		add_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
-
-		var_dump($haha);
+		add_filter('comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1);
 
 		// Create html structure
 		$html = '<div style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
-		$html .= '<img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode='. urlencode($order->br_code) .'"	alt="QR Code"/>';
+		$html .= '<img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode='. urlencode(str_replace("br_code:", "", $orderComments[0]->comment_content)) .'"	alt="QR Code"/>';
 		$html .= '<div>';
 		$html .= '<p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ 80,98</strong></p>';
 		$html .= '<div style="word-wrap: break-word; max-width: 450px;">';
 		$html .= '<small>Código de transação</small><br>';
-		$html .= '<code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">00020101021226670014BR.GOV.BCB.PIX0120ryccapetloja@meu.pix0221Pagamento infinitepay520400005303986540580.985802BR5909Rycca Pet6009FORTALEZA61086042548262290525TIMcVZlncAgctIxSrbr9EMu4763047E43</code>';
+		$html .= '<code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">'.str_replace("br_code:", "", $orderComments[0]->comment_content).'</code>';
 		$html .= '</div>';
 		$html .= '</div>';
 		$html .= '</div>';
