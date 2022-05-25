@@ -274,8 +274,10 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 				' );
 
 				// Generate pix QRCODE
-				$pixQrCode = 'https://gerarqrcodepix.com.br/api/v1?brcode=';
-				$qrcodeSrc = $pixQrCode.$body['data']['attributes']['br_code'];
+				$qrcodeSrc = $body['data']['attributes']['br_code'];
+				$order->add_order_note('
+					' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . qrcodeSrc . '
+				');
 
 				// Clear user cart
 				WC()->cart->empty_cart();
