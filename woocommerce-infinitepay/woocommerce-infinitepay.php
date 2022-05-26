@@ -13,7 +13,6 @@
  * @package InfinitePay
  */
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -23,10 +22,14 @@ if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins',
 	return;
 }
 
+// Woocommerce setup here
 add_action( 'plugins_loaded', 'wc_infiintepay_init', 11 );
 add_filter( 'woocommerce_payment_gateways', 'wc_infinitepay_add_to_gateway' );
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wc_infinitepay_plugin_links' );
 
+/**
+ * Require plugin files
+ */
 function wc_infiintepay_init() {
 	if ( class_exists( 'WC_Payment_Gateway' ) ) {
 
@@ -43,6 +46,9 @@ function wc_infiintepay_init() {
 	}
 }
 
+/**
+ * Add pix and credit card payment gateways
+ */
 function wc_infinitepay_add_to_gateway( $gateways ) {
 	// Append payment methods
 	$gateways[] = 'WC_InfinitePay_Module';
@@ -52,11 +58,12 @@ function wc_infinitepay_add_to_gateway( $gateways ) {
 	return $gateways;
 }
 
-
+/**
+ * Plugin URL
+ */
 function wc_infinitepay_plugin_links( $links ) {
 	$plugins_links = array(
 		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=infinitepay' ) . '">' . __( 'Configure', 'infinitepay-woocommerce' ) . '</a>'
 	);
-
 	return array_merge( $plugins_links, $links );
 }
