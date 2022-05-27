@@ -23,9 +23,19 @@ if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins',
 }
 
 // Woocommerce setup here
-add_action( 'plugins_loaded', 'wc_infiintepay_init', 11 );
-add_filter( 'woocommerce_payment_gateways', 'wc_infinitepay_add_to_gateway' );
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wc_infinitepay_plugin_links' );
+add_action('plugins_loaded', 'wc_infiintepay_init', 11);
+add_filter('woocommerce_payment_gateways', 'wc_infinitepay_add_to_gateway');
+add_filter('plugin_action_links_' . plugin_basename( __FILE__ ), 'wc_infinitepay_plugin_links');
+add_filter('woocommerce_rest_api_get_rest_namespaces', 'woo_custom_api');
+
+/**
+ * Custom API Controller
+ */
+function woo_custom_api( $controllers ) {
+	require_once dirname(__FILE__) . '/includes/class-wc-rest-custom-controller.php';
+	$controllers['wc/v3']['custom'] = 'WC_REST_Custom_Controller';
+	return $controllers;
+}
 
 /**
  * Require plugin files
