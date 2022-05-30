@@ -15,20 +15,42 @@ class WC_REST_Custom_Controller {
 	 * Found in packages/woocommerce-rest-api/src/Controllers/
 	 */
 	protected $namespace = 'wc/v3';
+	protected $pix_callback_endpoint = 'infinitepay_pix_callback';
 
-	protected $rest_base = 'custom';
+	// Callback handler
+	public function infinite_pay_callback($data) {
+		global $woocommerce;
 
-	public function get_custom( $data ) {
-		return array( 'custom' => 'Data' );
+		// Retrieve parameters
+		$orderId = $data['order_id'];
+
+		// Retrieve order
+		$order = wc_get_order($orderId);
+		$transactionId = get_post_meta($orderId, 'transactionSecret');
+
+		// Validate if the request is valid
+
+		// Update order status to payment received
+		$paymentReceivedStatus = 'processing';
+		$order->update_status($paymentReceivedStatus);
+
+		// Returning
+		return array(
+			'orderId' => $orderId,
+			'transactionId' => $transactionId,
+			'postId' => $post_id,
+			'order' => $order
+		);
 	}
 
+	// API Router
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			'/' . $this->rest_base,
+			'/' . $this->pix_callback_endpoint,
 			array(
-				'methods' => 'GET',
-				'callback' => array( $this, 'get_custom' ),
+				'methods' => 'POST',
+				'callback' => array( $this, 'infinite_pay_callback' )
 			)
 		);
 	}

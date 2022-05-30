@@ -222,15 +222,46 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			}
 		}
 
-		// PIX Transaction request body
+		// Apply discount if it has onde
+		$orderTotalWithDiscount = $order->get_total();
+		if ($this->discount) {
+			$discountValue = ($orderTotalWithDiscount * $this->discount) / 100;
+			$orderTotalWithDiscount = $orderTotalWithDiscount - $discountValue;
+		}
+
+		// Generate unique uuid for transaction secret
+		$transactionSecret = sha1($order->get_id() . time());
+		$storeUrl = $_SERVER['SERVER_NAME'];
+
+		// Prepare transaction request
 		$body = array(
-			'amount'         => $order-> get_total() * 100,
-			'capture_method' => 'pix'
+			'amount' => $orderTotalWithDiscount * 100,
+			'capture_method' => 'pix',
+			'metadata' => array(
+				'callback' => array(
+					'validate' => '',
+          'confirm' => $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
+          'secret' => $transactionSecret
+				)
+			)
 		);
+
+		// Add transaction secret to order
+		add_post_meta($order->get_id(), 'transactionSecret', $transactionSecret);
+
+		// !mock
+		// $test = '00020101021226670014BR.GOV.BCB.PIX0120ryccapetloja@meu.pix0221Pagamento infinitepay520400005303986540580.985802BR5909Rycca Pet6009FORTALEZA61086042548262290525TIMcVZlncAgctIxSrbr9EMu4763047E43';
+		// $order->add_order_note('
+		// 	' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . $test . '
+		// ');
+		// return array(
+		// 	'result'    => 'success',
+		// 	'redirect'  => $order->get_checkout_order_received_url()
+		// );
 
 		// PIX Transaction request
 		$args = array(
-			'body'    => json_encode( $body ),
+			'body' => json_encode($body),
 			'headers' => array(
 				'Authorization' => $this->sandbox === 'yes' ? $this->sandbox_api_key : $this->api_key,
 				'Content-Type'  => 'application/json'
@@ -250,33 +281,19 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			$args
 		);
 
-		$test = '00020101021226670014BR.GOV.BCB.PIX0120ryccapetloja@meu.pix0221Pagamento infinitepay520400005303986540580.985802BR5909Rycca Pet6009FORTALEZA61086042548262290525TIMcVZlncAgctIxSrbr9EMu4763047E43';
-		$order->add_order_note('
-			' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . $test . '
-		');
-		return array(
-			'result'    => 'success',
-			'redirect'  => $order->get_checkout_order_received_url()
-		);
-
 		// Check transaction create response
-		if (!is_wp_error( $response ) && $response['response']['code'] < 500) {
+		if (!is_wp_error($response) && $response['response']['code'] < 500) {
 			$body = json_decode( $response['body'], true);
 
-			// !Move this to a job that tracks pix callbacks
+			//* Validates if pix qrcode was successfully generated
 			if ($body['data']['attributes']['br_code']) {
-					
-				// Complete woocommerce payment
-				$order->payment_complete();
-				$order->add_order_note( '
-					' . __( 'Installments', 'infinitepix-woocommerce' ) . ': ' . 1 . '
-					' . __( 'Final amount', 'infinitepix-woocommerce' ) . ': R$ ' . number_format( $order->get_total(), 2, ",", "." ) . '
-				' );
 
-				// Generate pix QRCODE
-				$qrcodeSrc = $body['data']['attributes']['br_code'];
+				// Retrieve infinite pay response fields		
+				$pixBrCode = $body['data']['attributes']['br_code'];
+					
+				// Add br code to order object
 				$order->add_order_note('
-					' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . qrcodeSrc . '
+					' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . $pixBrCode . '
 				');
 
 				// Clear user cart
@@ -284,28 +301,29 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 
 				// Return that your transaction was successfully created
 				return array(
-					'result'   => 'success',
+					'result' => 'success',
 					'redirect' => $order->get_checkout_order_received_url(),
 				);
 
+			//! PIX Qrcode generation failed
 			} else {
         $code = '';
-        if ( $body['data'] && $body['data']['attributes'] && $body['data']['attributes']['authorization_code'] ) {
+        if ($body['data'] && $body['data']['attributes'] && $body['data']['attributes']['authorization_code']) {
           $code = $body['data']['attributes']['authorization_code'];
         }
-				wc_add_notice( __( 'Please review your card information and try again', 'infinitepix-woocommerce' ) . ' - ' . $code, 'error' );
-       	if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
-         	wc_add_notice( json_encode( $body ), 'error' );
+				wc_add_notice(__('Ooops, an internal error has occurred, wait bit and try again!', 'infinitepix-woocommerce') . ' - ' . $code, 'error');
+       	if ( isset($this->sandbox ) && $this->sandbox === 'yes') {
+         	wc_add_notice(json_encode( $body ), 'error');
        	}
 			}
 		} else {
-			wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepix-woocommerce' ), 'error' );
+			wc_add_notice( __('Ooops, an internal error has occurred, contact an administrator!', 'infinitepix-woocommerce'), 'error' );
 		}
 	}
 
 	public function change_payment_complete_order_status( $status, $order_id = 0, $order = false ) {
 		if ( $order && $order->get_payment_method() === 'infinitepix' ) {
-			$status = 'on-hold';
+			$status = 'pending';
 		}
 		return $status;
 	}
@@ -348,9 +366,6 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 	public function thank_you_page($order_id) {
 		$checkoutHtml = $this->pix_checkout_html($order_id);
 		echo $checkoutHtml;
-		// if (!empty( $this->instructions ) ) {
-		// 	echo wpautop(wptexturize(esc_html($this->instructions)));
-		// }
 	}
 
 	public function email_instructions($order, $sent_to_admin, $plain_text = false) {
