@@ -224,7 +224,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 
 		// Apply discount if it has onde
 		$orderTotalWithDiscount = $order->get_total();
-		if ($this->discount) {
+		if ($this->discount && orderTotalWithDiscount > $this.min_amount) {
 			$discountValue = ($orderTotalWithDiscount * $this->discount) / 100;
 			$orderTotalWithDiscount = $orderTotalWithDiscount - $discountValue;
 		}
