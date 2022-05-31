@@ -277,7 +277,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 					$order_items[] = array(
 						'id'          => (string) sanitize_key( $item->get_id() ),
 						'description' => sanitize_text_field( $item->get_name() ),
-						'amount'      => (float) sanitize_text_field( $item->get_data()['total'] ),
+						'amount'      => (int) sanitize_text_field( $item->get_data()['total'] ),
 						'quantity'    => (int) sanitize_key( $item->get_quantity() )
 					);
 				}
@@ -301,7 +301,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 				),
 				'order'           => array(
 					'id'               => (string) $order->get_id(),
-					'amount'           => (float) $order->get_total(),
+					'amount'           => (int) $order->get_total(),
 					'items'            => $order_items,
 					'delivery_details' => array(
 						'email'        => sanitize_text_field( $order->get_billing_email() ),
@@ -388,6 +388,8 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
                     $code = '';
                     if ( $body['data'] && $body['data']['attributes'] && $body['data']['attributes']['authorization_code'] ) {
                         $code = $body['data']['attributes']['authorization_code'];
+                    } else {
+	                    $code = $response['response']['code'];
                     }
 					wc_add_notice( __( 'Please review your card information and try again', 'infinitepay-woocommerce' ) . ' - ' . $code, 'error' );
                     if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {

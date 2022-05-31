@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WC_InfinitePay_Constants {
 
-	const VERSION = '1.1.2';
+	const VERSION = '1.1.3';
 	const MIN_PHP = 5.6;
 	const API_IP_BASE_URL = 'https://api.infinitepay.io';
 
