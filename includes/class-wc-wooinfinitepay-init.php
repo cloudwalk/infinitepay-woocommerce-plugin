@@ -342,6 +342,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 				),
 				'metadata'        => array(
                     'origin'     => 'woocommerce',
+					'plugin_version' => WC_InfinitePay_Constants::VERSION,
                     'store_url'  => $_SERVER['SERVER_NAME'],
 					'risk'       => array(
 						'session_id' => $uuid,
