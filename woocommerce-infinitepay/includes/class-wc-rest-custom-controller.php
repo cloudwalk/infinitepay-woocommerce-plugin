@@ -26,7 +26,8 @@ class WC_REST_Custom_Controller {
 
 		// Retrieve order
 		$order = wc_get_order($orderId);
-		$transactionId = get_post_meta($orderId, 'transactionSecret');
+		$transactionIds = get_post_meta($orderId, 'transactionSecret');
+		$convertedTransactionId = hash('sha256', $transactionIds[0]);
 
 		// Validate if the request is valid
 
@@ -37,7 +38,8 @@ class WC_REST_Custom_Controller {
 		// Returning
 		return array(
 			'orderId' => $orderId,
-			'transactionId' => $transactionId,
+			'transactionId' => $transactionIds[0],
+			'convertedTransactionId' => $convertedTransactionId,
 			'postId' => $post_id,
 			'order' => $order
 		);

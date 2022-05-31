@@ -240,24 +240,11 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			'metadata' => array(
 				'callback' => array(
 					'validate' => '',
-          'confirm' => $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
+          'confirm' => 'http://' . $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
           'secret' => $transactionSecret
 				)
 			)
 		);
-
-		// Add transaction secret to order
-		add_post_meta($order->get_id(), 'transactionSecret', $transactionSecret);
-
-		// !mock
-		// $test = '00020101021226670014BR.GOV.BCB.PIX0120ryccapetloja@meu.pix0221Pagamento infinitepay520400005303986540580.985802BR5909Rycca Pet6009FORTALEZA61086042548262290525TIMcVZlncAgctIxSrbr9EMu4763047E43';
-		// $order->add_order_note('
-		// 	' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . $test . '
-		// ');
-		// return array(
-		// 	'result'    => 'success',
-		// 	'redirect'  => $order->get_checkout_order_received_url()
-		// );
 
 		// PIX Transaction request
 		$args = array(
@@ -267,11 +254,6 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 				'Content-Type'  => 'application/json'
 			)
 		);
-
-		// Following IP docks inform "mock" value on headers if is sandbox
-		if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
-			$args['headers']['Env'] = 'mock';
-		}
 
 		// Transaction create request (POST)
 		$response = wp_remote_post(
@@ -283,13 +265,16 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 
 		// Check transaction create response
 		if (!is_wp_error($response) && $response['response']['code'] < 500) {
-			$body = json_decode( $response['body'], true);
+			$body = json_decode($response['body'], true);
 
 			//* Validates if pix qrcode was successfully generated
 			if ($body['data']['attributes']['br_code']) {
 
 				// Retrieve infinite pay response fields		
 				$pixBrCode = $body['data']['attributes']['br_code'];
+
+				// Add transaction secret to order
+				add_post_meta($order->get_id(), 'transactionSecret', $transactionSecret);
 					
 				// Add br code to order object
 				$order->add_order_note('
@@ -351,7 +336,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$html = '<div style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
 		$html .= '<img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode='. urlencode(str_replace("br_code:", "", $orderComments[0]->comment_content)) .'"	alt="QR Code"/>';
 		$html .= '<div>';
-		$html .= '<p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ 80,98</strong></p>';
+		$html .= '<p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ ' . $order->get_total() . '</strong></p>';
 		$html .= '<div style="word-wrap: break-word; max-width: 450px;">';
 		$html .= '<small>Código de transação</small><br>';
 		$html .= '<code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">'.str_replace("br_code:", "", $orderComments[0]->comment_content).'</code>';
@@ -368,9 +353,8 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		echo $checkoutHtml;
 	}
 
-	public function email_instructions($order, $sent_to_admin, $plain_text = false) {
-		// if ($this->instructions	&& ! $sent_to_admin	&& $this->id === $order->payment_method) {
-		// 	echo wp_kses_post(wpautop(wptexturize(esc_html($this->instructions))) . PHP_EOL );
-		// }
+	public function email_instructions($order_id) {
+		$checkoutHtml = $this->pix_checkout_html($order_id);
+		echo $checkoutHtml;
 	}
 }
