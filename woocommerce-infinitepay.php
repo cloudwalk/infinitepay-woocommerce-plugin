@@ -2,13 +2,13 @@
 /*
  * Plugin Name: InfinitePay payments for WooCommerce
  * Description: Configure the payment options and accept payments with cards.
- * Version: 1.1.3
+ * Version: 1.1.4
  * Author: Infinite Pay
  * Author URI: https://infinitepay.io/
  * Text Domain: infinitepay-woocommerce
  * Domain Path: /i18n/languages/
- * WC requires at least: 5.5.2
- * WC tested up to: 6.2.0
+ * WC requires at least: 5.7.0
+ * WC tested up to: 7.0.0
  *
  * @package InfinitePay
  */
@@ -29,8 +29,9 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wc_infinitepa
 
 function wc_infiintepay_init() {
 	if ( class_exists( 'WC_Payment_Gateway' ) ) {
+		require_once dirname( __FILE__ ) . '/includes/class-wc-wooinfinitepay-log.php';
 		require_once dirname( __FILE__ ) . '/includes/class-wc-wooinfinitepay-init.php';
-		require_once dirname( __FILE__ ) . '/includes/class-wc-wooinifnitepay-constants.php';
+		require_once dirname( __FILE__ ) . '/includes/class-wc-wooinfinitepay-constants.php';
 		WC_InfinitePay_Module::update_plugin_version();
 	}
 }
