@@ -49,6 +49,15 @@ Done! It will be in the "Installed Plugins" section and from there you can activ
 If you installed it correctly, you will see it in your list of "Installed Plugins" on the WordPress work area. Please enable it and input your api key on the specified field.
 
 == Changelog ==
+= 1.1.4 (2022/06/08) =
+* Bug fixes
+    - Removing API log from checkout
+* Features
+    - Adding InfinitePay Logo on checkout page
+    - Improving error messages
+    - Improving CC form on mobile
+    - Adding logs do API with WC logger
+
 = 1.1.0 (2022/04/25) =
 * Bug fixes
 	- Removing sanitize from api keys
