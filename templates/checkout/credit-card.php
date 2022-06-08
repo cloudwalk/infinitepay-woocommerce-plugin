@@ -38,6 +38,18 @@ for (
     .ip-form-control-error {
         border: 1px solid red !important;
     }
+
+    .ip-installments {
+        width: 100%;
+        height: 40px !important;
+        border-radius: 5px !important;
+        font-size: 13px !important;
+        padding: 0 10px !important;
+        background-color: #fff !important;
+        border: 1px solid #d1d1d1 !important;
+        margin-bottom: 0 !important;
+        color: #000 !important;
+    }
 </style>
 <fieldset id="wc-<?php echo esc_attr( $id ) ?>-cc-form" class="wc-credit-card-form wc-payment-form"
           style="background:transparent;">
@@ -45,33 +57,35 @@ for (
         <div class="form-row form-row-wide">
             <label for="ip_ccNo">Número do Cartão <span class="required">*</span></label>
             <input id="ip_ccNo" onkeyup="ipCreditMaskDate(this, ipMcc);" type="text" autocomplete="off"
-                   data-checkout="cardNumber" maxlength="19">
+                   data-checkout="cardNumber" maxlength="19" class="input-text">
             <span id="ip-error-1" class="ip-error" data-main="#ip_ccNo">Número do cartão inválido</span>
         </div>
-        <div class="form-row form-row-first">
+        <div class="form-row form-row-wide">
             <label for="ip_expdate">Data de validade <span class="required">*</span></label>
             <input id="ip_expdate" onkeyup="ipCreditMaskDate(this, ipDate);" onblur="ipValidateMonthYear()" type="text"
-                   autocomplete="off" placeholder="MM/AA" data-checkout="cardExpirationDate" maxlength="5">
+                   autocomplete="off" placeholder="MM/AA" data-checkout="cardExpirationDate" maxlength="5"
+                   class="input-text">
             <span id="ip-error-2" class="ip-error" data-main="#ip_expdate">Data inválida</span>
             <input type="hidden" id="cardExpirationMonth" data-checkout="cardExpirationMonth">
             <input type="hidden" id="cardExpirationYear" data-checkout="cardExpirationYear">
         </div>
-        <div class="form-row form-row-last">
+        <div class="form-row form-row-wide">
             <label for="ip_cvv">CVV<span class="required">*</span></label>
             <input id="ip_cvv" onkeyup="ipCreditMaskDate(this, ipInteger);" type="text" autocomplete="off"
-                   placeholder="CVV" data-checkout="cardSecurityCode" maxlength="4">
+                   placeholder="CVV" data-checkout="cardSecurityCode" maxlength="4" class="input-text">
             <span id="ip-error-3" class="ip-error" data-main="#ip_cvv">CVV inválido</span>
         </div>
         <div class="form-row form-row-wide">
             <label for="ip_installments">Número de parcelas <span class="required">*</span></label>
             <select id="ip_installments" name="infinitepay_custom[installments]"
-                    data-checkout="installments"><?php echo wp_kses( $installments, array( 'option' => array( 'value' => array() ) ) ) ?></select>
+                    data-checkout="installments"
+            ><?php echo wp_kses( $installments, array( 'option' => array( 'value' => array() ) ) ) ?></select>
             <span id="ip-error-4" class="ip-error" data-main="#ip_installments">Selecione o número de parcelas</span>
         </div>
         <div class="form-row form-row-wide">
             <label for="ip_docNumber">CPF do portador do cartão <span class="required">*</span></label>
             <input id="ip_docNumber" onkeyup="ipCreditMaskDate(this, ipDoc);" type="text" autocomplete="off"
-                   data-checkout="docNumber" name="infinitepay_custom[doc_number]" maxlength="14">
+                   data-checkout="docNumber" name="infinitepay_custom[doc_number]" maxlength="14" class="input-text">
             <span id="ip-error-5" class="ip-error" data-main="#ip_docNumber">Documento inválido</span>
         </div>
         <input type="hidden" id="ip-token" name="infinitepay_custom[token]"/>

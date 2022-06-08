@@ -46,6 +46,16 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 		}
 	}
 
+	public static function woocommerce_instance() {
+		if ( function_exists( 'WC' ) ) {
+			return WC();
+		} else {
+			global $woocommerce;
+
+			return $woocommerce;
+		}
+	}
+
 	public function __construct() {
 		self::load_plugin_textdomain();
 
@@ -63,6 +73,8 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 		$this->api_key               = $this->get_option( 'api_key' );
 		$this->sandbox               = sanitize_key( $this->get_option( 'sandbox', 'no' ) );
 		$this->sandbox_api_key       = $this->get_option( 'sandbox_api_key' );
+		$this->log                   = new WC_InfinitePay_Log( $this );
+		$this->icon                  = $this->get_ip_icon();
 
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
 			$this,
@@ -152,7 +164,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 		) );
 	}
 
-	private function calculate_installments(): array {
+	private function calculate_installments() {
 		$amount             = $this->get_order_total();
 		$installments_value = [];
 		for (
@@ -254,153 +266,164 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 	}
 
 	private function process_infinitepay_payment( $order ) {
-		if ( isset( $_POST['infinitepay_custom'] ) &&
-		     isset( $_POST['infinitepay_custom']['token'] ) && ! empty( $_POST['infinitepay_custom']['token'] ) &&
-		     isset( $_POST['infinitepay_custom']['uuid'] ) && ! empty( $_POST['infinitepay_custom']['uuid'] ) &&
-		     isset( $_POST['infinitepay_custom']['doc_number'] ) && ! empty( $_POST['infinitepay_custom']['doc_number'] ) &&
-		     isset( $_POST['infinitepay_custom']['installments'] ) && ! empty( $_POST['infinitepay_custom']['installments'] ) &&
-		     - 1 !== (int) $_POST['infinitepay_custom']['installments']
-		) {
-			$token        = sanitize_text_field( $_POST['infinitepay_custom']['token'] );
-			$uuid         = sanitize_key( $_POST['infinitepay_custom']['uuid'] );
-			$installments = sanitize_text_field( $_POST['infinitepay_custom']['installments'] );
-			$doc_number   = sanitize_text_field( $_POST['infinitepay_custom']['doc_number'] );
-            $nsu          = vsprintf( '%s%s-%s-%s-%s-%s%s%s', str_split( bin2hex( random_bytes( 16 ) ), 4 ) );
+		try {
+			$log_header = '[' . $order->get_id() . '] ';
+			if ( isset( $_POST['infinitepay_custom'] ) &&
+			     isset( $_POST['infinitepay_custom']['token'] ) && ! empty( $_POST['infinitepay_custom']['token'] ) &&
+			     isset( $_POST['infinitepay_custom']['uuid'] ) && ! empty( $_POST['infinitepay_custom']['uuid'] ) &&
+			     isset( $_POST['infinitepay_custom']['doc_number'] ) && ! empty( $_POST['infinitepay_custom']['doc_number'] ) &&
+			     isset( $_POST['infinitepay_custom']['installments'] ) && ! empty( $_POST['infinitepay_custom']['installments'] ) &&
+			     - 1 !== (int) $_POST['infinitepay_custom']['installments']
+			) {
+				$token        = sanitize_text_field( $_POST['infinitepay_custom']['token'] );
+				$uuid         = sanitize_key( $_POST['infinitepay_custom']['uuid'] );
+				$installments = sanitize_text_field( $_POST['infinitepay_custom']['installments'] );
+				$doc_number   = sanitize_text_field( $_POST['infinitepay_custom']['doc_number'] );
+				$nsu          = vsprintf( '%s%s-%s-%s-%s-%s%s%s', str_split( bin2hex( random_bytes( 16 ) ), 4 ) );
+				$this->log->write_log( __FUNCTION__, $log_header . 'Starting IP payment for nsu ' . $nsu );
 
-			$card_info       = explode( ':', $token );
-			$card_expiration = explode( '/', $card_info[1] );
+				$card_info       = explode( ':', $token );
+				$card_expiration = explode( '/', $card_info[1] );
 
 
-			$order_items = [];
-			if ( count( $order->get_items() ) > 0 ) {
-				foreach ( $order->get_items() as $item ) {
-					$order_items[] = array(
-						'id'          => (string) sanitize_key( $item->get_id() ),
-						'description' => sanitize_text_field( $item->get_name() ),
-						'amount'      => (int) sanitize_text_field( $item->get_data()['total'] ),
-						'quantity'    => (int) sanitize_key( $item->get_quantity() )
-					);
+				$order_items = [];
+				if ( count( $order->get_items() ) > 0 ) {
+					foreach ( $order->get_items() as $item ) {
+						$order_items[] = array(
+							'id'          => (string) sanitize_key( $item->get_id() ),
+							'description' => sanitize_text_field( $item->get_name() ),
+							'amount'      => (int) sanitize_text_field( $item->get_data()['total'] ),
+							'quantity'    => (int) sanitize_key( $item->get_quantity() )
+						);
+					}
 				}
-			}
 
-			$body = array(
-				'payment'         => array(
-					'amount'         => $order->get_total() * 100,
-					'installments'   => (int) sanitize_text_field( $installments ),
-					'capture_method' => 'ecommerce',
-					'origin'         => 'woocommerce',
-					'payment_method' => 'credit',
-                    'nsu'            => $nsu
-				),
-				'card'            => array(
-					'cvv'                   => $card_info[2],
-					'card_number'           => $card_info[0],
-					'card_holder_name'      => sanitize_text_field( $order->get_billing_first_name() ) . ' ' . sanitize_text_field( $order->get_billing_last_name() ),
-					'card_expiration_month' => str_pad( $card_expiration[0], 2, '0', STR_PAD_LEFT ),
-					'card_expiration_year'  => str_pad( $card_expiration[1], 4, '20', STR_PAD_LEFT ),
-				),
-				'order'           => array(
-					'id'               => (string) $order->get_id(),
-					'amount'           => (int) $order->get_total(),
-					'items'            => $order_items,
-					'delivery_details' => array(
-						'email'        => sanitize_text_field( $order->get_billing_email() ),
-						'name'         => sanitize_text_field( $order->get_shipping_first_name() ?: $order->get_billing_first_name() ) . ' ' . sanitize_text_field( $order->get_shipping_last_name() ?: $order->get_billing_last_name() ),
-						'phone_number' => sanitize_text_field( $order->get_shipping_phone() ) ?: sanitize_text_field( $order->get_billing_phone() ),
-						'address'      => array(
+				$body = array(
+					'payment'         => array(
+						'amount'         => $order->get_total() * 100,
+						'installments'   => (int) sanitize_text_field( $installments ),
+						'capture_method' => 'ecommerce',
+						'origin'         => 'woocommerce',
+						'payment_method' => 'credit',
+						'nsu'            => $nsu
+					),
+					'card'            => array(
+						'cvv'                   => $card_info[2],
+						'card_number'           => $card_info[0],
+						'card_holder_name'      => sanitize_text_field( $order->get_billing_first_name() ) . ' ' . sanitize_text_field( $order->get_billing_last_name() ),
+						'card_expiration_month' => str_pad( $card_expiration[0], 2, '0', STR_PAD_LEFT ),
+						'card_expiration_year'  => str_pad( $card_expiration[1], 4, '20', STR_PAD_LEFT ),
+					),
+					'order'           => array(
+						'id'               => (string) $order->get_id(),
+						'amount'           => (int) $order->get_total(),
+						'items'            => $order_items,
+						'delivery_details' => array(
+							'email'        => sanitize_text_field( $order->get_billing_email() ),
+							'name'         => sanitize_text_field( $order->get_shipping_first_name() ?: $order->get_billing_first_name() ) . ' ' . sanitize_text_field( $order->get_shipping_last_name() ?: $order->get_billing_last_name() ),
+							'phone_number' => sanitize_text_field( $order->get_shipping_phone() ) ?: sanitize_text_field( $order->get_billing_phone() ),
+							'address'      => array(
+								'line1'   => sanitize_text_field( $order->get_billing_address_1() ),
+								'line2'   => sanitize_text_field( $order->get_billing_address_2() ),
+								'city'    => sanitize_text_field( $order->get_billing_city() ),
+								'state'   => sanitize_text_field( $order->get_billing_state() ),
+								'zip'     => sanitize_text_field( $order->get_billing_postcode() ),
+								'country' => sanitize_text_field( $order->get_billing_country() ),
+							)
+						)
+					),
+					'customer'        => array(
+						'document_number' => $doc_number,
+						'email'           => sanitize_email( $order->get_billing_email() ),
+						'first_name'      => sanitize_text_field( $order->get_shipping_first_name() ?: $order->get_billing_first_name() ),
+						'last_name'       => sanitize_text_field( $order->get_shipping_last_name() ?: $order->get_billing_last_name() ),
+						'phone_number'    => sanitize_text_field( $order->get_billing_phone() ),
+						'address'         => sanitize_text_field( $order->get_shipping_address_1() ?: $order->get_billing_address_1() ),
+						'complement'      => sanitize_text_field( $order->get_shipping_address_2() ?: $order->get_billing_address_2() ),
+						'city'            => sanitize_text_field( $order->get_shipping_city() ?: $order->get_billing_city() ),
+						'state'           => sanitize_text_field( $order->get_shipping_state() ?: $order->get_billing_state() ),
+						'zip'             => sanitize_text_field( $order->get_shipping_postcode() ?: $order->get_billing_postcode() ),
+						'country'         => sanitize_text_field( $order->get_shipping_country() ?: $order->get_billing_country() ),
+					),
+					'billing_details' => array(
+						'address' => array(
 							'line1'   => sanitize_text_field( $order->get_billing_address_1() ),
 							'line2'   => sanitize_text_field( $order->get_billing_address_2() ),
 							'city'    => sanitize_text_field( $order->get_billing_city() ),
 							'state'   => sanitize_text_field( $order->get_billing_state() ),
-							'zip'     => sanitize_text_field( $order->get_billing_postcode() ),
+							'zip'     => sanitize_key( $order->get_billing_postcode() ),
 							'country' => sanitize_text_field( $order->get_billing_country() ),
 						)
+					),
+					'metadata'        => array(
+						'origin'         => 'woocommerce',
+						'plugin_version' => WC_InfinitePay_Constants::VERSION,
+						'store_url'      => $_SERVER['SERVER_NAME'],
+						'risk'           => array(
+							'session_id' => $uuid,
+							'payer_ip'   => isset( $_SERVER['HTTP_CLIENT_IP'] ) ? $_SERVER['HTTP_CLIENT_IP'] : ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'] ),
+						)
 					)
-				),
-				'customer'        => array(
-					'document_number' => $doc_number,
-					'email'           => sanitize_email( $order->get_billing_email() ),
-					'first_name'      => sanitize_text_field( $order->get_shipping_first_name() ?: $order->get_billing_first_name() ),
-					'last_name'       => sanitize_text_field( $order->get_shipping_last_name() ?: $order->get_billing_last_name() ),
-					'phone_number'    => sanitize_text_field( $order->get_billing_phone() ),
-					'address'         => sanitize_text_field( $order->get_shipping_address_1() ?: $order->get_billing_address_1() ),
-					'complement'      => sanitize_text_field( $order->get_shipping_address_2() ?: $order->get_billing_address_2() ),
-					'city'            => sanitize_text_field( $order->get_shipping_city() ?: $order->get_billing_city() ),
-					'state'           => sanitize_text_field( $order->get_shipping_state() ?: $order->get_billing_state() ),
-					'zip'             => sanitize_text_field( $order->get_shipping_postcode() ?: $order->get_billing_postcode() ),
-					'country'         => sanitize_text_field( $order->get_shipping_country() ?: $order->get_billing_country() ),
-				),
-				'billing_details' => array(
-					'address' => array(
-						'line1'   => sanitize_text_field( $order->get_billing_address_1() ),
-						'line2'   => sanitize_text_field( $order->get_billing_address_2() ),
-						'city'    => sanitize_text_field( $order->get_billing_city() ),
-						'state'   => sanitize_text_field( $order->get_billing_state() ),
-						'zip'     => sanitize_key( $order->get_billing_postcode() ),
-						'country' => sanitize_text_field( $order->get_billing_country() ),
+				);
+				wc_add_notice( json_encode( $body ), 'error' );
+				$args = array(
+					'body'    => json_encode( $body ),
+					'headers' => array(
+						'Authorization' => $this->sandbox === 'yes' ? $this->sandbox_api_key : $this->api_key,
+						'Content-Type'  => 'application/json'
 					)
-				),
-				'metadata'        => array(
-                    'origin'     => 'woocommerce',
-					'plugin_version' => WC_InfinitePay_Constants::VERSION,
-                    'store_url'  => $_SERVER['SERVER_NAME'],
-					'risk'       => array(
-						'session_id' => $uuid,
-                        'payer_ip'   => $_SERVER['HTTP_CLIENT_IP']
-                                              ?? ($_SERVER['HTTP_X_FORWARDED_FOR']
-                                              ?? $_SERVER['REMOTE_ADDR']),
-					)
-				)
-			);
-            wc_add_notice( json_encode( $body ), 'error' );
-			$args = array(
-				'body'    => json_encode( $body ),
-				'headers' => array(
-					'Authorization' => $this->sandbox === 'yes' ? $this->sandbox_api_key : $this->api_key,
-					'Content-Type'  => 'application/json'
-				)
-			);
-			if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
-				$args['headers']['Env'] = 'mock';
-			}
+				);
+				if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
+					$args['headers']['Env'] = 'mock';
+				}
 
-			$response = wp_remote_post(
-				( isset( $this->sandbox ) && $this->sandbox === 'yes' ) ? 'https://authorizer-staging.infinitepay.io/v2/transactions' : 'https://api.infinitepay.io/v2/transactions',
-				$args
-			);
-			if ( ! is_wp_error( $response ) && $response['response']['code'] < 500 ) {
+				$response = wp_remote_post(
+					( isset( $this->sandbox ) && $this->sandbox === 'yes' ) ? 'https://authorizer-staging.infinitepay.io/v2/transactions' : 'https://api.infinitepay.io/v2/transactions',
+					$args
+				);
+				$this->log->write_log( __FUNCTION__, $log_header . 'API response code: ' . $response['response']['code'] );
 				$body = json_decode( $response['body'], true );
-				if ( $body['data']['attributes']['authorization_code'] === '00' ) {
-					$order->payment_complete();
-					$order->add_order_note( '
+				if ( ! is_wp_error( $response ) && $response['response']['code'] < 500 ) {
+					$this->log->write_log( __FUNCTION__, $log_header . 'API response authorization_code: ' . $body['data']['attributes']['authorization_code'] );
+					if ( $body['data']['attributes']['authorization_code'] === '00' ) {
+						$order->payment_complete();
+						$order->add_order_note( '
 						' . __( 'Installments', 'infinitepay-woocommerce' ) . ': ' . $installments . '
 						' . __( 'Final amount', 'infinitepay-woocommerce' ) . ': R$ ' . number_format( $order->get_total(), 2, ",", "." ) . '
 						' . __( 'NSU', 'infinitepay-woocommerce' ) . ': ' . $body['data']['id'] . '
 					' );
 
-					WC()->cart->empty_cart();
+						WC()->cart->empty_cart();
 
-					return array(
-						'result'   => 'success',
-						'redirect' => $order->get_checkout_order_received_url(),
-					);
+						$this->log->write_log( __FUNCTION__, $log_header . 'Finished IP payment for nsu ' . $nsu . ' successfully' );
+
+						return array(
+							'result'   => 'success',
+							'redirect' => $order->get_checkout_order_received_url(),
+						);
+					} else {
+						$code = '';
+						if ( $body['data'] && $body['data']['attributes'] && $body['data']['attributes']['authorization_code'] ) {
+							$code = $body['data']['attributes']['authorization_code'];
+						} else {
+							$code = $response['response']['code'];
+						}
+						$this->log->write_log( __FUNCTION__, $log_header . 'Error ' . $code . ' on IP payment for nsu ' . $nsu . ', error log: ' . json_encode( $body ) );
+						wc_add_notice( __( 'Please review your card information and try again', 'infinitepay-woocommerce' ) . ' - ' . $code, 'error' );
+						if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
+							wc_add_notice( json_encode( $body ), 'error' );
+						}
+					}
 				} else {
-                    $code = '';
-                    if ( $body['data'] && $body['data']['attributes'] && $body['data']['attributes']['authorization_code'] ) {
-                        $code = $body['data']['attributes']['authorization_code'];
-                    } else {
-	                    $code = $response['response']['code'];
-                    }
-					wc_add_notice( __( 'Please review your card information and try again', 'infinitepay-woocommerce' ) . ' - ' . $code, 'error' );
-                    if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
-                        wc_add_notice( json_encode( $body ), 'error' );
-                    }
+					$this->log->write_log( __FUNCTION__, $log_header . 'Error 500 on IP payment for nsu ' . $nsu . ', error log: ' . json_encode( $body ) );
+					wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
 				}
 			} else {
-				wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
+				$this->log->write_log( __FUNCTION__, $log_header . 'Misconfiguration error on plugin ' );
+				wc_add_notice( __( 'Please review your card information and try again', 'infinitepay-woocommerce' ), 'error' );
 			}
-		} else {
-			wc_add_notice( __( 'Please review your card information and try again', 'infinitepay-woocommerce' ), 'error' );
+		} catch ( Exception $ex ) {
+			$this->log->write_log( __FUNCTION__, 'Caught exception: ' . $ex->getMessage() );
 		}
 	}
 
@@ -410,6 +433,10 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 		}
 
 		return $status;
+	}
+
+	public function get_ip_icon() {
+		return apply_filters( 'woocommerce_infinitepay_icon', plugins_url( './assets/images/logo.png', plugin_dir_path( __FILE__ ) ) );
 	}
 
 	public function thank_you_page() {
