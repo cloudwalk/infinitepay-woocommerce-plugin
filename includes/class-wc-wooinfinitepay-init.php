@@ -365,7 +365,6 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 						)
 					)
 				);
-				wc_add_notice( json_encode( $body ), 'error' );
 				$args = array(
 					'body'    => json_encode( $body ),
 					'headers' => array(
