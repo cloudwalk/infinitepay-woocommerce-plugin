@@ -302,3 +302,4 @@ wp-config.php
 /plugins
 /db_data
 /woocommerce-infinitepay/node_modules
+.idea

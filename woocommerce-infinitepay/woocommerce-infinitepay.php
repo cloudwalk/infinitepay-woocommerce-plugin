@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Make sure WooCommerce is active
-if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters('active_plugins', get_option( 'active_plugins')))) {
 	return;
 }
 
@@ -31,7 +31,7 @@ add_filter('woocommerce_rest_api_get_rest_namespaces', 'woo_custom_api');
 /**
  * Custom API Controller
  */
-function woo_custom_api( $controllers ) {
+function woo_custom_api($controllers) {
 	require_once dirname(__FILE__) . '/includes/class-wc-rest-custom-controller.php';
 	$controllers['wc/v3']['custom'] = 'WC_REST_Custom_Controller';
 	return $controllers;
@@ -41,11 +41,12 @@ function woo_custom_api( $controllers ) {
  * Require plugin files
  */
 function wc_infiintepay_init() {
-	if ( class_exists( 'WC_Payment_Gateway' ) ) {
+	if (class_exists( 'WC_Payment_Gateway' )) {
 
 		// Credit card and its contants method
+		require_once dirname( __FILE__ ) . '/includes/class-wc-wooinfinitepay-log.php';
 		require_once dirname(__FILE__) . '/includes/class-wc-wooinfinitepay-init.php';
-		require_once dirname(__FILE__) . '/includes/class-wc-wooinifnitepay-constants.php';
+		require_once dirname( __FILE__ ) . '/includes/class-wc-wooinfinitepay-constants.php';
 
 		// PIX mwthod
 		require_once dirname(__FILE__) . '/includes/class-wc-wooinfinitepix-init.php';
@@ -59,7 +60,7 @@ function wc_infiintepay_init() {
 /**
  * Add pix and credit card payment gateways
  */
-function wc_infinitepay_add_to_gateway( $gateways ) {
+function wc_infinitepay_add_to_gateway($gateways) {
 	// Append payment methods
 	$gateways[] = 'WC_InfinitePay_Module';
 	array_push($gateways, 'WC_InfinitePix_Module');
@@ -71,9 +72,9 @@ function wc_infinitepay_add_to_gateway( $gateways ) {
 /**
  * Plugin URL
  */
-function wc_infinitepay_plugin_links( $links ) {
+function wc_infinitepay_plugin_links($links) {
 	$plugins_links = array(
 		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=infinitepay' ) . '">' . __( 'Configure', 'infinitepay-woocommerce' ) . '</a>'
 	);
-	return array_merge( $plugins_links, $links );
+	return array_merge($plugins_links, $links);
 }
