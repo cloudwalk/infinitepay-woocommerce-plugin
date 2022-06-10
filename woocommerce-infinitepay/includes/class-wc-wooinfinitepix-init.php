@@ -55,6 +55,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$this->api_key               = $this->get_option('api_key');
 		$this->sandbox               = sanitize_key($this->get_option('sandbox', 'no'));
 		$this->sandbox_api_key       = $this->get_option('sandbox_api_key');
+		$this->icon                  = $this->get_ip_icon();
 
 		// Function exec order
 		add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this,'process_admin_options'));
@@ -309,6 +310,10 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			$status = 'pending';
 		}
 		return $status;
+	}
+
+	public function get_ip_icon() {
+		return apply_filters( 'woocommerce_infinitepay_icon', plugins_url( './assets/images/logo.png', plugin_dir_path( __FILE__ ) ) );
 	}
 
 	public function pix_checkout_html($order_id) {
