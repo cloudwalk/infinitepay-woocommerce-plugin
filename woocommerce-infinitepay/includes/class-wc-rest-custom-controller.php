@@ -23,13 +23,20 @@ class WC_REST_Custom_Controller {
 
 		// Retrieve parameters
 		$orderId = $data['order_id'];
+		$safetyHash = $data('X-Callback-Signature');
 
 		// Retrieve order
 		$order = wc_get_order($orderId);
 		$transactionIds = get_post_meta($orderId, 'transactionSecret');
-		$convertedTransactionId = hash('sha256', $transactionIds[0]);
+		$convertedTransactionId = hash_hmac('sha256', $data, $transactionIds[0], false);
 
 		// Validate if the request is valid
+		if ($convertedTransactionId != $safetyHash) {
+			// Return bad request
+			return array(
+				'status' => 200
+			);
+		}
 
 		// Update order status to payment received
 		$paymentReceivedStatus = 'processing';
@@ -37,6 +44,7 @@ class WC_REST_Custom_Controller {
 
 		// Returning
 		return array(
+			'status' => 200,
 			'orderId' => $orderId,
 			'transactionId' => $transactionIds[0],
 			'convertedTransactionId' => $convertedTransactionId,

@@ -52,7 +52,6 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$this->description           = sanitize_text_field($this->get_option( 'description'));
 		$this->discount              = sanitize_key($this->get_option('discount', 10));
 		$this->min_amount            = sanitize_key($this->get_option('min_amount', 2));
-		$this->cumulative_discount   = sanitize_key( $this->get_option('cumulative_discount', 'no' ));
 		$this->api_key               = $this->get_option('api_key');
 		$this->sandbox               = sanitize_key($this->get_option('sandbox', 'no'));
 		$this->sandbox_api_key       = $this->get_option('sandbox_api_key');
@@ -103,12 +102,6 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 				'description' => __( 'Discount to pix payments', 'infinitepix-woocommerce' ),
 				'default'     => '12',
 				'desc_tip'    => true,
-			),
-			'cumulative_discount' => array(
-				'title'   => 'Ativo/Inativo',
-				'type'    => 'checkbox',
-				'label'   => 'Habilitar desconto cumulativo',
-				'default' => 'no',
 			),
 			'min_amount'      => array(
 				'title'       => __( 'Min order amount', 'infinitepix-woocommerce' ),
@@ -222,16 +215,22 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			}
 		}
 
-		// Apply discount if it has onde
-		$orderTotalWithDiscount = $order->get_total();
-		if ($this->discount && orderTotalWithDiscount > $this->min_amount) {
-			$discountValue = ($orderTotalWithDiscount * $this->discount) / 100;
-			$orderTotalWithDiscount = $orderTotalWithDiscount - $discountValue;
-		}
-
 		// Generate unique uuid for transaction secret
 		$transactionSecret = sha1($order->get_id() . time());
 		$storeUrl = $_SERVER['SERVER_NAME'];
+
+		$order->add_order_note('
+		' . __( 'goees_around', 'infinitepix-woocommerce' ) . ': ' . $this->min_amount . '
+		');
+		
+		// Apply discount if it has onde
+		$orderTotalWithDiscount = $order->get_total();
+		if ($this->discount && $orderTotalWithDiscount > $this->min_amount) {
+			$discountValue = ($orderTotalWithDiscount * $this->discount) / 100;
+			$orderTotalWithDiscount = $orderTotalWithDiscount - $discountValue;
+			$order->set_discount_total($discountValue);
+			$order->set_total($orderTotalWithDiscount);
+		}
 
 		// Prepare transaction request
 		$body = array(
@@ -239,8 +238,9 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			'capture_method' => 'pix',
 			'metadata' => array(
 				'callback' => array(
-					'validate' => '',
-          'confirm' => 'http://' . $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
+					'validate' => 'https://9aa0-2804-18-871-62f9-9484-e8f1-3a1c-3aaf.sa.ngrok.io/testing?order_id=' . $order->get_id(),
+					'confirm' => 'https://9aa0-2804-18-871-62f9-9484-e8f1-3a1c-3aaf.sa.ngrok.io/testing?order_id=' . $order->get_id(),
+          //'confirm' => 'http://' . $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
           'secret' => $transactionSecret
 				)
 			)
@@ -272,13 +272,18 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 
 				// Retrieve infinite pay response fields		
 				$pixBrCode = $body['data']['attributes']['br_code'];
+				$pixNsuHost = $body['data']['attributes']['nsu_host'];
 
 				// Add transaction secret to order
 				add_post_meta($order->get_id(), 'transactionSecret', $transactionSecret);
+				add_post_meta($order->get_id(), 'nsuHost', $pixNsuHost);
 					
 				// Add br code to order object
 				$order->add_order_note('
 					' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . $pixBrCode . '
+					' . __( 'goees_around', 'infinitepix-woocommerce' ) . ': ' . $this->min_amount . '
+					' . __( 'come_around', 'infinitepix-woocommerce' ) . ': ' . $this->discount . '
+					' . __( 'total', 'infinitepix-woocommerce' ) . ': ' . $orderTotalWithDiscount . '
 				');
 
 				// Clear user cart
