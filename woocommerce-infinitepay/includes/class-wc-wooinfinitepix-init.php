@@ -219,10 +219,6 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$transactionSecret = sha1($order->get_id() . time());
 		$storeUrl = $_SERVER['SERVER_NAME'];
 
-		$order->add_order_note('
-		' . __( 'goees_around', 'infinitepix-woocommerce' ) . ': ' . $this->min_amount . '
-		');
-		
 		// Apply discount if it has onde
 		$orderTotalWithDiscount = $order->get_total();
 		if ($this->discount && $orderTotalWithDiscount > $this->min_amount) {
@@ -230,6 +226,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			$orderTotalWithDiscount = $orderTotalWithDiscount - $discountValue;
 			$order->set_discount_total($discountValue);
 			$order->set_total($orderTotalWithDiscount);
+			$order->save();
 		}
 
 		// Prepare transaction request
@@ -238,9 +235,8 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			'capture_method' => 'pix',
 			'metadata' => array(
 				'callback' => array(
-					'validate' => 'https://9aa0-2804-18-871-62f9-9484-e8f1-3a1c-3aaf.sa.ngrok.io/testing?order_id=' . $order->get_id(),
-					'confirm' => 'https://9aa0-2804-18-871-62f9-9484-e8f1-3a1c-3aaf.sa.ngrok.io/testing?order_id=' . $order->get_id(),
-          //'confirm' => 'http://' . $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
+					'validate' => '',
+          'confirm' => 'http://' . $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
           'secret' => $transactionSecret
 				)
 			)
@@ -281,9 +277,6 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 				// Add br code to order object
 				$order->add_order_note('
 					' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . $pixBrCode . '
-					' . __( 'goees_around', 'infinitepix-woocommerce' ) . ': ' . $this->min_amount . '
-					' . __( 'come_around', 'infinitepix-woocommerce' ) . ': ' . $this->discount . '
-					' . __( 'total', 'infinitepix-woocommerce' ) . ': ' . $orderTotalWithDiscount . '
 				');
 
 				// Clear user cart
