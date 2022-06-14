@@ -37,11 +37,9 @@ class WC_REST_Custom_Controller {
 			// Return bad request
 			return array(
 				'status' => 400,
-				'nsu' => $nsu[0],
-				'secret' => $transactionSecrets[0],
+				'transactionId' => $nsu[0],
 				'signature' => $safetyHash,
-				'generatedHash' => $transactionSignature,
-				'test' => $body
+				'generatedHash' => $transactionSignature
 			);
 		}
 
