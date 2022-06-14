@@ -29,7 +29,7 @@ class WC_REST_Custom_Controller {
 		$order = wc_get_order($orderId);
 		$transactionSecrets = get_post_meta($orderId, 'transactionSecret');
 		$nsu = get_post_meta($orderId, 'nsuHost');
-		$body = json_encode($data->get_json_params(), JSON_UNESCAPED_LINE_TERMINATORS);
+		$body = json_encode($data->get_json_params(), JSON_UNESCAPED_LINE_TERMINATORS | JSON_UNESCAPED_UNICODE);
 		$transactionSignature = hash_hmac('sha256', $body, $transactionSecrets[0]);
 
 		// Validate if the request is valid
