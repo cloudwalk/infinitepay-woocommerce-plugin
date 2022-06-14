@@ -236,8 +236,8 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			'capture_method' => 'pix',
 			'metadata' => array(
 				'callback' => array(
-					'validate' => 'https://b386-2804-18-10c9-88db-62b-f66d-baf7-b2a.sa.ngrok.io/testing?order_id=' . $order->get_id(),
-          'confirm' => 'https://b386-2804-18-10c9-88db-62b-f66d-baf7-b2a.sa.ngrok.io/testing?order_id=' . $order->get_id(),
+					'validate' => '',
+          'confirm' => 'http://' . $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
           'secret' => $transactionSecret
 				)
 			)
