@@ -236,8 +236,8 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			'capture_method' => 'pix',
 			'metadata' => array(
 				'callback' => array(
-					'validate' => '',
-          'confirm' => 'http://' . $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
+					'validate' => 'https://b386-2804-18-10c9-88db-62b-f66d-baf7-b2a.sa.ngrok.io/testing?order_id=' . $order->get_id(),
+          'confirm' => 'https://b386-2804-18-10c9-88db-62b-f66d-baf7-b2a.sa.ngrok.io/testing?order_id=' . $order->get_id(),
           'secret' => $transactionSecret
 				)
 			)
@@ -315,6 +315,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 	public function get_ip_icon() {
 		return apply_filters( 'woocommerce_infinitepay_icon', plugins_url( './assets/images/logo.png', plugin_dir_path( __FILE__ ) ) );
 	}
+
 
 	public function pix_checkout_html($order_id) {
 		// Retrieve order

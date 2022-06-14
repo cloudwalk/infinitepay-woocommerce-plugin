@@ -27,15 +27,21 @@ class WC_REST_Custom_Controller {
 
 		// Retrieve order
 		$order = wc_get_order($orderId);
-		$transactionIds = get_post_meta($orderId, 'transactionSecret');
-		$body = json_encode($data->get_json_params());
-		$convertedTransactionId = hash_hmac('sha256', $body, $transactionIds[0], false);
+		$transactionSecrets = get_post_meta($orderId, 'transactionSecret');
+		$nsu = get_post_meta($orderId, 'nsuHost');
+		$body = json_encode($data->get_json_params(), JSON_UNESCAPED_LINE_TERMINATORS);
+		$transactionSignature = hash_hmac('sha256', $body, $transactionSecrets[0]);
 
 		// Validate if the request is valid
-		if ($convertedTransactionId != $safetyHash) {
+		if ($transactionSignature != $safetyHash) {
 			// Return bad request
 			return array(
-				'status' => 400
+				'status' => 400,
+				'nsu' => $nsu[0],
+				'secret' => $transactionSecrets[0],
+				'signature' => $safetyHash,
+				'generatedHash' => $transactionSignature,
+				'test' => $body
 			);
 		}
 
@@ -43,17 +49,10 @@ class WC_REST_Custom_Controller {
 		$paymentReceivedStatus = 'processing';
 		$order->update_status($paymentReceivedStatus);
 
-		$nsu = get_post_meta($orderId, 'nsuHost');
-
 		// Returning
 		return array(
 			'status' => 200,
-			'nsu' => $nsu,
-			'orderId' => $orderId,
-			'safety' => $safetyHash,
-			'body' => $body,
-			'transactionId' => $transactionIds[0],
-			'convertedTransactionId' => $convertedTransactionId
+			'message' => 'Transaction successfully validated'
 		);
 	}
 
