@@ -49,9 +49,18 @@ Done! It will be in the "Installed Plugins" section and from there you can activ
 If you installed it correctly, you will see it in your list of "Installed Plugins" on the WordPress work area. Please enable it and input your api key on the specified field.
 
 == Changelog ==
-= 1.1.4 (2022/06/08) =
+= 1.1.6 (2022/06/15) =
+* Bug fixes
+    - Changing logo to improve readiness on white and black background
+    - Disallow installment less than R$ 1
+* Features
+    - Adding tokenization to credit card transactions
+
+= 1.1.5 (2022/06/09) =
 * Bug fixes
     - Removing API log from checkout
+
+= 1.1.4 (2022/06/08) =
 * Features
     - Adding InfinitePay Logo on checkout page
     - Improving error messages

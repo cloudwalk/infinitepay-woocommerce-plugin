@@ -22,7 +22,11 @@ for (
 	if ( $i === 1 ) {
 		$installments .= '<option value="1">R$ ' . esc_attr( number_format( $installments_value[ $i - 1 ]['value'], 2, ",", "." ) ) . ' à vista</option>';
 	} else {
-		$new_value    = round( $installments_value[ $i - 1 ]['value'], 2, PHP_ROUND_HALF_UP );
+		$new_value = round( $installments_value[ $i - 1 ]['value'], 2, PHP_ROUND_HALF_UP );
+		if ( $new_value < 1 ) {
+			break;
+		}
+
 		$has_interest = $installments_value[ $i - 1 ]['interest'] ? 'com' : 'sem';
 		$installments .= '<option value="' . esc_attr( $i ) . '">' . esc_attr( $i ) . 'x de R$ ' . esc_attr( number_format( $new_value, 2, ",", "." ) ) . ' ' . esc_attr( $has_interest ) . ' juros</option>';
 	}
