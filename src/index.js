@@ -220,7 +220,7 @@
             var head = document.getElementsByTagName("head")[0];
             var script = document.createElement("script");
             script.async = 1;
-            script.src = "https://ipayjs.infinitepay.io/ipay-1.0.0.min.js";
+            script.src = "https://ipayjs.infinitepay.io/production/ipay-latest.min.js";
             script.onload = function() {
                 const iPay = new window.IPay({ token: wc_infinitepay_params.token })
                 iPay.fingerprint(function(error, fp){
