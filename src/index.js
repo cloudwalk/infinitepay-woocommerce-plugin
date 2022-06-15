@@ -4,6 +4,13 @@
     $(function () {
         let infinite_pay_submit = false
         let additionalInfo = {}
+        let iPay
+
+        function getIPay() {
+            if (!!iPay) return iPay
+            iPay = window.iPay
+            return iPay
+        }
 
         function getCheckoutForm() {
             return document.querySelector('#infinitepay-form')
@@ -28,7 +35,6 @@
                 i++
             ) {
                 const errorElement = document.querySelectorAll('[data-checkout]')[i]
-                console.log(errorElement)
                 errorElement.classList.remove('ip-form-control-error')
             }
             for (
@@ -147,15 +153,29 @@
 
         function createToken() {
             clearErrors()
-            // TODO: show loading
 
-            const form = getCheckoutForm()
-            const number = document.querySelector('#ip_ccNo').value.replace(/\D+/g, '')
-            const expire = document.querySelector('#ip_expdate').value
-            const cvv = document.querySelector('#ip_cvv').value
-            const token = `${number}:${expire}:${cvv}`
-            responseHandler({token})
-            return false
+            const form = document.querySelector('form.woocommerce-checkout')
+            const number = document.querySelector('#ip_ccNo')
+            const expireDate = document.querySelector('#cardExpirationMonth')
+            const expireYear = document.querySelector('#cardExpirationYear')
+            const cvv = document.querySelector('#ip_cvv')
+
+            const ipay = getIPay()
+
+            const cardValidate = ipay.cardValidate(number.value)
+            const cardExpirationValidate = ipay.cardExpirationValidate(expireYear.value, expireDate.value)
+            if (!cardValidate.valid || !cardExpirationValidate) return false
+
+            const elements = {
+                form,
+                'card-number': number,
+                'card-cvv': cvv,
+                'expiration-month': expireDate,
+                'expiration-year': expireYear
+            }
+            ipay.tokenize(elements, function (error, data) {
+                responseHandler(data)
+            })
         }
 
         function infinitePayFormHandler() {
@@ -171,24 +191,30 @@
             return false
         }
 
-        function init() {
-            const uuid = wc_infinitepay_params.uuid
-            const script = document.createElement('script')
-            script.setAttribute('src', 'https://authorizer-data.infinitepay.io/fp/tags.js?org_id=k8vif92e&session_id=cloudwalk' + uuid)
-            script.setAttribute('type', 'text/javascript')
-            document.head.appendChild(script)
-            const iFrame = document.createElement('div')
-            iFrame.setAttribute('id', 'iframe-cloudwatch-auth')
-            iFrame.innerHTML = '<noscript><iframe style="width: 100px; height: 100px; border: 0; position:absolute; top: -5000px;" src="https://authorizer-data.infinitepay.io/fp/tags?org_id=k8vif92e&session_id=cloudwalk' + uuid + '"></iframe></noscript>'
-            document.body.appendChild(iFrame)
-            const inputUUID = document.querySelector("#ip-uuid")
-            inputUUID.value = uuid
-        }
-
         $("form.woocommerce-checkout").on(
             "checkout_place_order",
             infinitePayFormHandler
         )
+
+        function init() {
+            if(!!window["IPay"]) return;
+
+            var head = document.getElementsByTagName("head")[0];
+            var script = document.createElement("script");
+            script.async = 1;
+            // TODO: Change to CDN URL
+            script.src = "https://woo.local/wp-content/plugins/infinitepay-woocommerce/assets/ipay-1.0.0.min.js";
+            script.onload = function() {
+                const iPay = new window.IPay({ token: wc_infinitepay_params.token })
+                iPay.fingerprint(function(error, fp){
+                    if(error){ console.error(error); return; }
+                    const inputUUID = document.querySelector("#ip-uuid");
+                    inputUUID.value = fp;
+                })
+                window.iPay = iPay
+            }
+            head.parentNode.appendChild(script);
+        }
         init()
     })
 })(jQuery)

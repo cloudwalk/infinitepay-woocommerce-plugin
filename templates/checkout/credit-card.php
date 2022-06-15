@@ -72,7 +72,8 @@ for (
         <div class="form-row form-row-wide">
             <label for="ip_cvv">CVV<span class="required">*</span></label>
             <input id="ip_cvv" onkeyup="ipCreditMaskDate(this, ipInteger);" type="text" autocomplete="off"
-                   placeholder="CVV" data-checkout="cardSecurityCode" maxlength="4" class="input-text">
+                   placeholder="CVV" data-checkout="cardSecurityCode" name="infinitepay_custom[cvv]" maxlength="4"
+                   class="input-text">
             <span id="ip-error-3" class="ip-error" data-main="#ip_cvv">CVV inválido</span>
         </div>
         <div class="form-row form-row-wide">
@@ -94,7 +95,6 @@ for (
     <div class="clear"></div>
     <div class="clear"></div>
 </fieldset>
-
 <script type="text/javascript">
     function ipCreditExecmascara() {
         v_obj.value = v_fun(v_obj.value)
