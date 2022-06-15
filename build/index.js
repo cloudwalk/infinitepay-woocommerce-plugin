@@ -58,6 +58,8 @@ var __webpack_exports__ = {};
         if (mainInputs.indexOf(element.getAttribute('data-checkout')) > -1) {
           let withError = false;
           if (element.value === '-1' || element.value === '') withError = true;
+          if (element.id === 'ip_ccNo') withError = !validateCardNumber(element.value);
+          if (element.id === 'ip_expdate') withError = !validateExpireDate(element.value);
           if (element.id === 'ip_docNumber') withError = !validateCpf(element.value);
 
           if (withError) {
@@ -97,6 +99,15 @@ var __webpack_exports__ = {};
       return hasEmpty;
     }
 
+    function validateCardNumber(card) {
+      return getIPay().cardValidate(card).valid;
+    }
+
+    function validateExpireDate(expire) {
+      const [month, year] = expire.split('/');
+      return getIPay().cardExpirationValidate(year, month);
+    }
+
     function validateCpf(cpf) {
       cpf = cpf.replace(/[^\d]+/g, '');
       if (cpf == '') return false;
@@ -128,7 +139,9 @@ var __webpack_exports__ = {};
       infinite_pay_submit = false;
       const wooCheckoutForm = $('form.woocommerce-checkout');
       wooCheckoutForm.off('checkout_place_order', infinitePayFormHandler);
-      wooCheckoutForm.submit();
+      setTimeout(function () {
+        wooCheckoutForm.submit();
+      }, 200);
     }
 
     function createToken() {
@@ -150,8 +163,14 @@ var __webpack_exports__ = {};
         'expiration-year': expireYear
       };
       ipay.tokenize(elements, function (error, data) {
+        if (error) {
+          console.log(error);
+          return false;
+        }
+
         responseHandler(data);
       });
+      return false;
     }
 
     function infinitePayFormHandler() {
