@@ -220,9 +220,9 @@
             var head = document.getElementsByTagName("head")[0];
             var script = document.createElement("script");
             script.async = 1;
-            script.src = "https://ipayjs.infinitepay.io/production/ipay-latest.min.js";
+            script.src = wc_infinitepay_params.sandbox === 'yes' ? "https://ipayjs.infinitepay.io/development/ipay-latest.min.js" : "https://ipayjs.infinitepay.io/production/ipay-latest.min.js";
             script.onload = function() {
-                const iPay = new window.IPay({ token: wc_infinitepay_params.token })
+                const iPay = new window.IPay({ api_key: wc_infinitepay_params.api_key })
                 iPay.fingerprint(function(error, fp){
                     if(error){ console.error(error); return; }
                     const inputUUID = document.querySelector("#ip-uuid");

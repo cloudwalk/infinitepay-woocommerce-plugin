@@ -233,7 +233,8 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 			'woocommerce_infinitepay',
 			'wc_infinitepay_params',
 			array(
-				'token' => $this->sandbox === 'yes' ? $this->sandbox_api_key : $this->api_key
+				'api_key' => $this->sandbox === 'yes' ? $this->sandbox_api_key : $this->api_key,
+				'sandbox' => $this->sandbox,
 			)
 		);
 	}
