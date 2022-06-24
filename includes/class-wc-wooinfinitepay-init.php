@@ -311,8 +311,8 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 
 				$body = array(
 					'payment'         => array(
-						'amount'         => $order->get_total() * 100,
-						'installments'   => $final_value,
+						'amount'         => $final_value,
+						'installments'   => (int) sanitize_text_field( $installments ),
 						'capture_method' => 'ecommerce',
 						'origin'         => 'woocommerce',
 						'payment_method' => 'credit',
