@@ -57,13 +57,13 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 	}
 
 	public static function generate_uuid() {
-		$data = openssl_random_pseudo_bytes(16);
-		assert(strlen($data) == 16);
+		$data = openssl_random_pseudo_bytes( 16 );
+		assert( strlen( $data ) == 16 );
 
-		$data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
-		$data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
+		$data[6] = chr( ord( $data[6] ) & 0x0f | 0x40 ); // set version to 0100
+		$data[8] = chr( ord( $data[8] ) & 0x3f | 0x80 ); // set bits 6-7 to 10
 
-		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+		return vsprintf( '%s%s-%s-%s-%s-%s%s%s', str_split( bin2hex( $data ), 4 ) );
 	}
 
 	public function __construct() {
@@ -300,15 +300,18 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 						$order_items[] = array(
 							'id'          => (string) sanitize_key( $item->get_id() ),
 							'description' => sanitize_text_field( $item->get_name() ),
-							'amount'      => (int) sanitize_text_field( $item->get_data()['total'] ),
+							'amount'      => (int) sanitize_text_field( $item->get_data()['total'] * 100 ),
 							'quantity'    => (int) sanitize_key( $item->get_quantity() )
 						);
 					}
 				}
 
+				$order_value = $order->get_total() * 100;
+				$final_value = (int) explode( '.', $order_value )[0];
+
 				$body = array(
 					'payment'         => array(
-						'amount'         => $order->get_total() * 100,
+						'amount'         => $final_value,
 						'installments'   => (int) sanitize_text_field( $installments ),
 						'capture_method' => 'ecommerce',
 						'origin'         => 'woocommerce',
@@ -322,7 +325,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 					),
 					'order'           => array(
 						'id'               => (string) $order->get_id(),
-						'amount'           => (int) $order->get_total(),
+						'amount'           => $final_value,
 						'items'            => $order_items,
 						'delivery_details' => array(
 							'email'        => sanitize_text_field( $order->get_billing_email() ),
