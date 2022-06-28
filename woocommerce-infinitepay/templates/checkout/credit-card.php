@@ -22,7 +22,11 @@ for (
 	if ( $i === 1 ) {
 		$installments .= '<option value="1">R$ ' . esc_attr( number_format( $installments_value[ $i - 1 ]['value'], 2, ",", "." ) ) . ' à vista</option>';
 	} else {
-		$new_value    = round( $installments_value[ $i - 1 ]['value'], 2, PHP_ROUND_HALF_UP );
+		$new_value = round( $installments_value[ $i - 1 ]['value'], 2, PHP_ROUND_HALF_UP );
+		if ( $new_value < 1 ) {
+			break;
+		}
+
 		$has_interest = $installments_value[ $i - 1 ]['interest'] ? 'com' : 'sem';
 		$installments .= '<option value="' . esc_attr( $i ) . '">' . esc_attr( $i ) . 'x de R$ ' . esc_attr( number_format( $new_value, 2, ",", "." ) ) . ' ' . esc_attr( $has_interest ) . ' juros</option>';
 	}
@@ -72,7 +76,8 @@ for (
         <div class="form-row form-row-wide">
             <label for="ip_cvv">CVV<span class="required">*</span></label>
             <input id="ip_cvv" onkeyup="ipCreditMaskDate(this, ipInteger);" type="text" autocomplete="off"
-                   placeholder="CVV" data-checkout="cardSecurityCode" maxlength="4" class="input-text">
+                   placeholder="CVV" data-checkout="cardSecurityCode" name="infinitepay_custom[cvv]" maxlength="4"
+                   class="input-text">
             <span id="ip-error-3" class="ip-error" data-main="#ip_cvv">CVV inválido</span>
         </div>
         <div class="form-row form-row-wide">
@@ -94,7 +99,6 @@ for (
     <div class="clear"></div>
     <div class="clear"></div>
 </fieldset>
-
 <script type="text/javascript">
     function ipCreditExecmascara() {
         v_obj.value = v_fun(v_obj.value)

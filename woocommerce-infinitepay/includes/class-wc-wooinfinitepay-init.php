@@ -56,6 +56,16 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 		}
 	}
 
+	public static function generate_uuid() {
+		$data = openssl_random_pseudo_bytes( 16 );
+		assert( strlen( $data ) == 16 );
+
+		$data[6] = chr( ord( $data[6] ) & 0x0f | 0x40 ); // set version to 0100
+		$data[8] = chr( ord( $data[8] ) & 0x3f | 0x80 ); // set bits 6-7 to 10
+
+		return vsprintf( '%s%s-%s-%s-%s-%s%s%s', str_split( bin2hex( $data ), 4 ) );
+	}
+
 	public function __construct() {
 		self::load_plugin_textdomain();
 
@@ -223,7 +233,8 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 			'woocommerce_infinitepay',
 			'wc_infinitepay_params',
 			array(
-				'uuid' => vsprintf( '%s%s-%s-%s-%s-%s%s%s', str_split( bin2hex( random_bytes( 16 ) ), 4 ) ),
+				'api_key' => $this->sandbox === 'yes' ? $this->sandbox_api_key : $this->api_key,
+				'sandbox' => $this->sandbox,
 			)
 		);
 	}
@@ -282,12 +293,9 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 				$uuid         = sanitize_key( $_POST['infinitepay_custom']['uuid'] );
 				$installments = sanitize_text_field( $_POST['infinitepay_custom']['installments'] );
 				$doc_number   = sanitize_text_field( $_POST['infinitepay_custom']['doc_number'] );
-				$nsu          = vsprintf( '%s%s-%s-%s-%s-%s%s%s', str_split( bin2hex( random_bytes( 16 ) ), 4 ) );
+				$cvv          = sanitize_text_field( $_POST['infinitepay_custom']['cvv'] );
+				$nsu          = self::generate_uuid();
 				$this->log->write_log( __FUNCTION__, $log_header . 'Starting IP payment for nsu ' . $nsu );
-
-				$card_info       = explode( ':', $token );
-				$card_expiration = explode( '/', $card_info[1] );
-
 
 				$order_items = [];
 				if ( count( $order->get_items() ) > 0 ) {
@@ -295,15 +303,18 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 						$order_items[] = array(
 							'id'          => (string) sanitize_key( $item->get_id() ),
 							'description' => sanitize_text_field( $item->get_name() ),
-							'amount'      => (int) sanitize_text_field( $item->get_data()['total'] ),
+							'amount'      => (int) sanitize_text_field( $item->get_data()['total'] * 100 ),
 							'quantity'    => (int) sanitize_key( $item->get_quantity() )
 						);
 					}
 				}
 
+				$order_value = $order->get_total() * 100;
+				$final_value = (int) explode( '.', $order_value )[0];
+
 				$body = array(
 					'payment'         => array(
-						'amount'         => $order->get_total() * 100,
+						'amount'         => $final_value,
 						'installments'   => (int) sanitize_text_field( $installments ),
 						'capture_method' => 'ecommerce',
 						'origin'         => 'woocommerce',
@@ -311,15 +322,13 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 						'nsu'            => $nsu
 					),
 					'card'            => array(
-						'cvv'                   => $card_info[2],
-						'card_number'           => $card_info[0],
-						'card_holder_name'      => sanitize_text_field( $order->get_billing_first_name() ) . ' ' . sanitize_text_field( $order->get_billing_last_name() ),
-						'card_expiration_month' => str_pad( $card_expiration[0], 2, '0', STR_PAD_LEFT ),
-						'card_expiration_year'  => str_pad( $card_expiration[1], 4, '20', STR_PAD_LEFT ),
+						'cvv'              => $cvv,
+						'token'            => $token,
+						'card_holder_name' => sanitize_text_field( $order->get_billing_first_name() ) . ' ' . sanitize_text_field( $order->get_billing_last_name() ),
 					),
 					'order'           => array(
 						'id'               => (string) $order->get_id(),
-						'amount'           => (int) $order->get_total(),
+						'amount'           => $final_value,
 						'items'            => $order_items,
 						'delivery_details' => array(
 							'email'        => sanitize_text_field( $order->get_billing_email() ),
@@ -369,7 +378,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 					)
 				);
 				$args = array(
-					'body'    => json_encode( $body ),
+					'body'    => json_encode( $body, JSON_UNESCAPED_UNICODE ),
 					'headers' => array(
 						'Authorization' => $this->sandbox === 'yes' ? $this->sandbox_api_key : $this->api_key,
 						'Content-Type'  => 'application/json'
