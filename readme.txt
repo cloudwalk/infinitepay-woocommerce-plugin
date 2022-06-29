@@ -4,7 +4,7 @@ Tags: ecommerce, infinitepay, woocommerce, payments
 Requires at least: 5.7
 Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 1.1.7
+Stable tag: 1.1.8
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -49,6 +49,10 @@ Done! It will be in the "Installed Plugins" section and from there you can activ
 If you installed it correctly, you will see it in your list of "Installed Plugins" on the WordPress work area. Please enable it and input your api key on the specified field.
 
 == Changelog ==
+- 1.1.8 (2022/06/29) -
+* Bug fixes
+    - Updated order status to "processing" when payment is confirmed
+
 = 1.1.7 (2022/06/24) =
 * Bug fixes
     - Wrong number when using plugins that change order amount
