@@ -51,7 +51,7 @@ If you installed it correctly, you will see it in your list of "Installed Plugin
 == Changelog ==
 - 1.1.8 (2022/06/29) -
 * Bug fixes
-    - Fixed credit card paid status to "processing" when confirmed
+    - Updated order status to "processing" when payment is confirmed
 
 = 1.1.7 (2022/06/24) =
 * Bug fixes
