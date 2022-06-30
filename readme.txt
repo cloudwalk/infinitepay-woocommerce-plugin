@@ -49,8 +49,6 @@ Done! It will be in the "Installed Plugins" section and from there you can activ
 If you installed it correctly, you will see it in your list of "Installed Plugins" on the WordPress work area. Please enable it and input your api key on the specified field.
 
 == Changelog ==
-<<<<<<< HEAD
-=======
 - 1.1.8 (2022/06/29) -
 * Bug fixes
     - Updated order status to "processing" when payment is confirmed
@@ -77,7 +75,6 @@ If you installed it correctly, you will see it in your list of "Installed Plugin
     - Improving CC form on mobile
     - Adding logs do API with WC logger
 
->>>>>>> d9eb64f9cbc8dff58e66708907997b10db3aa638
 = 1.1.0 (2022/04/25) =
 * Bug fixes
 	- Removing sanitize from api keys
