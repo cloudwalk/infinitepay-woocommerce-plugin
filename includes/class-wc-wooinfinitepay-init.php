@@ -248,15 +248,12 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 			echo wpautop( wp_kses_post( $this->description ) );
 		}
 
-		// Credit card settings
 		$parameters = array(
 			'max_installments'   => $this->max_installments,
 			'amount'             => $this->get_order_total(),
 			'id'                 => $this->id,
 			'installments_value' => $this->calculate_installments(),
 		);
-
-		// Add credit card transparent component to checkout
 		wc_get_template(
 			'checkout/credit-card.php',
 			$parameters,
