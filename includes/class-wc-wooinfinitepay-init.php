@@ -440,7 +440,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 
 	public function change_payment_complete_order_status( $status, $order_id = 0, $order = false ) {
 		if ( $order && $order->get_payment_method() === 'infinitepay' ) {
-			$status = 'completed';
+			$status = 'processing';
 		}
 
 		return $status;

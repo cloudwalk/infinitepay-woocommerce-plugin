@@ -1,10 +1,10 @@
 === InfinitePay payments for WooCommerce ===
 Contributors: cloudwalkio
 Tags: ecommerce, infinitepay, woocommerce, payments
-Requires at least: 4.9.10
-Tested up to: 5.9
-Requires PHP: 5.6
-Stable tag: 1.1.1
+Requires at least: 5.7
+Tested up to: 6.0
+Requires PHP: 7.0
+Stable tag: 1.1.8
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -49,6 +49,35 @@ Done! It will be in the "Installed Plugins" section and from there you can activ
 If you installed it correctly, you will see it in your list of "Installed Plugins" on the WordPress work area. Please enable it and input your api key on the specified field.
 
 == Changelog ==
+<<<<<<< HEAD
+=======
+- 1.1.8 (2022/06/29) -
+* Bug fixes
+    - Updated order status to "processing" when payment is confirmed
+
+= 1.1.7 (2022/06/24) =
+* Bug fixes
+    - Wrong number when using plugins that change order amount
+
+= 1.1.6 (2022/06/15) =
+* Bug fixes
+    - Changing logo to improve readiness on white and black background
+    - Disallow installment less than R$ 1
+* Features
+    - Adding tokenization to credit card transactions
+
+= 1.1.5 (2022/06/09) =
+* Bug fixes
+    - Removing API log from checkout
+
+= 1.1.4 (2022/06/08) =
+* Features
+    - Adding InfinitePay Logo on checkout page
+    - Improving error messages
+    - Improving CC form on mobile
+    - Adding logs do API with WC logger
+
+>>>>>>> d9eb64f9cbc8dff58e66708907997b10db3aa638
 = 1.1.0 (2022/04/25) =
 * Bug fixes
 	- Removing sanitize from api keys
