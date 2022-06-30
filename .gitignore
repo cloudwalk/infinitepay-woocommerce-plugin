@@ -1,4 +1,3 @@
-
 # Created by https://www.toptal.com/developers/gitignore/api/phpstorm,wordpress,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=phpstorm,wordpress,node
 
@@ -298,8 +297,5 @@ wp-config.php
 
 # End of https://www.toptal.com/developers/gitignore/api/phpstorm,wordpress,node
 
-/wordpress
-/plugins
-/db_data
-/woocommerce-infinitepay/node_modules
 .idea
+.vscode
