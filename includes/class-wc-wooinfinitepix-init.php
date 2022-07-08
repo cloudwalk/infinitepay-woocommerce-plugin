@@ -63,7 +63,6 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 			$this,
 			'process_admin_options'
 		) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thank_you_page' ) );
 		add_filter( 'woocommerce_payment_complete_order_status', array(
 			$this,
@@ -137,38 +136,6 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 				'default'     => '',
 			),
 		) );
-	}
-
-	public function payment_scripts() {
-		if (
-			( ! is_cart() && ! is_checkout() && ! isset( $_GET['pay_for_order'] ) )
-			|| $this->enabled === 'no'
-			|| empty( $this->api_key )
-			|| ( ( ! isset( $this->sandbox ) || $this->sandbox === 'no' ) && ! is_ssl() )
-		) {
-			return;
-		}
-
-		$script_path       = '/../build/index.js';
-		$script_asset_path = dirname( __FILE__ ) . '/../build/index.asset.php';
-		$script_asset      = file_exists( $script_asset_path )
-			? require( $script_asset_path )
-			: array( 'dependencies' => array(), 'version' => filemtime( $script_path ) );
-		$script_url        = plugins_url( $script_path, __FILE__ );
-
-		wp_register_script(
-			'woocommerce_infinitepix',
-			$script_url,
-			$script_asset['dependencies'],
-			$script_asset['version'],
-			true
-		);
-		wp_enqueue_script( 'woocommerce_infinitepix' );
-		wp_localize_script(
-			'woocommerce_infinitepix',
-			'wc_infinitepay_params',
-			array( 'uuid' => vsprintf( '%s%s-%s-%s-%s-%s%s%s', str_split( bin2hex( random_bytes( 16 ) ), 4 ) ) )
-		);
 	}
 
 	public function payment_fields() {
