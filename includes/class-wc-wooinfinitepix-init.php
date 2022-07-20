@@ -217,7 +217,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 				'metadata'       => array(
 					'callback' => array(
 						'validate' => '',
-						'confirm'  => 'http://' . $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
+						'confirm'  => 'https://' . $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
 						'secret'   => $transactionSecret
 					)
 				)
@@ -260,8 +260,9 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 
 					// Add br code to order object
 					$order->add_order_note( '
-					' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . $pixBrCode . '
-				' );
+						' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . $pixBrCode . '
+						' . __( 'transaction_id', 'infinitepix-woocommerce' ) . ': ' . $pixNsuHost . '
+					' );
 
 					// Clear user cart
 					WC()->cart->empty_cart();
@@ -330,18 +331,39 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		add_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
 
 		$code = ltrim( rtrim( str_replace( "br_code: ", "", $orderComments[0]->comment_content ) ) );
+		$storeUrl = $_SERVER['SERVER_NAME'];
 
 		// Create html structure
-		$html = '<div style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
-		$html .= '<img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode=' . urlencode( $code ) . '"	alt="QR Code"/>';
-		$html .= '<div>';
-		$html .= '<p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ ' . $order->get_total() . '</strong></p>';
-		$html .= '<div style="word-wrap: break-word; max-width: 450px;">';
-		$html .= '<small>Código de transação</small><br>';
-		$html .= '<code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">' . $code . '</code>';
+		$html = '<div id="qrcodepixcontent" style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
+		$html .= '  <img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode=' . urlencode( $code ) . '"	alt="QR Code"/>';
+		$html .= '  <div>';
+		$html .= '    <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ ' . $order->get_total() . '</strong></p>';
+		$html .= '    <div style="word-wrap: break-word; max-width: 450px;">';
+		$html .= '      <small>Código de transação</small><br>';
+		$html .= '      <code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">' . $code . '</code>';
+		$html .= '    </div>';
+		$html .= '  </div>';
 		$html .= '</div>';
-		$html .= '</div>';
-		$html .= '</div>';
+
+		// Javascript structure to update qrcode once payment is done
+		$html .= '<script type="text/javascript">';
+		$html .= 'const req = new XMLHttpRequest();';
+		$html .= 'req.open("GET", "https://'.$storeUrl.'/wp-json/wc/v3/infinitepay_order_status?order_id='.$order_id.'", true);';
+		$html .= 'req.setRequestHeader("X-Requested-With", "XMLHttpRequest");';
+		$html .= 'req.setRequestHeader("Access-Control-Allow-Origin", "*");';
+		$html .= 'req.onreadystatechange = function() {';
+		$html .= '  if (this.readyState == 4 && this.status == 200) {';
+		$html .= '    const data = JSON.parse(req.responseText);';
+		$html .= '    console.log("status update", data.order_status);';
+		$html .= '    if (data.order_status == "processing") {';
+		$html .= '      const pixQrElement = document.getElementById("qrcodepixcontent");';
+		$html .= '      pixQrElement.innerHTML = "";';
+		$html .= '      pixQrElement.innerHTML = "<div><h2>Pagamento recebido</h2><p>Obrigado por comprar em nossa loja. Você pode consultar o andamento de seu pedido na sua página de pedidos realizados.</p><a href=\"https://'.$storeUrl.'/my-account/orders\">Ir para meus pedidos</a></div>";';
+		$html .= '    }';
+		$html .= '  }';
+		$html .= '};';
+		$html .= 'const interval = setInterval(() => { req.send(null); }, 10000);';
+		$html .= '</script>';
 
 		// Return html
 		return $html;
