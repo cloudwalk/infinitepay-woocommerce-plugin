@@ -362,7 +362,13 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$html .= '    }';
 		$html .= '  }';
 		$html .= '};';
-		$html .= 'const interval = setInterval(() => { req.send(null); }, 10000);';
+		$html .= 'setTimeout(() => {';
+		$html .= '  setInterval(() => {';
+		$html .= '    req.open("GET", "https://'.$storeUrl.'/wp-json/wc/v3/infinitepay_order_status?order_id='.$order_id.'", true);';
+		$html .= '    req.setRequestHeader("X-Requested-With", "XMLHttpRequest");';
+		$html .= '    req.setRequestHeader("Access-Control-Allow-Origin", "*");';
+		$html .= '    req.send(null); }, 10000);';
+		$html .= '}, 1000);';
 		$html .= '</script>';
 
 		// Return html
