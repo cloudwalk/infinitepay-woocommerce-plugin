@@ -348,9 +348,6 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		// Javascript structure to update qrcode once payment is done
 		$html .= '<script type="text/javascript">';
 		$html .= 'const req = new XMLHttpRequest();';
-		$html .= 'req.open("GET", "https://'.$storeUrl.'/wp-json/wc/v3/infinitepay_order_status?order_id='.$order_id.'", true);';
-		$html .= 'req.setRequestHeader("X-Requested-With", "XMLHttpRequest");';
-		$html .= 'req.setRequestHeader("Access-Control-Allow-Origin", "*");';
 		$html .= 'req.onreadystatechange = function() {';
 		$html .= '  if (this.readyState == 4 && this.status == 200) {';
 		$html .= '    const data = JSON.parse(req.responseText);';
@@ -358,7 +355,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$html .= '    if (data.order_status == "processing") {';
 		$html .= '      const pixQrElement = document.getElementById("qrcodepixcontent");';
 		$html .= '      pixQrElement.innerHTML = "";';
-		$html .= '      pixQrElement.innerHTML = "<div><h2>Pagamento recebido</h2><p>Obrigado por comprar em nossa loja. Você pode consultar o andamento de seu pedido na sua página de pedidos realizados.</p><a href=\"https://'.$storeUrl.'/my-account/orders\">Ir para meus pedidos</a></div>";';
+		$html .= '      pixQrElement.innerHTML = "<div><h2>Pagamento recebido</h2><p>Obrigado por comprar em nossa loja. Você pode consultar o andamento de seu pedido na sua página de pedidos realizados.</p><a href=\"'.$order->get_view_order_url().'\">Ir para meus pedidos</a></div>";';
 		$html .= '    }';
 		$html .= '  }';
 		$html .= '};';
