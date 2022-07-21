@@ -309,6 +309,43 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		return apply_filters( 'woocommerce_infinitepay_icon', plugins_url( './assets/images/logo.png', plugin_dir_path( __FILE__ ) ) );
 	}
 
+	public function pix_email_html( $order_id ) {
+		// Retrieve order
+		$order = wc_get_order( $order_id );
+		if ( $order->get_payment_method() != 'infinitepix' ) {
+			return '';
+		}
+
+		// Retrieve order comments
+		remove_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
+		$orderComments = get_comments( array(
+			'post_id' => $order_id,
+			'orderby' => 'comment_ID',
+			'order'   => 'DESC',
+			'approve' => 'approve',
+			'type'    => 'order_note',
+			'number'  => 1
+		) );
+		add_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
+
+		$code = ltrim( rtrim( str_replace( "br_code: ", "", $orderComments[0]->comment_content ) ) );
+		$storeUrl = $_SERVER['SERVER_NAME'];
+
+		// Create html structure
+		$html = '<div id="qrcodepixcontent" style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
+		$html .= '  <img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode=' . urlencode( $code ) . '"	alt="QR Code"/>';
+		$html .= '  <div>';
+		$html .= '    <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ ' . $order->get_total() . '</strong></p>';
+		$html .= '    <div style="word-wrap: break-word; max-width: 450px;">';
+		$html .= '      <small>Código de transação</small><br>';
+		$html .= '      <code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">' . $code . '</code>';
+		$html .= '    </div>';
+		$html .= '  </div>';
+		$html .= '</div>';
+
+		// Return html
+		return $html;
+	}
 
 	public function pix_checkout_html( $order_id ) {
 		// Retrieve order
@@ -380,7 +417,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 	}
 
 	public function email_instructions( $order_id ) {
-		$checkoutHtml = $this->pix_checkout_html( $order_id );
+		$checkoutHtml = $this->pix_email_html( $order_id );
 		echo $checkoutHtml;
 	}
 }
