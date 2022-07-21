@@ -380,6 +380,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$html .= '    </div>';
 		$html .= '  </div>';
 		$html .= '</div>';
+		$html.=  '<p style="margin-top: 1rem;">Caso já tenha feito o pagamento, verifique se foi confirmado acessando <a href="'.$order->get_view_order_url().'">seu pedido</a></p>';
 
 		// Javascript structure to update qrcode once payment is done
 		$html .= '<script type="text/javascript">';
@@ -393,7 +394,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$html .= '    if (data.order_status == "processing") {';
 		$html .= '      const pixQrElement = document.getElementById("qrcodepixcontent");';
 		$html .= '      pixQrElement.innerHTML = "";';
-		$html .= '      pixQrElement.innerHTML = "<div><h2>Pagamento recebido</h2><p>Obrigado por comprar em nossa loja. Você pode consultar o andamento de seu pedido na sua página de pedidos realizados.</p><a href=\"'.$order->get_view_order_url().'\">Ir para meus pedidos</a></div>";';
+		$html .= '      pixQrElement.innerHTML = "<div><h2>Pagamento recebido</h2><p>Obrigado por comprar em nossa loja. Você pode consultar o andamento de seu pedido pela página do mesmo.</p><a href=\"'.$order->get_view_order_url().'\">Acessar pedido</a></div>";';
 		$html .= '    }';
 		$html .= '  }';
 		$html .= '};';
