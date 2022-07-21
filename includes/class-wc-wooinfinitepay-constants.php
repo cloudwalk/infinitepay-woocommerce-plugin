@@ -18,5 +18,4 @@ class WC_InfinitePay_Constants {
 	const VERSION = '1.1.8';
 	const MIN_PHP = 5.6;
 	const API_IP_BASE_URL = 'https://api.infinitepay.io';
-
 }
