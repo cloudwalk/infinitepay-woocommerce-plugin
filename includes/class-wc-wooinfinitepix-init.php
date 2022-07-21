@@ -261,7 +261,6 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 					// Add br code to order object
 					$order->add_order_note( '
 						' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . $pixBrCode . '
-						' . __( 'transaction_id', 'infinitepix-woocommerce' ) . ': ' . $pixNsuHost . '
 					' );
 
 					// Clear user cart
