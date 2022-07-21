@@ -380,7 +380,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$html .= '    </div>';
 		$html .= '  </div>';
 		$html .= '</div>';
-		$html.=  '<p style="margin-top: 1rem;">Caso já tenha feito o pagamento, verifique se foi confirmado acessando <a href="'.$order->get_view_order_url().'">seu pedido</a></p>';
+		$html.=  '<p style="margin-top: 1rem;">Caso já tenha feito o pagamento, verifique se foi confirmado na página de <a href="'.$order->get_view_order_url().'">detalhes do pedido</a></p>';
 
 		// Javascript structure to update qrcode once payment is done
 		$html .= '<script type="text/javascript">';
