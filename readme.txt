@@ -1,4 +1,4 @@
-=== InfinitePay payments for WooCommerce ===
+=== InfinitePay for WooCommerce ===
 Contributors: cloudwalkio
 Tags: ecommerce, infinitepay, woocommerce, payments
 Requires at least: 5.7
