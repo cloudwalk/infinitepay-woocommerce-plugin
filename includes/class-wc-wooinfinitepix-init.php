@@ -347,10 +347,12 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		// Javascript structure to update qrcode once payment is done
 		$html .= '<script type="text/javascript">';
 		$html .= 'const req = new XMLHttpRequest();';
+		$html .= 'var lastStatus = "";';
 		$html .= 'req.onreadystatechange = function() {';
 		$html .= '  if (this.readyState == 4 && this.status == 200) {';
 		$html .= '    const data = JSON.parse(req.responseText);';
 		$html .= '    console.log("status update", data.order_status);';
+		$html .= '    lastStatus = data.order_status;'; 							
 		$html .= '    if (data.order_status == "processing") {';
 		$html .= '      const pixQrElement = document.getElementById("qrcodepixcontent");';
 		$html .= '      pixQrElement.innerHTML = "";';
@@ -359,7 +361,8 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$html .= '  }';
 		$html .= '};';
 		$html .= 'setTimeout(() => {';
-		$html .= '  setInterval(() => {';
+		$html .= '  let pixInterval = setInterval(() => {';
+		$html .= '    if (lastStatus == "processing") clearInterval(pixInterval);'; 
 		$html .= '    req.open("GET", "https://'.$storeUrl.'/wp-json/wc/v3/infinitepay_order_status?order_id='.$order_id.'", true);';
 		$html .= '    req.setRequestHeader("X-Requested-With", "XMLHttpRequest");';
 		$html .= '    req.setRequestHeader("Access-Control-Allow-Origin", "*");';
