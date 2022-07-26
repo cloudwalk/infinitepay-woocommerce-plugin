@@ -217,7 +217,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 				'metadata'       => array(
 					'callback' => array(
 						'validate' => '',
-						'confirm'  => 'http://' . $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
+						'confirm'  => 'https://' . $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
 						'secret'   => $transactionSecret
 					)
 				)
@@ -260,8 +260,8 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 
 					// Add br code to order object
 					$order->add_order_note( '
-					' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . $pixBrCode . '
-				' );
+						' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . $pixBrCode . '
+					' );
 
 					// Clear user cart
 					WC()->cart->empty_cart();
@@ -309,6 +309,43 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		return apply_filters( 'woocommerce_infinitepay_icon', plugins_url( './assets/images/logo.png', plugin_dir_path( __FILE__ ) ) );
 	}
 
+	public function pix_email_html( $order_id ) {
+		// Retrieve order
+		$order = wc_get_order( $order_id );
+		if ( $order->get_payment_method() != 'infinitepix' ) {
+			return '';
+		}
+
+		// Retrieve order comments
+		remove_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
+		$orderComments = get_comments( array(
+			'post_id' => $order_id,
+			'orderby' => 'comment_ID',
+			'order'   => 'DESC',
+			'approve' => 'approve',
+			'type'    => 'order_note',
+			'number'  => 1
+		) );
+		add_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
+
+		$code = ltrim( rtrim( str_replace( "br_code: ", "", $orderComments[0]->comment_content ) ) );
+		$storeUrl = $_SERVER['SERVER_NAME'];
+
+		// Create html structure
+		$html = '<div id="qrcodepixcontent" style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
+		$html .= '  <img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode=' . urlencode( $code ) . '"	alt="QR Code"/>';
+		$html .= '  <div>';
+		$html .= '    <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ ' . $order->get_total() . '</strong></p>';
+		$html .= '    <div style="word-wrap: break-word; max-width: 450px;">';
+		$html .= '      <small>Código de transação</small><br>';
+		$html .= '      <code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">' . $code . '</code>';
+		$html .= '    </div>';
+		$html .= '  </div>';
+		$html .= '</div>';
+
+		// Return html
+		return $html;
+	}
 
 	public function pix_checkout_html( $order_id ) {
 		// Retrieve order
@@ -330,18 +367,46 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		add_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
 
 		$code = ltrim( rtrim( str_replace( "br_code: ", "", $orderComments[0]->comment_content ) ) );
+		$storeUrl = $_SERVER['SERVER_NAME'];
 
 		// Create html structure
-		$html = '<div style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
-		$html .= '<img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode=' . urlencode( $code ) . '"	alt="QR Code"/>';
-		$html .= '<div>';
-		$html .= '<p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ ' . $order->get_total() . '</strong></p>';
-		$html .= '<div style="word-wrap: break-word; max-width: 450px;">';
-		$html .= '<small>Código de transação</small><br>';
-		$html .= '<code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">' . $code . '</code>';
+		$html = '<div id="qrcodepixcontent" style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
+		$html .= '  <img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode=' . urlencode( $code ) . '"	alt="QR Code"/>';
+		$html .= '  <div>';
+		$html .= '    <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ ' . $order->get_total() . '</strong></p>';
+		$html .= '    <div style="word-wrap: break-word; max-width: 450px;">';
+		$html .= '      <small>Código de transação</small><br>';
+		$html .= '      <code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">' . $code . '</code>';
+		$html .= '    </div>';
+		$html .= '  </div>';
 		$html .= '</div>';
-		$html .= '</div>';
-		$html .= '</div>';
+		$html.=  '<p style="margin-top: 1rem;">Caso já tenha feito o pagamento, verifique se foi confirmado na página de <a href="'.$order->get_view_order_url().'">detalhes do pedido</a></p>';
+
+		// Javascript structure to update qrcode once payment is done
+		$html .= '<script type="text/javascript">';
+		$html .= 'const req = new XMLHttpRequest();';
+		$html .= 'var lastStatus = "";';
+		$html .= 'req.onreadystatechange = function() {';
+		$html .= '  if (this.readyState == 4 && this.status == 200) {';
+		$html .= '    const data = JSON.parse(req.responseText);';
+		$html .= '    console.log("status update", data.order_status);';
+		$html .= '    lastStatus = data.order_status;'; 							
+		$html .= '    if (data.order_status == "processing") {';
+		$html .= '      const pixQrElement = document.getElementById("qrcodepixcontent");';
+		$html .= '      pixQrElement.innerHTML = "";';
+		$html .= '      pixQrElement.innerHTML = "<div><h2>Pagamento recebido</h2><p>Obrigado por comprar em nossa loja. Você pode consultar o andamento de seu pedido pela página do mesmo.</p><a href=\"'.$order->get_view_order_url().'\">Acessar pedido</a></div>";';
+		$html .= '    }';
+		$html .= '  }';
+		$html .= '};';
+		$html .= 'setTimeout(() => {';
+		$html .= '  let pixInterval = setInterval(() => {';
+		$html .= '    if (lastStatus == "processing") clearInterval(pixInterval);'; 
+		$html .= '    req.open("GET", "https://'.$storeUrl.'/wp-json/wc/v3/infinitepay_order_status?order_id='.$order_id.'", true);';
+		$html .= '    req.setRequestHeader("X-Requested-With", "XMLHttpRequest");';
+		$html .= '    req.setRequestHeader("Access-Control-Allow-Origin", "*");';
+		$html .= '    req.send(null); }, 10000);';
+		$html .= '}, 1000);';
+		$html .= '</script>';
 
 		// Return html
 		return $html;
@@ -353,7 +418,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 	}
 
 	public function email_instructions( $order_id ) {
-		$checkoutHtml = $this->pix_checkout_html( $order_id );
+		$checkoutHtml = $this->pix_email_html( $order_id );
 		echo $checkoutHtml;
 	}
 }
