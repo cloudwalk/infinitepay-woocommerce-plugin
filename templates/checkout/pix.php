@@ -36,10 +36,6 @@ if ( ! defined( 'ABSPATH' ) ) {
   <div class="pix-label">
     <img src="https://confere-pix.web.app/pix.png" alt="InfinitePay Label" />
   </div>
-  <div id="infinitepay-form">
-    <input type="hidden" id="ip-token" name="infinitepay_custom[token]"/>
-    <input type="hidden" id="ip-uuid" name="infinitepay_custom[uuid]"/>
-  </div>
 </fieldset>
 
 <script type="text/javascript">
