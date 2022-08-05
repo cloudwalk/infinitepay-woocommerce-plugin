@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+
 class WC_InfinitePay_Module extends WC_Payment_Gateway {
 	public $infinite_pay_tax = [
 		1,
@@ -75,21 +76,25 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 		$this->init_settings();
 
 		$this->title                 = sanitize_text_field( $this->get_option( 'title' ) );
-		$this->description           = sanitize_text_field( $this->get_option( 'description' ) );
-		$this->instructions          = sanitize_textarea_field( $this->get_option( 'instructions', $this->description ) );
+		$this->instructions          = sanitize_textarea_field( $this->get_option( 'instructions' ) );
 		$this->max_installments      = sanitize_key( $this->get_option( 'max_installments', 12 ) );
 		$this->max_installments_free = sanitize_key( $this->get_option( 'max_installments_free', 12 ) );
-		$this->enabled               = sanitize_key( $this->get_option( 'enabled' ) );
-		$this->api_key               = $this->get_option( 'api_key' );
-		$this->sandbox               = sanitize_key( $this->get_option( 'sandbox', 'no' ) );
-		$this->sandbox_api_key       = $this->get_option( 'sandbox_api_key' );
+		$this->enabled_creditcard	 = sanitize_key( $this->get_option( 'enabled_creditcard' ) );
+
+		$this->environment          = sanitize_key( $this->get_option( 'environment', 'sandbox' ) );
+		$this->client_id       		= $this->get_option( 'client_id' );
+		$this->client_secret        = $this->get_option( 'client_secret' );
+
+		$this->enabled_pix	 = sanitize_key( $this->get_option( 'enabled_pix' ) );
+		$this->title_pix	 = sanitize_text_field( $this->get_option( 'title_pix' ) );
+		$this->instructions	 = sanitize_text_field( $this->get_option( 'instructions' ) );
+		$this->discount_pix	 = sanitize_key( $this->get_option( 'discount_pix', 0.5 ) );
+		$this->min_value_pix	 = sanitize_key( $this->get_option( 'min_value_pix', 20.00 ) );
+
 		$this->log                   = new WC_InfinitePay_Log( $this );
 		$this->icon                  = $this->get_ip_icon();
 
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
-			$this,
-			'process_admin_options'
-		) );
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thank_you_page' ) );
 		add_filter( 'woocommerce_payment_complete_order_status', array(
@@ -103,75 +108,81 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 		$this->id                 = 'infinitepay';
 		$this->icon               = apply_filters( 'woocommerce_offline_icon', '' );
 		$this->method_title       = 'InfinitePay';
-		$this->method_description = __( 'Accept credit cards payments with InfinitePay', 'infinitepay-woocommerce' );
+		$this->method_description = __( 'Accept payments with InfinitePay', 'infinitepay-woocommerce' );
 		$this->has_fields         = true;
 		$this->supports           = array(
 			'products',
 		);
 	}
 
+	public function admin_options()
+	{?>
+	<h2>InfinitePay</h2>
+	<?php if ( true ) : ?>
+        <div id="message" class="notice-warning notice">
+        <?php
+            printf(
+                '<p><strong>%s: </strong>%s <strong>%s</strong>.</p>',
+                __( 'Before accepting payments', 'infinitepay-woocommerce' ),
+                __( 'you need to add your', 'infinitepay-woocommerce' ),
+                __( 'Client ID and Client Secret', 'infinitepay-woocommerce' )
+            );
+        ?>
+        </div>
+    <?php endif; ?>
+
+	<?php
+		echo $this->build_submenu();
+		echo '<table class="form-table">';
+		echo $this->generate_settings_html( $this->get_form_fields(), false );
+		echo '</table>';	
+	}
+
+	public function build_submenu()
+	{
+
+		ob_start();
+
+		echo '<ul class="subsubsub wirecard-submenu">';
+
+		$sections = array(
+			'if-credentials'       => __( 'Credentials', 'infinitepay-woocommerce' ),
+			'if-credit-card'   => __( 'Credit Card', 'infinitepay-woocommerce' ),
+			'if-pix'        => __( 'PIX', 'infinitepay-woocommerce' ),
+            'if-settings' => __( 'Settings', 'infinitepay-woocommerce' )
+		);
+
+		$array_keys      = array_keys( $sections );
+		$current_section = isset($_GET['if-tab']) ? $_GET['if-tab'] : 'if-credit-card';
+
+		foreach ( $sections as $id => $label ) {
+			$link = admin_url( 'admin.php?page=wc-settings&tab=checkout&section=infinitepay&if-tab=' . sanitize_title( $id ) );
+			$pipe = ( end( $array_keys ) === $id ? '' : '|' );
+			echo '<li><a href="' . $link . '" class="' . ( $current_section === $id ? 'current' : '' ) . '">' . $label . '</a> ' . $pipe . ' </li>';
+		}
+
+		echo '</ul><br class="clear" />';
+
+		$content = ob_get_contents();
+
+		ob_end_clean();
+
+		return $content;
+	}
+
 	public function init_form_fields() {
-		$this->form_fields = apply_filters( 'wc_infinitepay_form_fields', array(
-			'enabled'               => array(
-				'title'   => __( 'Enabled/Disabled', 'infinitepay-woocommerce' ),
-				'type'    => 'checkbox',
-				'label'   => __( 'Enable payments with InfinitePay', 'infinitepay-woocommerce' ),
-				'default' => 'yes',
-			),
-			'title'                 => array(
-				'title'       => __( 'Payment Title', 'infinitepay-woocommerce' ),
-				'type'        => 'text',
-				'description' => __( 'Title that will be shown for the customers on your checkout page', 'infinitepay-woocommerce' ),
-				'default'     => __( 'Credit Card', 'infinitepay-woocommerce' ),
-				'desc_tip'    => true,
-			),
-			'description'           => array(
-				'title'       => __( 'Description', 'infinitepay-woocommerce' ),
-				'type'        => 'textarea',
-				'description' => __( 'Description that will be shown for the customers on your checkout page', 'infinitepay-woocommerce' ),
-				'default'     => __( '', 'infinitepay-woocommerce' ),
-				'desc_tip'    => true,
-			),
-			'instructions'          => array(
-				'title'       => __( 'Instructions', 'infinitepay-woocommerce' ),
-				'type'        => 'textarea',
-				'description' => __( 'Instructions that will be shown on thank you page and will be sent on email', 'infinitepay-woocommerce' ),
-				'default'     => __( '', 'infinitepay-woocommerce' ),
-				'desc_tip'    => true,
-			),
-			'max_installments'      => array(
-				'title'       => __( 'Maximum number of installments', 'infinitepay-woocommerce' ),
-				'type'        => 'number',
-				'description' => __( 'Maximum number of installments that a customer can split the final amount', 'infinitepay-woocommerce' ),
-				'default'     => '12',
-				'desc_tip'    => true,
-			),
-			'max_installments_free' => array(
-				'title'       => __( 'Maximum number of installments without interest', 'infinitepay-woocommerce' ),
-				'type'        => 'number',
-				'description' => __( 'Maximum number of installments that a customer can split the final amount without interest', 'infinitepay-woocommerce' ),
-				'default'     => '12',
-				'desc_tip'    => true,
-			),
-			'api_key'               => array(
-				'title'       => __( 'API Key', 'infinitepay-woocommerce' ),
-				'type'        => 'password',
-				'description' => __( 'Key to connect with InfinitePay', 'infinitepay-woocommerce' ),
-				'default'     => '',
-			),
-			'sandbox'               => array(
-				'title'   => 'Ativo/Inativo',
-				'type'    => 'checkbox',
-				'label'   => 'Habilitar ambiente de sandbox',
-				'default' => 'no',
-			),
-			'sandbox_api_key'       => array(
-				'title'       => 'Chave de API do ambiente de Sandbox',
-				'type'        => 'password',
-				'description' => 'Chave para conexão com o ambiente de sandbox da InfinitePay',
-				'default'     => '',
-			),
-		) );
+		
+		$current_section = isset( $_GET['if-tab'] ) ? $_GET['if-tab'] : 'if-credit-card';
+		$fiels = $this->creditcard_fields();
+		switch( $current_section ) {
+			case 'if-credentials' : $fiels = $this->credentials_fields(); break;
+			case 'if-credit-card' : $fiels = $this->creditcard_fields(); break;
+			case 'if-pix' : $fiels = $this->pix_fields(); break;
+			case 'if-settings' : $fiels = $this->settings_fields(); break;
+		}
+
+
+		$this->form_fields = $fiels;
 	}
 
 	private function calculate_installments() {
@@ -204,7 +215,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 				&& ! is_checkout()
 				&& ! isset( $_GET['pay_for_order'] )
 			)
-			|| $this->enabled === 'no'
+			|| $this->enabled_creditcard === 'no'
 			|| empty( $this->api_key ?: $this->sandbox_api_key )
 			|| ( (
 				     ! isset( $this->sandbox ) || $this->sandbox === 'no'
@@ -240,26 +251,44 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 	}
 
 	public function payment_fields() {
+		
+		$description = '';
 		if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
-			$this->description .= ' TEST MODE ENABLED. In test mode, you can use any card numbers.';
-			$this->description = trim( $this->description );
+			$description .= 'TEST MODE ENABLED. In test mode, you can use any card numbers.';
 		}
-		if ( ! empty( $this->description ) ) {
-			echo wpautop( wp_kses_post( $this->description ) );
+		if ( ! empty( $description ) ) {
+			echo wpautop( wp_kses_post( $description ) );
 		}
 
-		$parameters = array(
-			'max_installments'   => $this->max_installments,
-			'amount'             => $this->get_order_total(),
-			'id'                 => $this->id,
-			'installments_value' => $this->calculate_installments(),
-		);
-		wc_get_template(
-			'checkout/credit-card.php',
-			$parameters,
-			'woo/infinite/pay/module/',
-			plugin_dir_path( __FILE__ ) . '../templates/'
-		);
+		if ( $this->enabled_creditcard === 'yes' ) {
+			// Add credit card transparent component to checkout
+			$parameters = array(
+				'max_installments'   => $this->max_installments,
+				'amount'             => $this->get_order_total(),
+				'id'                 => $this->id,
+				'installments_value' => $this->calculate_installments(),
+			);		
+			wc_get_template(
+				'checkout/credit-card.php',
+				$parameters,
+				'woo/infinite/pay/module/',
+				plugin_dir_path( __FILE__ ) . '../templates/'
+			);
+		}
+
+		if ( $this->enabled_pix  === 'yes' ) {
+			// Add pix transparent component to checkout
+			$parameters_pix = array(
+				'amount' => $this->get_order_total(),
+				'id'     => $this->id
+			);
+			wc_get_template(
+				'checkout/pix.php',
+				$parameters_pix,
+				'woo/infinite/pay/module/',
+				plugin_dir_path( __FILE__ ) . '../templates/'
+			);
+		}
 	}
 
 	public function process_payment( $order_id ) {
@@ -461,5 +490,162 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 		) {
 			echo wp_kses_post( wpautop( wptexturize( esc_html( $this->instructions ) ) ) . PHP_EOL );
 		}
+	}
+
+	protected function creditcard_fields() {
+	
+		$fields = apply_filters( 'wc_infinitepay_form_fields', array(
+			'enabled_creditcard'               => array(
+				'title'   => __( 'Enabled/Disabled', 'infinitepay-woocommerce' ),
+				'type'    => 'checkbox',
+				'label'   => __( 'Enable Credit Card with InfinitePay', 'infinitepay-woocommerce' ),
+				'default' => 'yes',
+			),
+			'title'                 => array(
+				'title'       => __( 'Payment Title', 'infinitepay-woocommerce' ),
+				'type'        => 'text',
+				'description' => __( 'Title that will be shown for the customers on your checkout page', 'infinitepay-woocommerce' ),
+				'default'     => __( 'Credit Card', 'infinitepay-woocommerce' ),
+				'desc_tip'    => true,
+			),
+			'instructions'          => array(
+				'title'       => __( 'Instructions', 'infinitepay-woocommerce' ),
+				'type'        => 'textarea',
+				'description' => __( 'Instructions that will be shown on thank you page and will be sent on email', 'infinitepay-woocommerce' ),
+				'default'     => __( '', 'infinitepay-woocommerce' ),
+				'desc_tip'    => true,
+			),
+			'max_installments'      => array(
+				'title'       => __( 'Maximum number of installments', 'infinitepay-woocommerce' ),
+				'type'        => 'number',
+				'description' => __( 'Maximum number of installments that a customer can split the final amount', 'infinitepay-woocommerce' ),
+				'default'     => '12',
+				'desc_tip'    => true,
+			),
+			'max_installments_free' => array(
+				'title'       => __( 'Maximum number of installments without interest', 'infinitepay-woocommerce' ),
+				'type'        => 'number',
+				'description' => __( 'Maximum number of installments that a customer can split the final amount without interest', 'infinitepay-woocommerce' ),
+				'default'     => '12',
+				'desc_tip'    => true,
+			),
+			// 'api_key'               => array(
+			// 	'title'       => __( 'API Key', 'infinitepay-woocommerce' ),
+			// 	'type'        => 'password',
+			// 	'description' => __( 'Key to connect with InfinitePay', 'infinitepay-woocommerce' ),
+			// 	'default'     => '',
+			// ),
+			// 'sandbox'               => array(
+			// 	'title'   => 'Ativo/Inativo',
+			// 	'type'    => 'checkbox',
+			// 	'label'   => 'Habilitar ambiente de sandbox',
+			// 	'default' => 'no',
+			// ),
+			// 'sandbox_api_key'       => array(
+			// 	'title'       => 'Chave de API do ambiente de Sandbox',
+			// 	'type'        => 'password',
+			// 	'description' => 'Chave para conexão com o ambiente de sandbox da InfinitePay',
+			// 	'default'     => '',
+			// ),
+		) );
+
+		return $fields;
+	}
+	
+	protected function pix_fields() {
+	
+		$fields = apply_filters( 'wc_infinitepay_form_fields', array(
+			'enabled_pix'               => array(
+				'title'   => __( 'Enabled/Disabled', 'infinitepay-woocommerce' ),
+				'type'    => 'checkbox',
+				'label'   => __( 'Enable PIX with InfinitePay', 'infinitepay-woocommerce' ),
+				'default' => 'yes',
+			),
+			'title_pix'                 => array(
+				'title'       => __( 'Payment Title', 'infinitepay-woocommerce' ),
+				'type'        => 'text',
+				'description' => __( 'Title that will be shown for the customers on your checkout page', 'infinitepay-woocommerce' ),
+				'default'     => __( 'PIX', 'infinitepay-woocommerce' ),
+				'desc_tip'    => true,
+			),
+			'instructions'          => array(
+				'title'       => __( 'Instructions', 'infinitepay-woocommerce' ),
+				'type'        => 'textarea',
+				'description' => __( 'Instructions that will be shown on thank you page and will be sent on email', 'infinitepay-woocommerce' ),
+				'default'     => __( '', 'infinitepay-woocommerce' ),
+				'desc_tip'    => true,
+			),
+			'discount_pix'      => array(
+				'title'       => __( 'Discount (%)', 'infinitepay-woocommerce' ),
+				'type'        => 'number',
+				'default'     => '5.0',
+				'desc_tip'    => true,
+			),
+			'min_value_pix' => array(
+				'title'       => __( 'Minimum value (R$)', 'infinitepay-woocommerce' ),
+				'type'        => 'number',
+				'default'     => '10.00',
+				'desc_tip'    => true,
+			),
+			
+		) );
+
+		return $fields;
+	}
+
+	protected function credentials_fields() {
+	
+		$fields = apply_filters( 'wc_infinitepay_form_fields', array(
+			'environment' => array(
+				'title'   => __( 'Store environment', 'infinitepay-woocommerce' ),
+				'type'    => 'select',
+				'label'   => __( 'Store environment', 'infinitepay-woocommerce' ),
+				'default' => 'yes',
+				'options'     => [
+					'sandbox' => 'Sandbox',
+					'production' => 'Production',
+				],
+			),
+			'client_id'       => array(
+				'title'       => __( 'Client ID', 'infinitepay-woocommerce' ),
+				'type'        => 'text',
+				'desc_tip'    => true,
+			),
+			'client_secret'	  => array(
+				'title'       => __( 'Client Secret', 'infinitepay-woocommerce' ),
+				'type'        => 'text',
+				'desc_tip'    => true,
+			)
+		) );
+
+		return $fields;
+	}
+	
+	protected function settings_fields() {
+	
+		$fields = apply_filters( 'wc_infinitepay_form_fields', array(
+			'status_aproved' => array(
+				'title'   => __( 'Payment Aproved', 'infinitepay-woocommerce' ),
+				'type'    => 'select',
+				'label'   => __( 'Payment Aproved', 'infinitepay-woocommerce' ),
+				'default' => 'yes',
+				'options'     =>  wc_get_order_statuses()
+			),
+			'status_canceled' => array(
+				'title'   => __( 'Store environment', 'infinitepay-woocommerce' ),
+				'type'    => 'select',
+				'label'   => __( 'Store environment', 'infinitepay-woocommerce' ),
+				'default' => 'yes',
+				'options'     =>  wc_get_order_statuses()
+			),
+			'enabled'	  => array(
+				'title'   => __( 'Enable logs?', 'infinitepay-woocommerce' ),
+				'type'    => 'checkbox',
+				'label'   => __( 'Enable logs', 'infinitepay-woocommerce' ),
+				'default' => 'yes',
+			),
+		) );
+
+		return $fields;
 	}
 }
