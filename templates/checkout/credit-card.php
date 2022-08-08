@@ -27,9 +27,9 @@ for (
 			break;
 		}
 
-		$has_interest = $installments_value[ $i - 1 ]['interest'] ? 'com' : 'sem';
+		$has_interest = $installments_value[ $i - 1 ]['interest'] ? 'com' : 'sem'; 
         $total_value = $i * $new_value;
-        $has_interest_total = $has_interest ? '(R$ '. esc_attr( number_format($total_value, 2, ",", "." ) ) .')' : '';
+        $has_interest_total = $installments_value[ $i - 1 ]['interest'] ? '(R$ '. esc_attr( number_format($total_value, 2, ",", "." ) ) .')' : '(R$ '. esc_attr( number_format($installments_value[ 0 ]['value'], 2, ",", "." ) ) .')';
 		$installments .= '<option value="' . esc_attr( $i ) . '">' . esc_attr( $i ) . 'x de R$ ' . esc_attr( number_format( $new_value, 2, ",", "." ) ) . ' ' . esc_attr( $has_interest ) . ' juros ' . $has_interest_total . '</option>';
 	}
 }

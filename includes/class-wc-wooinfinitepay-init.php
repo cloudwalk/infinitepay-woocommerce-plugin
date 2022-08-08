@@ -304,7 +304,11 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 					}
 				}
 
-				$installments_val = (int) sanitize_text_field( $installments ) * round( $this->calculate_installments()[ $installments - 1 ]['value'], 2, PHP_ROUND_HALF_UP );
+				$installments_val = $order->get_total();
+				if( $this->calculate_installments()[ $installments - 1 ]['interest'] ) { 
+					$installments_val = (int) sanitize_text_field( $installments ) * round( $this->calculate_installments()[ $installments - 1 ]['value'], 2, PHP_ROUND_HALF_UP );
+				}
+				
 				$order_value = $installments == 1 ? $order->get_total() * 100 : $installments_val * 100;
 				$final_value = (int) explode( '.', $order_value )[0];
 
