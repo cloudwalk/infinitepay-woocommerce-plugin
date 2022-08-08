@@ -308,6 +308,11 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 				$order_value = $installments == 1 ? $order->get_total() * 100 : $installments_val * 100;
 				$final_value = (int) explode( '.', $order_value )[0];
 
+				if( $installments != 1 ) { 
+					$order->set_total($installments_val);
+					$order->save();
+				}
+
 				$body = array(
 					'payment'         => array(
 						'amount'         => $final_value,
