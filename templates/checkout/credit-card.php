@@ -84,7 +84,7 @@ for (
         </div>
         <div class="form-row form-row-wide">
             <label for="ip_installments">Número de parcelas <span class="required">*</span></label>
-            <select id="ip_installments" name="infinitepay_custom[installments]" data-checkout="installments"><?php echo wp_kses( $installments, array( 'option' => array( 'value' => array() ) ) ) ?></select>
+            <select id="ip_installments" name="infinitepay_custom[installments]" data-checkout="installments"><?php print_r(wp_kses( $installments, array( 'option' => array( 'value' => array() ) ) )) ?></select>
             <span id="ip-error-4" class="ip-error" data-main="#ip_installments">Selecione o número de parcelas</span>
         </div>
         <div class="form-row form-row-wide">
