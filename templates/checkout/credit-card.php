@@ -27,8 +27,10 @@ for (
 			break;
 		}
 
-		$has_interest = $installments_value[ $i - 1 ]['interest'] ? 'com' : 'sem';
-		$installments .= '<option value="' . esc_attr( $i ) . '">' . esc_attr( $i ) . 'x de R$ ' . esc_attr( number_format( $new_value, 2, ",", "." ) ) . ' ' . esc_attr( $has_interest ) . ' juros</option>';
+		$has_interest = $installments_value[ $i - 1 ]['interest'] ? 'com' : 'sem'; 
+        $total_value = $i * $new_value;
+        $has_interest_total = $installments_value[ $i - 1 ]['interest'] ? '(R$ '. esc_attr( number_format($total_value, 2, ",", "." ) ) .')' : '(R$ '. esc_attr( number_format($installments_value[ 0 ]['value'], 2, ",", "." ) ) .')';
+		$installments .= '<option value="' . esc_attr( $i ) . '">' . esc_attr( $i ) . 'x de R$ ' . esc_attr( number_format( $new_value, 2, ",", "." ) ) . ' ' . esc_attr( $has_interest ) . ' juros ' . $has_interest_total . '</option>';
 	}
 }
 
@@ -82,9 +84,7 @@ for (
         </div>
         <div class="form-row form-row-wide">
             <label for="ip_installments">Número de parcelas <span class="required">*</span></label>
-            <select id="ip_installments" name="infinitepay_custom[installments]"
-                    data-checkout="installments"
-            ><?php echo wp_kses( $installments, array( 'option' => array( 'value' => array() ) ) ) ?></select>
+            <select id="ip_installments" name="infinitepay_custom[installments]" data-checkout="installments"><?php print_r(wp_kses( $installments, array( 'option' => array( 'value' => array() ) ) )) ?></select>
             <span id="ip-error-4" class="ip-error" data-main="#ip_installments">Selecione o número de parcelas</span>
         </div>
         <div class="form-row form-row-wide">

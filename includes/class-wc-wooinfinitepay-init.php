@@ -9,6 +9,8 @@
  *  @package InfinitePay
  */
 
+opcache_reset();
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -86,16 +88,10 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 		$this->log                   = new WC_InfinitePay_Log( $this );
 		$this->icon                  = $this->get_ip_icon();
 
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
-			$this,
-			'process_admin_options'
-		) );
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thank_you_page' ) );
-		add_filter( 'woocommerce_payment_complete_order_status', array(
-			$this,
-			'change_payment_complete_order_status'
-		), 10, 3 );
+		add_filter( 'woocommerce_payment_complete_order_status', array( $this, 'change_payment_complete_order_status' ), 10, 3 );
 		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
 	}
 
@@ -187,7 +183,7 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 			if ( $tax ) {
 				$interest = $this->infinite_pay_tax[ $i - 1 ] / 100;
 			}
-			$value                = ! $tax ? $amount / $i : $amount * ( $interest / ( 1 - pow( 1 + $interest, - $i ) ) );
+			$value    = ! $tax ? $amount / $i : $amount * ( $interest / ( 1 - pow( 1 + $interest, - $i ) ) );
 			$installments_value[] = array(
 				'value'    => $value,
 				'interest' => $tax,
@@ -277,7 +273,9 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 	}
 
 	private function process_infinitepay_payment( $order ) {
+
 		try {
+
 			$log_header = '[' . $order->get_id() . '] ';
 			if ( isset( $_POST['infinitepay_custom'] ) &&
 			     isset( $_POST['infinitepay_custom']['token'] ) && ! empty( $_POST['infinitepay_custom']['token'] ) &&
@@ -306,8 +304,18 @@ class WC_InfinitePay_Module extends WC_Payment_Gateway {
 					}
 				}
 
-				$order_value = $order->get_total() * 100;
+				$installments_val = $order->get_total();
+				if( $this->calculate_installments()[ $installments - 1 ]['interest'] ) { 
+					$installments_val = (int) sanitize_text_field( $installments ) * round( $this->calculate_installments()[ $installments - 1 ]['value'], 2, PHP_ROUND_HALF_UP );
+				}
+				
+				$order_value = $installments == 1 ? $order->get_total() * 100 : $installments_val * 100;
 				$final_value = (int) explode( '.', $order_value )[0];
+
+				if( $installments != 1 ) { 
+					$order->set_total($installments_val);
+					$order->save();
+				}
 
 				$body = array(
 					'payment'         => array(
