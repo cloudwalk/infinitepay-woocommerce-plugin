@@ -9,7 +9,7 @@
  *  @package InfinitePay
  */
 
-opcache_reset();
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
