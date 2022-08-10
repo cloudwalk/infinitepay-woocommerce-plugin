@@ -51,7 +51,7 @@ If you installed it correctly, you will see it in your list of "Installed Plugin
 == Changelog ==
 - 1.1.10 (2022/08/10) -
 * Bug fixes
-    - Removing opcache from plugin
+    - Fix cache setting for unsupported PHP versions
 
 - 1.1.9 (2022/08/08) -
 * Bug fixes
