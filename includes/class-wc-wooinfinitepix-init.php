@@ -14,6 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class WC_InfinitePix_Module extends WC_Payment_Gateway {
+
+
+	public $storeUrl; 
+
 	/**
 	 * Load translations from i18n
 	 */
@@ -45,6 +49,9 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$this->setup_properties();
 		$this->init_form_fields();
 		$this->init_settings();
+
+		$this->storeUrl = stripos($_SERVER['SERVER_PROTOCOL'],'https') === 0 ? 'https://' : 'http://' . $_SERVER['HTTP_HOST'];
+
 
 		// Config fields
 		$this->enabled         = sanitize_key( $this->get_option( 'enabled' ) );
@@ -195,7 +202,6 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 
 			// Generate unique uuid for transaction secret
 			$transactionSecret = sha1( $order->get_id() . time() );
-			$storeUrl          = $_SERVER['SERVER_NAME'];
 
 			// Apply discount if it has one
 			$orderTotalWithDiscount = $order->get_total();
@@ -217,7 +223,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 				'metadata'       => array(
 					'callback' => array(
 						'validate' => '',
-						'confirm'  => 'https://' . $storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
+						'confirm'  => $this->storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $order->get_id(),
 						'secret'   => $transactionSecret
 					)
 				)
@@ -329,7 +335,6 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		add_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
 
 		$code = ltrim( rtrim( str_replace( "br_code: ", "", $orderComments[0]->comment_content ) ) );
-		$storeUrl = $_SERVER['SERVER_NAME'];
 
 		// Create html structure
 		$html = '<div id="qrcodepixcontent" style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
@@ -367,7 +372,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		add_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
 
 		$code = ltrim( rtrim( str_replace( "br_code: ", "", $orderComments[0]->comment_content ) ) );
-		$storeUrl = $_SERVER['SERVER_NAME'];
+		$storeUrl = $this->storeUrl;
 
 		// Create html structure
 		$html = '<div id="qrcodepixcontent" style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
@@ -401,7 +406,7 @@ class WC_InfinitePix_Module extends WC_Payment_Gateway {
 		$html .= 'setTimeout(() => {';
 		$html .= '  let pixInterval = setInterval(() => {';
 		$html .= '    if (lastStatus == "processing") clearInterval(pixInterval);'; 
-		$html .= '    req.open("GET", "https://'.$storeUrl.'/wp-json/wc/v3/infinitepay_order_status?order_id='.$order_id.'", true);';
+		$html .= '    req.open("GET", "'.$storeUrl.'/wp-json/wc/v3/infinitepay_order_status?order_id='.$order_id.'", true);';
 		$html .= '    req.setRequestHeader("X-Requested-With", "XMLHttpRequest");';
 		$html .= '    req.setRequestHeader("Access-Control-Allow-Origin", "*");';
 		$html .= '    req.send(null); }, 10000);';
