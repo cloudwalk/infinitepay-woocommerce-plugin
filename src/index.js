@@ -215,23 +215,32 @@
         )
 
         function init() {
+            console.log('IPAY INIT', wc_infinitepay_params.script_url);
             if(!!window["IPay"]) return;
-
+            console.log('IPAY URL', wc_infinitepay_params.script_url);
             var head = document.getElementsByTagName("head")[0];
             var script = document.createElement("script");
-            script.async = 1;
-            script.src = wc_infinitepay_params.sandbox === 'yes' ? "https://ipayjs.infinitepay.io/development/ipay-latest.min.js" : "https://ipayjs.infinitepay.io/production/ipay-latest.min.js";
-            script.onload = function() {
-                const iPay = new window.IPay({ api_key: wc_infinitepay_params.api_key })
-                iPay.fingerprint(function(error, fp){
-                    if(error){ console.error(error); return; }
-                    const inputUUID = document.querySelector("#ip-uuid");
-                    inputUUID.value = fp;
-                })
-                window.iPay = iPay
-            }
+                script.async = 1;
+                script.src = wc_infinitepay_params.script_url;
             head.parentNode.appendChild(script);
+
+            // // if(!!window["IPay"]) return;
+            // // var head = document.getElementsByTagName("head")[0];
+            // // var script = document.createElement("script");
+            // // script.async = 1;
+            // // script.src = wc_infinitepay_params.environment === 'sandbox' ? "https://ipayjs.infinitepay.io/development/ipay-latest.min.js" : "https://ipayjs.infinitepay.io/production/ipay-latest.min.js";
+            // // script.onload = function() {
+            // //     const iPay = new window.IPay({ access_token: wc_infinitepay_params.access_token })
+            // //     console.log('iPay', iPay);
+            // //     iPay.fingerprint(function(error, fp){
+            // //         if(error){ console.error(error); return; }
+            // //         const inputUUID = document.querySelector("#ip-uuid");
+            // //         inputUUID.value = fp;
+            // //     })
+            // //     window.iPay = iPay
+            // // }
+            // // head.parentNode.appendChild(script);
         }
-        init()
+        init();
     })
 })(jQuery)

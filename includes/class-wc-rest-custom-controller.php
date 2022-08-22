@@ -81,7 +81,8 @@ class WC_REST_Custom_Controller {
 			'/' . $this->pix_callback_endpoint,
 			array(
 				'methods' => 'POST',
-				'callback' => array($this, 'infinite_pay_callback')
+				'callback' => array($this, 'infinite_pay_callback'),
+				'permission_callback' => '__return_true'
 			)
 		);
 		// Register order status route
@@ -90,7 +91,8 @@ class WC_REST_Custom_Controller {
 			'/' . $this->order_status_endpoint,
 			array(
 				'methods' => 'GET',
-				'callback' => array($this, 'get_order_status')
+				'callback' => array($this, 'get_order_status'),
+				'permission_callback' => '__return_true'
 			)
 		);
 	}
