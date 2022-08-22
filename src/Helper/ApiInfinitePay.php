@@ -6,46 +6,46 @@ if ( ! function_exists( 'add_action' ) ) {
 }
 
 use Woocommerce\InfinitePay\Helper\Log;
+use Woocommerce\InfinitePay\Helper\Constants;
 
 use Woocommerce\InfinitePay\InfinitePayCore;
 
 class ApiInfinitePay
 {
-    const ACCESS_TOKEN_KEY = 'infinitepay_access_token';
-    protected $endpoint = '';
     protected $args = [];
     protected $environment = '';
     public $has_access_token = false;
 
-    public function __construct($_environment)
+    public function __construct()
 	{
-        $this->environment = $_environment;
-        //TODO: criar endpoint para cada um dos 3 tipos que panachi mandou
-        $this->endpoint = $this->environment === 'sandbox' ? 'https://authorizer-staging.infinitepay.io/v2' : 'https://api.infinitepay.io/v2';
+        $options = get_option('woocommerce_infinitepay_settings');
+        $this->environment = $options['environment'];
+
         $this->args = array(
 			'headers' => array(
 				'Content-Type'  => 'application/json',
+                'Accept'        => 'application/json',
 			),
 		);
         
 		if ($this->environment === 'sandbox') {
 			$this->args['headers']['Env'] = 'mock';
 		}
-        $this->has_access_token = false !== get_option(self::ACCESS_TOKEN_KEY);
+        $this->has_access_token = false !== get_option(Constants::ACCESS_TOKEN_KEY);
         $this->log = new Log();
     }
 
-    public function auth( $client_id, $client_secret, $scope = 'transactions' ) {
+    public function tokenize() {
 
         $body = [
-            "grant_type" => "client_credentials",
-            "client_id" => $client_id,
-            "client_secret" => $client_secret,
-            "scope" => "[$scope]"
+            "grant_type"    => "client_credentials",
+            "client_id"     =>  get_option(Constants::CLIENT_ID),
+            "client_secret" =>  get_option(Constants::CLIENT_SECRET),
+            "scope"         => 'card_tokenization'
         ];
 
         $this->args['body'] = json_encode($body, JSON_UNESCAPED_UNICODE);
-        $response = wp_remote_post((isset($this->environment) && $this->environment === 'sandbox') ? 'https://api-staging.infinitepay.io/v2/oauth/token' : 'https://api.infinitepay.io/v2/oauth/token', $this->args );
+        $response = wp_remote_post(($this->environment == 'sandbox') ? 'https://api-staging.infinitepay.io/v2/oauth/token' : 'https://api.infinitepay.io/v2/oauth/token', $this->args );
         if (is_wp_error($response)) {
             return null;
         }
@@ -57,7 +57,7 @@ class ApiInfinitePay
             }
 
             if ($body['access_token']) {
-                add_option( self::ACCESS_TOKEN_KEY, $body['access_token']);
+                add_option( Constants::ACCESS_TOKEN_KEY, $body['access_token']);
                 return $body['access_token'];
             }
         }
@@ -67,14 +67,34 @@ class ApiInfinitePay
 
     public function transactions($body) {
 
-        $this->args['headers']['Authorization'] = 'Bearer ' .  get_option( self::ACCESS_TOKEN_KEY, $body['access_token']);
-        $this->args['body'] = json_encode($body, JSON_UNESCAPED_UNICODE);
+        $bodyAuth = [
+            "grant_type"    => "client_credentials",
+            "client_id"     =>  get_option(Constants::CLIENT_ID),
+            "client_secret" =>  get_option(Constants::CLIENT_SECRET),
+            "scope"         => 'transactions'
+        ];
 
-		$response = wp_remote_post( $this->endpoint . '/v2/transactions', $args );
+        $this->args['body'] = json_encode($bodyAuth, JSON_UNESCAPED_UNICODE);
+        $responseAuth = wp_remote_post(($this->environment == 'sandbox') ? 'https://api-staging.infinitepay.io/v2/oauth/token' : 'https://api.infinitepay.io/v2/oauth/token', $this->args );
+        if (is_wp_error($responseAuth)) {
+            return null;
+        }
 
-        return $response;
+        $bodyAuth = json_decode($responseAuth['body'], true);
+        if (!is_wp_error($responseAuth) && $responseAuth['response']['code'] < 500) {
+            if (!is_wp_error($responseAuth) && $responseAuth['response']['code'] == 401) {
+                return null;
+            }
+            if ($bodyAuth['access_token']) {
 
-        //TODO: trazer o contexto do erro para cá
+                $this->args['headers']['Authorization'] = 'Bearer ' . $bodyAuth['access_token'];
+                $this->args['body'] = json_encode($body, JSON_UNESCAPED_UNICODE);
+                $response = wp_remote_post( $this->environment == 'sandbox' ? 'https://authorizer-staging.infinitepay.io/v2/transactions' : 'https://api.infinitepay.io/v2/transactions', $this->args );
+                return $response;
+
+            }
+        }
+        return null;
     }
 
 }

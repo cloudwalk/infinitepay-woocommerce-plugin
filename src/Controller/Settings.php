@@ -1,7 +1,8 @@
 <?php
 namespace Woocommerce\InfinitePay\Controller;
 
-use Woocommerce\InfinitePay\Controller\Log;
+use Woocommerce\InfinitePay\Helper\Constants;
+use Woocommerce\InfinitePay\Helper\Log;
 use Woocommerce\InfinitePay\Fields\ConfigurationsFields;
 use Woocommerce\InfinitePay\Fields\CredentialsFields;
 use Woocommerce\InfinitePay\Fields\CreditCardFields;
@@ -46,9 +47,6 @@ class Settings
         $this->max_installments_free = sanitize_key($wc_payments->get_option('max_installments_free', 12));
         $this->enabled_creditcard    = sanitize_key($wc_payments->get_option('enabled_creditcard'));
 
-        // echo $this->title;
-        // die;
-
         $this->environment   = sanitize_key($wc_payments->get_option('environment', 'sandbox'));
         $this->client_id     = $wc_payments->get_option('client_id');
         $this->client_secret = $wc_payments->get_option('client_secret');
@@ -58,6 +56,9 @@ class Settings
         $this->instructions  = sanitize_text_field($wc_payments->get_option('instructions'));
         $this->discount_pix  = sanitize_key($wc_payments->get_option('discount_pix', 0.5));
         $this->min_value_pix = sanitize_key($wc_payments->get_option('min_value_pix', 20.00));
+
+        add_option( Constants::CLIENT_ID, $this->client_id);
+        add_option( Constants::CLIENT_SECRET, $this->client_secret);
     }
 
 	public static function form_fields($current_section)

@@ -102,8 +102,7 @@ for (
         <input id="ip_method" name="ip_method" value="<?php echo ($enabled_pix === 'yes' && $enabled_creditcard === 'yes') ? "cc-form" : ($enabled_pix === 'yes' ? 'form-pix' : 'cc-form') ?>" type="hidden">
         <?php if($enabled_creditcard === 'yes') : ?>
             <fieldset id="wc-<?php echo esc_attr( $id ) ?>-cc-form" class="wc-credit-card-form wc-payment-form wc-if-form" style="background:transparent;">                
-            <form action="#" data-ip="form">    
-                
+            
                     <div class="form-row form-row-wide">
                         <label for="ip_ccNo">Número do Cartão <span class="required">*</span></label>
                         <input id="ip_ccNo" onkeyup="ipCreditMaskDate(this, ipMcc);" type="text" data-ip="card-number" autocomplete="off" maxlength="19" class="input-text">
@@ -142,7 +141,7 @@ for (
                     <input type="hidden" id="ip-uuid" name="infinitepay_custom[uuid]"/>
                     <input type="hidden" data-ip="method" value="credit_card">
                     <div class="clear"></div>
-                </form>
+                
             </fieldset>
         <?php endif; ?>
         

@@ -2,7 +2,7 @@
 /*
  * Plugin Name: InfinitePay payments for WooCommerce
  * Description: Configure the payment options and accept payments with cards.
- * Version: 1.1.9
+ * Version: 2.0.0
  * Author: Infinite Pay
  * Author URI: https://infinitepay.io/
  * Text Domain: infinitepay-woocommerce
@@ -12,17 +12,6 @@
  *
  * @package InfinitePay
  */
-
-//TODO: REMOVER opcache_reset() DA PR
-/*
-  _______ ____  _____   ____      _____                                                _          _ _       _                   _           _           
- |__   __/ __ \|  __ \ / __ \ _  |  __ \                                              | |        | (_)     | |                 | |         (_)          
-    | | | |  | | |  | | |  | (_) | |__) |___ _ __ ___   _____   _____ _ __    ___  ___| |_ __ _  | |_ _ __ | |__   __ _    __ _| |__   __ _ ___  _____  
-    | | | |  | | |  | | |  | |   |  _  // _ \ '_ ` _ \ / _ \ \ / / _ \ '__|  / _ \/ __| __/ _` | | | | '_ \| '_ \ / _` |  / _` | '_ \ / _` | \ \/ / _ \ 
-    | | | |__| | |__| | |__| |_  | | \ \  __/ | | | | | (_) \ V /  __/ |    |  __/\__ \ || (_| | | | | | | | | | | (_| | | (_| | |_) | (_| | |>  < (_) |
-    |_|  \____/|_____/ \____/(_) |_|  \_\___|_| |_| |_|\___/ \_/ \___|_|     \___||___/\__\__,_| |_|_|_| |_|_| |_|\__,_|  \__,_|_.__/ \__,_|_/_/\_\___/                                                                                                                                                      
-*/
-opcache_reset();
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

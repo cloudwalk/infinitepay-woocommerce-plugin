@@ -9,34 +9,13 @@ use Woocommerce\InfinitePay\Controller\Settings;
 use Woocommerce\InfinitePay\Controller\Checkout;
 use Woocommerce\InfinitePay\Helper\ApiInfinitePay;
 use Woocommerce\InfinitePay\Helper\Log;
-use Woocommerce\InfinitePay\Helper\Util;
+use Woocommerce\InfinitePay\Helper\Utils;
+use Woocommerce\InfinitePay\Helper\Constants;
 
 class InfinitePayCore extends \WC_Payment_Gateway
 {
- 
-	const TEXT_DOMAIN     = 'infinitepay-woocommerce';
-    const SLUG            = 'infinitepay';
-    const VERSION         = '1.1.9';
-    const MIN_PHP         = 5.6;
-    const API_IP_BASE_URL = 'https://api.infinitepay.io';
-
 	public $core_settings;
 	public $api;
-
-    protected $infinite_pay_tax = [
-        1,
-        1.3390,
-        1.5041,
-        1.5992,
-        1.6630,
-        1.7057,
-        2.3454,
-        2.3053,
-        2.2755,
-        2.2490,
-        2.2306,
-        2.2111,
-    ];
 
     public function __construct()
     {
@@ -51,10 +30,8 @@ class InfinitePayCore extends \WC_Payment_Gateway
 		$this->log			 = new Log($this);
 
 
-		$this->api = new ApiInfinitePay($this->core_settings->environment);
+		$this->api = new ApiInfinitePay();
 
-		$this->api->auth($this->core_settings->client_id, $this->core_settings->client_secret);
-        
 		add_action('woocommerce_update_options_payment_gateways_infinitepay', array($this, 'process_admin_options'));
         add_action('wp_enqueue_scripts', array($this, 'payment_scripts'));
         add_action('woocommerce_thankyou_infinitepay', array($this, 'thank_you_page'));
@@ -76,8 +53,8 @@ class InfinitePayCore extends \WC_Payment_Gateway
     public function update_plugin_version()
     {
         $old_version = get_option('_ip_version', '0');
-        if (version_compare(self::VERSION, $old_version, '>')) {
-            update_option('_ip_version', self::VERSION, true);
+        if (version_compare(Constants::VERSION, $old_version, '>')) {
+            update_option('_ip_version', Constants::VERSION, true);
         }
     }
 
@@ -134,30 +111,6 @@ class InfinitePayCore extends \WC_Payment_Gateway
         $this->supports           = [ 'products' ];
     }
 
-    private function calculate_installments()
-    {
-        $amount             = $this->get_order_total();
-        $installments_value = [];
-        for (
-            $i = 1;
-            $i <= (int) $this->core_settings->max_installments;
-            $i++
-        ) {
-            $tax      = !((int) $this->core_settings->max_installments_free >= $i) && $i > 1;
-            $interest = 1;
-            if ($tax) {
-                $interest = $this->infinite_pay_tax[$i - 1] / 100;
-            }
-            $value                = !$tax ? $amount / $i : $amount * ($interest / (1 - pow(1 + $interest, -$i)));
-            $installments_value[] = array(
-                'value'    => $value,
-                'interest' => $tax,
-            );
-        }
-
-        return $installments_value;
-    }
-
     //TODO: validar o sandbox para environment
     public function payment_scripts()
     {
@@ -177,7 +130,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
             return;
         }
 
-		$card_tokenization = $this->api->auth($this->core_settings->client_id, $this->core_settings->client_secret, 'card_tokenization');
+		$card_tokenization = $this->api->tokenize();
 
         $script_path       = '/../build/index.js';
         $script_asset_path = dirname(__FILE__) . '/../build/index.asset.php';
@@ -214,7 +167,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
             'max_installments'   => $this->core_settings->max_installments,
             'amount'             => $this->get_order_total(),
             'id'                 => $this->id,
-            'installments_value' => $this->calculate_installments(),
+            'installments_value' => Utils::calculate_installments($this->get_order_total()),
             'enabled_creditcard' => $this->core_settings->enabled_creditcard,
             'enabled_pix'        => $this->core_settings->enabled_pix,
             'title_credit_card'  => $this->core_settings->title_credit_card,
@@ -233,7 +186,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
     public function process_payment($order_id)
     {
-        $order = wc_get_order($order_id);
+        $order = wc_get_order($order_id);        
 
         if (!isset($_POST['infinitepay_custom'])) {
             return false;
@@ -251,30 +204,37 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
         try {
 
-			echo $_POST['infinitepay_custom']['token'] . $_POST['infinitepay_custom']['doc_number']  . $_POST['infinitepay_custom']['uuid'];
-		die;
-
 			$checkout = new Checkout($order);
 
-            //TODO: primeiro if, validar se vem do pix ou não  $_POST['ip_method'] == 'pix-form'
-            $is_creditcard = (isset($_POST['infinitepay_custom']) &&
+            $is_creditcard = ( isset($_POST['infinitepay_custom']) &&
                 isset($_POST['infinitepay_custom']['token']) && !empty($_POST['infinitepay_custom']['token']) &&
                 isset($_POST['infinitepay_custom']['uuid']) && !empty($_POST['infinitepay_custom']['uuid']) &&
                 isset($_POST['infinitepay_custom']['doc_number']) && !empty($_POST['infinitepay_custom']['doc_number']) &&
                 isset($_POST['infinitepay_custom']['installments']) && !empty($_POST['infinitepay_custom']['installments']) &&
-                -1 !== (int) $_POST['infinitepay_custom']['installments']);
+                -1 !== (int) $_POST['infinitepay_custom']['installments'] );
 
             $is_pix = (isset($_POST['infinitepay_custom']) && $_POST['ip_method'] == 'pix-form');
 
             $log_header = '[' . $order->get_id() . '] ';
-            if ($is_creditcard) {
-                
-				$checkout->process_credit_card();
-
-
+            if ( $is_creditcard ) {
+				$result = $checkout->process_credit_card();
+                if($result) {
+                    return array(
+                        'result'   => 'success',
+                        'redirect' => $order->get_checkout_order_received_url(),
+                    );
+                }
+            } else if ( $is_pix ) {
+                $result = $checkout->process_pix();
+                if($result) {
+                    return array(
+						'result'   => 'success',
+						'redirect' => $order->get_checkout_order_received_url(),
+					);
+                }
             } else {
                 $this->log->write_log(__FUNCTION__, $log_header . 'Misconfiguration error on plugin ');
-                wc_add_notice(__($is_pix . 'Please review your card information and try again', 'infinitepay-woocommerce'), 'error');
+                wc_add_notice(__($is_pix . 'Please review your payment information and try again', 'infinitepay-woocommerce'), 'error');
             }
         } catch (Exception $ex) {
             $this->log->write_log(__FUNCTION__, 'Caught exception: ' . $ex->getMessage());
@@ -284,9 +244,12 @@ class InfinitePayCore extends \WC_Payment_Gateway
     public function change_payment_complete_order_status($status, $order_id = 0, $order = false)
     {
         if ($order && $order->get_payment_method() === 'infinitepay') {
-            $status = 'processing';
+            if( $order->get_meta('payment_method') == 'credit' ) {
+                $status = 'processing';
+            } else  if( $order->get_meta('payment_method') == 'pix' ) {
+                $status = 'pending';
+            }
         }
-
         return $status;
     }
 
@@ -297,22 +260,132 @@ class InfinitePayCore extends \WC_Payment_Gateway
         }
     }
 
-    public function thank_you_page()
+    public function thank_you_page( $order_id )
     {
-        if (!empty($this->core_settings->instructions)) {
-            echo wpautop(wptexturize(esc_html($this->core_settings->instructions)));
+        $order = wc_get_order( $order_id );
+
+        if( $order->get_meta('payment_method') == 'credit' ) {
+            if (!empty($this->core_settings->instructions)) {
+                echo wpautop(wptexturize(esc_html($this->core_settings->instructions)));
+            }
+        } else  if( $order->get_meta('payment_method') == 'pix' ) {
+            echo $this->pix_checkout_html( $order );
         }
     }
 
+    public function pix_checkout_html( $order ) {
+
+		if ( $order->get_payment_method() != 'infinitepix' ) {
+			return '';
+		}
+
+		// Retrieve order comments
+		remove_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
+		$orderComments = get_comments( array(
+			'post_id' => $order->id,
+			'orderby' => 'comment_ID',
+			'order'   => 'DESC',
+			'approve' => 'approve',
+			'type'    => 'order_note',
+			'number'  => 1
+		) );
+		add_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
+
+		$code = ltrim( rtrim( str_replace( "br_code: ", "", $orderComments[0]->comment_content ) ) );
+		$storeUrl = $this->storeUrl;
+
+		// Create html structure
+		$html = '<div id="qrcodepixcontent" style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
+		$html .= '  <img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode=' . urlencode( $code ) . '"	alt="QR Code"/>';
+		$html .= '  <div>';
+		$html .= '    <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ ' . $order->get_total() . '</strong></p>';
+		$html .= '    <div style="word-wrap: break-word; max-width: 450px;">';
+		$html .= '      <small>Código de transação</small><br>';
+		$html .= '      <code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">' . $code . '</code>';
+		$html .= '    </div>';
+		$html .= '  </div>';
+		$html .= '</div>';
+		$html.=  '<p style="margin-top: 1rem;">Caso já tenha feito o pagamento, verifique se foi confirmado na página de <a href="'.$order->get_view_order_url().'">detalhes do pedido</a></p>';
+
+		// Javascript structure to update qrcode once payment is done
+		$html .= '<script type="text/javascript">';
+		$html .= 'const req = new XMLHttpRequest();';
+		$html .= 'var lastStatus = "";';
+		$html .= 'req.onreadystatechange = function() {';
+		$html .= '  if (this.readyState == 4 && this.status == 200) {';
+		$html .= '    const data = JSON.parse(req.responseText);';
+		$html .= '    console.log("status update", data.order_status);';
+		$html .= '    lastStatus = data.order_status;'; 							
+		$html .= '    if (data.order_status == "processing") {';
+		$html .= '      const pixQrElement = document.getElementById("qrcodepixcontent");';
+		$html .= '      pixQrElement.innerHTML = "";';
+		$html .= '      pixQrElement.innerHTML = "<div><h2>Pagamento recebido</h2><p>Obrigado por comprar em nossa loja. Você pode consultar o andamento de seu pedido pela página do mesmo.</p><a href=\"'.$order->get_view_order_url().'\">Acessar pedido</a></div>";';
+		$html .= '    }';
+		$html .= '  }';
+		$html .= '};';
+		$html .= 'setTimeout(() => {';
+		$html .= '  let pixInterval = setInterval(() => {';
+		$html .= '    if (lastStatus == "processing") clearInterval(pixInterval);'; 
+		$html .= '    req.open("GET", "'.$storeUrl.'/wp-json/wc/v3/infinitepay_order_status?order_id='.$order->id.'", true);';
+		$html .= '    req.setRequestHeader("X-Requested-With", "XMLHttpRequest");';
+		$html .= '    req.setRequestHeader("Access-Control-Allow-Origin", "*");';
+		$html .= '    req.send(null); }, 10000);';
+		$html .= '}, 1000);';
+		$html .= '</script>';
+
+		// Return html
+		return $html;
+	}
+
     public function email_instructions($order, $sent_to_admin, $plain_text = false)
     {
-        if (
-            $this->core_settings->instructions
-            && !$sent_to_admin
-            && $this->id === $order->payment_method
-        ) {
-            echo wp_kses_post(wpautop(wptexturize(esc_html($this->core_settings->instructions))) . PHP_EOL);
+        if( $order->get_meta('payment_method') == 'credit' ) {
+            if (
+                $this->core_settings->instructions
+                && !$sent_to_admin
+                && $this->id === $order->payment_method
+            ) {
+                echo wp_kses_post(wpautop(wptexturize(esc_html($this->core_settings->instructions))) . PHP_EOL);
+            }
+        } else  if( $order->get_meta('payment_method') == 'pix' ) {
+            echo $this->pix_email_html( $order );
         }
     }
+
+    public function pix_email_html( $order ) {
+		
+		if ( $order->get_payment_method() != 'infinitepix' ) {
+			return '';
+		}
+
+		// Retrieve order comments
+		remove_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
+		$orderComments = get_comments( array(
+			'post_id' => $order->id,
+			'orderby' => 'comment_ID',
+			'order'   => 'DESC',
+			'approve' => 'approve',
+			'type'    => 'order_note',
+			'number'  => 1
+		) );
+		add_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
+
+		$code = ltrim( rtrim( str_replace( "br_code: ", "", $orderComments[0]->comment_content ) ) );
+
+		// Create html structure
+		$html = '<div id="qrcodepixcontent" style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
+		$html .= '  <img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode=' . urlencode( $code ) . '"	alt="QR Code"/>';
+		$html .= '  <div>';
+		$html .= '    <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ ' . $order->get_total() . '</strong></p>';
+		$html .= '    <div style="word-wrap: break-word; max-width: 450px;">';
+		$html .= '      <small>Código de transação</small><br>';
+		$html .= '      <code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">' . $code . '</code>';
+		$html .= '    </div>';
+		$html .= '  </div>';
+		$html .= '</div>';
+
+		// Return html
+		return $html;
+	}
 
 }

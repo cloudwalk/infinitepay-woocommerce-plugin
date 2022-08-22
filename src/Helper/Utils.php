@@ -5,15 +5,11 @@ if ( ! function_exists( 'add_action' ) ) {
 	exit( 0 );
 }
 
-// use Moip\Auth\Connect;
-// use Moip\Moip;
-
 use Woocommerce\InfinitePay\InfinitePayCore;
+use Woocommerce\InfinitePay\Helper\Constants;
 
 class Utils
 {
-
-
     public static function generate_uuid() {
 		$data = openssl_random_pseudo_bytes( 16 );
 		assert( strlen( $data ) == 16 );
@@ -63,14 +59,38 @@ class Utils
 	    return wp_strip_all_tags( $value, $remove_breaks );
 	}
 
+	public static function calculate_installments($amount)
+    {
+		$options = get_option('woocommerce_infinitepay_settings');
+        $installments_value = [];
+        for (
+            $i = 1;
+            $i <= (int) $options['max_installments'];
+            $i++
+        ) {
+            $tax      = !((int) $options['max_installments_free'] >= $i) && $i > 1;
+            $interest = 1;
+            if ($tax) {
+                $interest = Constants::INFINITEPAY_TAX[$i - 1] / 100;
+            }
+            $value = !$tax ? $amount / $i : $amount * ($interest / (1 - pow(1 + $interest, -$i)));
+            $installments_value[] = array(
+                'value'    => $value,
+                'interest' => $tax,
+            );
+        }
 
-    public static function log( $data, $log_name = 'debug' )
-	{
-		$name = sprintf( '%s-%s.log', $log_name, date( 'd-m-Y' ) );
-		$log  = print_r( $data, true ) . PHP_EOL;
-		$log .= "\n=============================\n";
+        return $installments_value;
+    }
 
-		file_put_contents( Core::get_file_path( $name, 'logs/' ), $log, FILE_APPEND );
-	}
+
+    // public static function log( $data, $log_name = 'debug' )
+	// {
+	// 	$name = sprintf( '%s-%s.log', $log_name, date( 'd-m-Y' ) );
+	// 	$log  = print_r( $data, true ) . PHP_EOL;
+	// 	$log .= "\n=============================\n";
+
+	// 	file_put_contents( Core::get_file_path( $name, 'logs/' ), $log, FILE_APPEND );
+	// }
 
 }
