@@ -49,9 +49,9 @@ Done! It will be in the "Installed Plugins" section and from there you can activ
 If you installed it correctly, you will see it in your list of "Installed Plugins" on the WordPress work area. Please enable it and input your api key on the specified field.
 
 == Changelog ==
-- 2.0.0 (2022/08/08) - //TODO: ATUALIZAR O CHANGELOG
-* Bug fixes
-    - Displaying the total amount in the installment field
+- 2.0.0 (2022/08/08) -
+* New version and Bug fixes
+    - Fixing some bugs and implementing the PIX Payment
 
 - 1.1.9 (2022/08/08) -
 * Bug fixes

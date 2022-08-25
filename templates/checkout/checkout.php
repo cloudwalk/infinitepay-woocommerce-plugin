@@ -12,7 +12,6 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 $installments = '';
 for (
 	$i = 1;
@@ -87,13 +86,13 @@ for (
 
 <?php if($enabled_creditcard === 'yes') : ?>
 <a href="javascript:;" onClick="<?php echo ($enabled_pix === 'yes') ? "ifchangePaymentMethod('cc-form')" : "void(0)" ?>" id="cc-form" class="button active">
-    <?php echo $title_credit_card; ?>
+    <?php echo __('Credit Card', 'infinitepay-woocommerce'); ?>
 </a>
 <?php endif; ?>
 
 <?php if($enabled_pix === 'yes') : ?>
 <a href="javascript:;" onClick="<?php echo ($enabled_creditcard === 'yes') ? "ifchangePaymentMethod('pix-form')" : "void(0)" ?>" id="pix-form" class="button">
-    <?php echo $title_pix; ?>
+    PIX
 </a>
 <?php endif; ?>
 
@@ -102,7 +101,9 @@ for (
         <input id="ip_method" name="ip_method" value="<?php echo ($enabled_pix === 'yes' && $enabled_creditcard === 'yes') ? "cc-form" : ($enabled_pix === 'yes' ? 'form-pix' : 'cc-form') ?>" type="hidden">
         <?php if($enabled_creditcard === 'yes') : ?>
             <fieldset id="wc-<?php echo esc_attr( $id ) ?>-cc-form" class="wc-credit-card-form wc-payment-form wc-if-form" style="background:transparent;">                
-            
+                    
+                <p><?php echo $instructions; ?></p>
+
                     <div class="form-row form-row-wide">
                         <label for="ip_ccNo">Número do Cartão <span class="required">*</span></label>
                         <input id="ip_ccNo" onkeyup="ipCreditMaskDate(this, ipMcc);" type="text" data-ip="card-number" autocomplete="off" maxlength="19" class="input-text">
@@ -111,13 +112,13 @@ for (
 
                     <div class="form-row form-row-first">
                         <label for="cardExpirationMonth">Mês de validade <span class="required">*</span></label>
-                        <input id="cardExpirationMonth" data-ip="card-expiration-month" type="text" autocomplete="off" placeholder="MM" maxlength="5" class="input-text">
+                        <input id="cardExpirationMonth" data-ip="card-expiration-month" onkeyup="ipCreditMaskDate(this, ipInteger);" type="text" autocomplete="off" placeholder="MM" maxlength="2" class="input-text">
                         <span id="ip-error-2" class="ip-error" data-main="#ip_expdate">Data inválida</span>
                     </div>
 
                     <div class="form-row form-row-last">
                         <label for="cardExpirationYear">Ano de validade <span class="required">*</span></label>
-                        <input id="cardExpirationYear" data-ip="card-expiration-year" type="text" autocomplete="off" placeholder="AA" maxlength="5" class="input-text">
+                        <input id="cardExpirationYear" data-ip="card-expiration-year" onkeyup="ipCreditMaskDate(this, ipInteger);" type="text" autocomplete="off" placeholder="AA" maxlength="2" class="input-text">
                     </div>
 
                     <div class="form-row form-row-wide">
@@ -147,6 +148,7 @@ for (
         
         <?php if($enabled_pix === 'yes') : ?>
             <fieldset id="wc-<?php echo esc_attr( $id ) ?>-pix-form" class="wc-pix-form wc-payment-form wc-if-form" style="background:transparent;<?php echo ($enabled_creditcard === 'yes') ? "display:none" : "" ?>">
+            <p><?php echo $instructions_pix; ?></p>
                 <div class="pix-label">
                     <img src="https://confere-pix.web.app/pix.png" alt="InfinitePay Label" />
                 </div>

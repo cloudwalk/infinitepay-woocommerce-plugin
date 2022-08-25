@@ -16,13 +16,13 @@ class CreditCardFields
 				'label'   => __( 'Enable Credit Card with InfinitePay', 'infinitepay-woocommerce' ),
 				'default' => 'yes',
 			),
-			'title_credit_card'                 => array(
-				'title'	  	 => __( 'Credit Card Payment Title', 'infinitepay-woocommerce' ),
-				'type'		  => 'text',
-				'description' => __( 'Title that will be shown for the customers on your checkout page', 'infinitepay-woocommerce' ),
-				'default'     => __( 'Credit Card', 'infinitepay-woocommerce' ),
-				'desc_tip'    => true,
-			),
+			// 'title_credit_card'                 => array(
+			// 	'title'	  	 => __( 'Credit Card Payment Title', 'infinitepay-woocommerce' ),
+			// 	'type'		  => 'text',
+			// 	'description' => __( 'Title that will be shown for the customers on your checkout page', 'infinitepay-woocommerce' ),
+			// 	'default'     => __( 'Credit Card', 'infinitepay-woocommerce' ),
+			// 	'desc_tip'    => true,
+			// ),
 			'instructions'          => array(
 				'title'       => __( 'Instructions', 'infinitepay-woocommerce' ),
 				'type'        => 'textarea',
@@ -42,7 +42,7 @@ class CreditCardFields
 				'title'       => __( 'Maximum number of installments without interest', 'infinitepay-woocommerce' ),
 				'type'        => 'select',
 				'description' => __( 'Maximum number of installments that a customer can split the final amount without interest', 'infinitepay-woocommerce' ),
-				'default'     => '12',
+				'default'     => 12,
 				'desc_tip'    => true,
 				'options'	  => [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ] 
 			)

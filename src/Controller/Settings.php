@@ -29,6 +29,7 @@ class Settings
 
     public $enabled_pix;
     public $title_pix;
+    public $instructions_pix;
     public $discount_pix;
     public $min_value_pix;
 
@@ -39,9 +40,9 @@ class Settings
         $wc_payments->init_settings();
 
         $this->title        = sanitize_text_field($wc_payments->get_option('title'));
-        $this->enabled_logo = sanitize_text_field($wc_payments->get_option('enabled_logo'));
+        $this->enabled_logo = sanitize_text_field($wc_payments->get_option('enabled_logo', 'yes'));
 
-        $this->title_credit_card     = sanitize_text_field($wc_payments->get_option('title_credit_card'));
+        // $this->title_credit_card     = sanitize_text_field($wc_payments->get_option('title_credit_card'));
         $this->instructions          = sanitize_textarea_field($wc_payments->get_option('instructions'));
         $this->max_installments      = sanitize_key($wc_payments->get_option('max_installments', 12));
         $this->max_installments_free = sanitize_key($wc_payments->get_option('max_installments_free', 12));
@@ -52,13 +53,10 @@ class Settings
         $this->client_secret = $wc_payments->get_option('client_secret');
 
         $this->enabled_pix   = sanitize_key($wc_payments->get_option('enabled_pix'));
-        $this->title_pix     = sanitize_text_field($wc_payments->get_option('title_pix'));
-        $this->instructions  = sanitize_text_field($wc_payments->get_option('instructions'));
+        // $this->title_pix     = sanitize_text_field($wc_payments->get_option('title_pix'));
+        $this->instructions_pix  = sanitize_text_field($wc_payments->get_option('instructions_pix'));
         $this->discount_pix  = sanitize_key($wc_payments->get_option('discount_pix', 0.5));
         $this->min_value_pix = sanitize_key($wc_payments->get_option('min_value_pix', 20.00));
-
-        add_option( Constants::CLIENT_ID, $this->client_id);
-        add_option( Constants::CLIENT_SECRET, $this->client_secret);
     }
 
 	public static function form_fields($current_section)

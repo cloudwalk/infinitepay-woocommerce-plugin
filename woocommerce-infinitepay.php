@@ -26,7 +26,6 @@ add_filter('woocommerce_payment_gateways', 'wc_infinitepay_add_to_gateway');
 add_filter('plugin_action_links_' . plugin_basename( __FILE__ ), 'wc_infinitepay_plugin_links');
 add_filter('woocommerce_rest_api_get_rest_namespaces', 'woo_custom_api');
 
-
 function woo_custom_api($controllers) {
 	require_once dirname(__FILE__) . '/includes/class-wc-rest-custom-controller.php';
 	$controllers['wc/v3']['custom'] = 'WC_REST_Custom_Controller';
@@ -36,12 +35,6 @@ function woo_custom_api($controllers) {
 
 function wc_infintepay_init() {
 	if (class_exists( 'WC_Payment_Gateway' )) {
-
-		// require_once dirname( __FILE__ ) . '/includes/class-wc-wooinfinitepay-log.php';
-		// require_once dirname( __FILE__ ) . '/includes/class-wc-wooinfinitepay-init.php';
-		// require_once dirname( __FILE__ ) . '/includes/class-wc-wooinfinitepay-constants.php';
-		//WC_InfinitePay_Module::update_plugin_version();
-
 		require_once __DIR__ . '/vendor/autoload.php';
 		new Woocommerce\InfinitePay\InfinitePayCore;
 	}
@@ -55,8 +48,8 @@ function wc_infinitepay_add_to_gateway( $gateways ) {
 
 function wc_infinitepay_plugin_links( $links ) {
 	$plugins_links = array(
-		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=infinitepay' ) . '">' . __( 'Configure', 'infinitepay-woocommerce' ) . '</a>'
+		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=infinitepay' ) . '">' . __( 'Configure', 'infinitepay-woocommerce' ) . '</a>',
+		'<a href="https://ajuda.infinitepay.io/pt-BR/" target="_blank">Ajuda</a>'
 	);
-	//TODO: Adicionar link de Support
 	return array_merge( $plugins_links, $links );
 }

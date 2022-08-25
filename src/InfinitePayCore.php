@@ -29,12 +29,11 @@ class InfinitePayCore extends \WC_Payment_Gateway
         $this->icon			 = $this->get_ip_icon();
 		$this->log			 = new Log($this);
 
-
 		$this->api = new ApiInfinitePay();
 
-		add_action('woocommerce_update_options_payment_gateways_infinitepay', array($this, 'process_admin_options'));
+		add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
         add_action('wp_enqueue_scripts', array($this, 'payment_scripts'));
-        add_action('woocommerce_thankyou_infinitepay', array($this, 'thank_you_page'));
+        add_action('woocommerce_thankyou_' . $this->id, array($this, 'thank_you_page'));
         add_filter('woocommerce_payment_complete_order_status', array($this, 'change_payment_complete_order_status'), 10, 3);
         add_action('woocommerce_email_before_order_table', array($this, 'email_instructions'), 10, 3);
     }
@@ -111,7 +110,6 @@ class InfinitePayCore extends \WC_Payment_Gateway
         $this->supports           = [ 'products' ];
     }
 
-    //TODO: validar o sandbox para environment
     public function payment_scripts()
     {
         if (
@@ -145,7 +143,6 @@ class InfinitePayCore extends \WC_Payment_Gateway
             true
         );
 
-        //TODO: validar o sandbox para environment
         wp_enqueue_script('woocommerce_infinitepay');
         wp_localize_script(
             'woocommerce_infinitepay',
@@ -160,9 +157,6 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
     public function payment_fields()
     {
-		//add_option('infinitepay_accesstoken', 'malkafly');
-
-		//echo get_option('infinitepay_accesstoken');
         $parameters = array(
             'max_installments'   => $this->core_settings->max_installments,
             'amount'             => $this->get_order_total(),
@@ -170,8 +164,8 @@ class InfinitePayCore extends \WC_Payment_Gateway
             'installments_value' => Utils::calculate_installments($this->get_order_total()),
             'enabled_creditcard' => $this->core_settings->enabled_creditcard,
             'enabled_pix'        => $this->core_settings->enabled_pix,
-            'title_credit_card'  => $this->core_settings->title_credit_card,
-            'title_pix'          => $this->core_settings->title_pix,
+            'instructions'       => $this->core_settings->instructions,
+            'instructions_pix'   => $this->core_settings->instructions_pix,
             'enabled_logo'       => $this->core_settings->enabled_logo,
             'sandbox_warning'    => (isset($this->core_settings->environment) && $this->core_settings->environment === 'sandbox') ? __('TEST MODE ENABLED. In test mode, you can use any card numbers.', 'infinitepay-woocommerce') : '',
         );
@@ -234,7 +228,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
                 }
             } else {
                 $this->log->write_log(__FUNCTION__, $log_header . 'Misconfiguration error on plugin ');
-                wc_add_notice(__($is_pix . 'Please review your payment information and try again', 'infinitepay-woocommerce'), 'error');
+                wc_add_notice(__( 'Please review your payment information and try again', 'infinitepay-woocommerce'), 'error');
             }
         } catch (Exception $ex) {
             $this->log->write_log(__FUNCTION__, 'Caught exception: ' . $ex->getMessage());
@@ -256,7 +250,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
     public function get_ip_icon()
     {
         if ($this->core_settings->enabled_logo == 'yes') {
-            return apply_filters('woocommerce_infinitepay_icon', plugins_url('./assets/images/logo.png', plugin_dir_path(__FILE__)));
+            return apply_filters('woocommerce_infinitepay_icon', plugins_url('/assets/images/logo.png', plugin_dir_path(__FILE__)));
         }
     }
 
@@ -275,14 +269,14 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
     public function pix_checkout_html( $order ) {
 
-		if ( $order->get_payment_method() != 'infinitepix' ) {
+		if ( $order->get_payment_method() != 'infinitepay' ) {
 			return '';
 		}
 
 		// Retrieve order comments
 		remove_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
 		$orderComments = get_comments( array(
-			'post_id' => $order->id,
+			'post_id' => $order->get_id(),
 			'orderby' => 'comment_ID',
 			'order'   => 'DESC',
 			'approve' => 'approve',
@@ -292,7 +286,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
 		add_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
 
 		$code = ltrim( rtrim( str_replace( "br_code: ", "", $orderComments[0]->comment_content ) ) );
-		$storeUrl = $this->storeUrl;
+		$storeUrl = Utils::getStoreUrl();
 
 		// Create html structure
 		$html = '<div id="qrcodepixcontent" style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
@@ -326,7 +320,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
 		$html .= 'setTimeout(() => {';
 		$html .= '  let pixInterval = setInterval(() => {';
 		$html .= '    if (lastStatus == "processing") clearInterval(pixInterval);'; 
-		$html .= '    req.open("GET", "'.$storeUrl.'/wp-json/wc/v3/infinitepay_order_status?order_id='.$order->id.'", true);';
+		$html .= '    req.open("GET", "' . $storeUrl.'/wp-json/wc/v3/infinitepay_order_status?order_id='.$order->get_id() . '", true);';
 		$html .= '    req.setRequestHeader("X-Requested-With", "XMLHttpRequest");';
 		$html .= '    req.setRequestHeader("Access-Control-Allow-Origin", "*");';
 		$html .= '    req.send(null); }, 10000);';
@@ -354,14 +348,14 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
     public function pix_email_html( $order ) {
 		
-		if ( $order->get_payment_method() != 'infinitepix' ) {
+		if ( $order->get_payment_method() != 'infinitepay' ) {
 			return '';
 		}
 
 		// Retrieve order comments
 		remove_filter( 'comments_clauses', array( 'WC_Comments', 'exclude_order_comments' ), 10, 1 );
 		$orderComments = get_comments( array(
-			'post_id' => $order->id,
+			'post_id' => $order->get_id(),
 			'orderby' => 'comment_ID',
 			'order'   => 'DESC',
 			'approve' => 'approve',
