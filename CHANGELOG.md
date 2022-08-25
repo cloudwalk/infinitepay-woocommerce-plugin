@@ -2,8 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [2.0.0](https://github.com/cloudwalk/infinitepay-woocommerce-plugin/compare/v1.0.10...v2.0.0) (2022-XX-XX)
-
 ## [1.1.9](https://github.com/cloudwalk/infinitepay-woocommerce-plugin/compare/v1.0.8...v1.1.9) (2022-08-08)
 
 ## [1.1.8](https://github.com/cloudwalk/infinitepay-woocommerce-plugin/compare/v1.0.0...v1.1.8) (2022-06-29)
