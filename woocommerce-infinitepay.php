@@ -36,7 +36,7 @@ function woo_custom_api($controllers) {
 function wc_infintepay_init() {
 	if (class_exists( 'WC_Payment_Gateway' )) {
 		require_once __DIR__ . '/vendor/autoload.php';
-		new Woocommerce\InfinitePay\InfinitePayCore;
+		//new Woocommerce\InfinitePay\InfinitePayCore;
 	}
 }
 

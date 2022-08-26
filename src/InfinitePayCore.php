@@ -288,46 +288,20 @@ class InfinitePayCore extends \WC_Payment_Gateway
         $code = ltrim( rtrim( str_replace( "br_code: ", "", $orderComments[0]->comment_content ) ) );
         $storeUrl = Utils::getStoreUrl();
 
-        // Create html structure
-        $html = '<div id="qrcodepixcontent" style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
-        $html .= '  <img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode=' . urlencode( $code ) . '"	alt="QR Code"/>';
-        $html .= '  <div>';
-        $html .= '    <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ ' . $order->get_total() . '</strong></p>';
-        $html .= '    <div style="word-wrap: break-word; max-width: 450px;">';
-        $html .= '      <small>Código de transação</small><br>';
-        $html .= '      <code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">' . $code . '</code>';
-        $html .= '    </div>';
-        $html .= '  </div>';
-        $html .= '</div>';
-        $html .= '<p style="margin-top: 1rem;">Caso já tenha feito o pagamento, verifique se foi confirmado na página de <a href="'.$order->get_view_order_url().'">detalhes do pedido</a></p>';
 
-        // Javascript structure to update qrcode once payment is done
-        $html .= '<script type="text/javascript">';
-        $html .= 'const req = new XMLHttpRequest();';
-        $html .= 'var lastStatus = "";';
-        $html .= 'req.onreadystatechange = function() {';
-        $html .= '  if (this.readyState == 4 && this.status == 200) {';
-        $html .= '    const data = JSON.parse(req.responseText);';
-        $html .= '    console.log("status update", data.order_status);';
-        $html .= '    lastStatus = data.order_status;'; 							
-        $html .= '    if (data.order_status == "processing") {';
-        $html .= '      const pixQrElement = document.getElementById("qrcodepixcontent");';
-        $html .= '      pixQrElement.innerHTML = "";';
-        $html .= '      pixQrElement.innerHTML = "<div><h2>Pagamento recebido</h2><p>Obrigado por comprar em nossa loja. Você pode consultar o andamento de seu pedido pela página do mesmo.</p><a href=\"'.$order->get_view_order_url().'\">Acessar pedido</a></div>";';
-        $html .= '    }';
-        $html .= '  }';
-        $html .= '};';
-        $html .= 'setTimeout(() => {';
-        $html .= '  let pixInterval = setInterval(() => {';
-        $html .= '    if (lastStatus == "processing") clearInterval(pixInterval);'; 
-        $html .= '    req.open("GET", "' . $storeUrl.'/wp-json/wc/v3/infinitepay_order_status?order_id='.$order->get_id() . '", true);';
-        $html .= '    req.setRequestHeader("X-Requested-With", "XMLHttpRequest");';
-        $html .= '    req.setRequestHeader("Access-Control-Allow-Origin", "*");';
-        $html .= '    req.send(null); }, 10000);';
-        $html .= '}, 1000);';
-        $html .= '</script>';
 
-        echo $html;
+        $parameters = array(
+            'order' => $order,
+            'storeUrl' => $storeUrl,
+            'code' => $code
+        );
+
+        wc_get_template(
+            'order-received/order-received.php',
+            $parameters,
+            'woo/infinite/pay/module/',
+            plugin_dir_path(__FILE__) . '../templates/'
+        );
 	}
 
     public function email_instructions($order, $sent_to_admin, $plain_text = false)
