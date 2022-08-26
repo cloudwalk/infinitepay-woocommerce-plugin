@@ -10,13 +10,6 @@ class ConfigurationsFields
 	public static function fields() {
 	
         $fields = apply_filters( 'wc_infinitepay_form_fields', array(
-			'title'                 => array(
-				'title'		  => __( 'Payment Title', 'infinitepay-woocommerce' ),
-				'type'		  => 'text',
-				'description' => __( 'Title that will be shown for the customers on your checkout page', 'infinitepay-woocommerce' ),
-				'default'     => __( 'Payment Method', 'infinitepay-woocommerce' ),
-				'desc_tip'    => true,
-			),
 			'enabled_logo'	  => array(
 				'title'   => __( 'Enable InfinitePay Logo?', 'infinitepay-woocommerce' ),
 				'type'    => 'checkbox',
@@ -37,7 +30,7 @@ class ConfigurationsFields
 				'default' => 'yes',
 				'options' =>  wc_get_order_statuses()
 			),
-			'enabled'	  => array(
+			'enabled_log'	  => array(
 				'title'   => __( 'Enable logs?', 'infinitepay-woocommerce' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable logs', 'infinitepay-woocommerce' ),

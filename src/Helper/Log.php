@@ -27,12 +27,15 @@ class Log
 		} else {
 			$this->log = InfinitePayCore::woocommerce_instance()->logger();
 		}
-
 		return $this->log;
 	}
 
 	public function write_log( $function, $message ) {
-		$this->log->add( $this->id, '[' . $function . ']: ' . $message );
+		$options = get_option('woocommerce_infinitepay_settings');
+
+		if ($options['enabled_log'] == 'yes') {
+			$this->log->add( $this->id, '[' . $function . ']: ' . $message );
+		}
 	}
 
 	public function set_id( $id ) {

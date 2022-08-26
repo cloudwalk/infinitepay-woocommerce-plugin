@@ -18,13 +18,11 @@ class Checkout extends \WC_Payment_Gateway
 	public $storeUrl;
 	public $order;
 	public $api;
-	
 
 	public function __construct($_order) {
 		$this->order	= $_order;
 		$this->log 		= new Log($this);
 		$this->api 		= new ApiInfinitePay();
-		$this->storeUrl = stripos($_SERVER['SERVER_PROTOCOL'],'https') === 0 ? 'https://' : 'http://' . $_SERVER['HTTP_HOST'];
 	}
 
 	public function process_credit_card() {
@@ -224,7 +222,7 @@ class Checkout extends \WC_Payment_Gateway
 					'payment_method' => 'pix',
 					'callback' => array(
 						'validate' => '',
-						'confirm'  => $this->storeUrl . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $this->order->get_id(),
+						'confirm'  => Utils::getStoreUrl() . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $this->order->get_id(),
 						'secret'   => $transactionSecret
 					)
 				)
@@ -254,7 +252,7 @@ class Checkout extends \WC_Payment_Gateway
 
 					// Add br code to order object
 					$this->order->add_order_note( '
-						' . __( 'br_code', 'infinitepix-woocommerce' ) . ': ' . $pixBrCode . '
+						' . __( 'br_code', 'infinitepay-woocommerce' ) . ': ' . $pixBrCode . '
 					' );
 
 					// Clear user cart
@@ -274,14 +272,14 @@ class Checkout extends \WC_Payment_Gateway
 						$code = $response['response']['code'];
 					}
 					$this->log->write_log( __FUNCTION__, $log_header . 'Error ' . $code . ' on IP PIX payment, error log: ' . json_encode( $body ) );
-					wc_add_notice( __( 'Ooops, an internal error has occurred, wait bit and try again!', 'infinitepix-woocommerce' ) . ' - ' . $code, 'error' );
+					wc_add_notice( __( 'Ooops, an internal error has occurred, wait bit and try again!', 'infinitepay-woocommerce' ) . ' - ' . $code, 'error' );
 					if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
 						wc_add_notice( json_encode( $body ), 'error' );
 					}
 				}
 			} else {
 				$this->log->write_log( __FUNCTION__, $log_header . 'Error 500 on IP payment, error log: ' . json_encode( $body ) );
-				wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepix-woocommerce' ), 'error' );
+				wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
 			}
 		} catch ( Exception $ex ) {
 			$this->log->write_log( __FUNCTION__, 'Caught exception: ' . $ex->getMessage() );

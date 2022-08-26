@@ -90,15 +90,4 @@ class Utils
 		$port = $_SERVER['SERVER_PORT'] ? ':'.$_SERVER['SERVER_PORT'] : '';
 		return $protocol.$server.$port;
 	}
-
-
-    // public static function log( $data, $log_name = 'debug' )
-	// {
-	// 	$name = sprintf( '%s-%s.log', $log_name, date( 'd-m-Y' ) );
-	// 	$log  = print_r( $data, true ) . PHP_EOL;
-	// 	$log .= "\n=============================\n";
-
-	// 	file_put_contents( Core::get_file_path( $name, 'logs/' ), $log, FILE_APPEND );
-	// }
-
 }

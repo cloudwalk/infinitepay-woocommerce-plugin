@@ -16,13 +16,6 @@ class CreditCardFields
 				'label'   => __( 'Enable Credit Card with InfinitePay', 'infinitepay-woocommerce' ),
 				'default' => 'yes',
 			),
-			// 'title_credit_card'                 => array(
-			// 	'title'	  	 => __( 'Credit Card Payment Title', 'infinitepay-woocommerce' ),
-			// 	'type'		  => 'text',
-			// 	'description' => __( 'Title that will be shown for the customers on your checkout page', 'infinitepay-woocommerce' ),
-			// 	'default'     => __( 'Credit Card', 'infinitepay-woocommerce' ),
-			// 	'desc_tip'    => true,
-			// ),
 			'instructions'          => array(
 				'title'       => __( 'Instructions', 'infinitepay-woocommerce' ),
 				'type'        => 'textarea',

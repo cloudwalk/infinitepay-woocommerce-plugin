@@ -14,18 +14,4 @@ class Credentials
 	public function __construct()
 	{
     }
-
-
-
-// 	curl --request POST \
-//   --url https://api.infinitepay.io/v2/oauth/token \
-//   --header 'Content-Type: application/json' \
-//   --data '{
-//         "grant_type": "client_credentials",
-//         "client_id": "[client_id]",
-//         "client_secret": "[client_secret]",
-//         "scope": "[access_token_scope]"
-//     }'
-
-	
 }

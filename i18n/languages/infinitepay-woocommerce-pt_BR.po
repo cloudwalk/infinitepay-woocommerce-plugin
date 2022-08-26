@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the InfinitePay payments for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: InfinitePay payments for WooCommerce 1.0.0\n"
+"Project-Id-Version: InfinitePay for WooCommerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-"
 "infinitepay\n"
 "POT-Creation-Date: 2022-04-06T14:14:44+00:00\n"

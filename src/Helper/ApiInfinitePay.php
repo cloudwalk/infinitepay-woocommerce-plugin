@@ -104,19 +104,7 @@ class ApiInfinitePay
                 $this->args['headers']['Authorization'] = 'Bearer ' . $bodyAuth['access_token'];
                 $this->args['body'] = json_encode($body, JSON_UNESCAPED_UNICODE);
 
-                //TODO: Remover estas linhas de log do PR
-                //TODO: Remover estas linhas de log do PR
-                //TODO: Remover estas linhas de log do PR
-                //TODO: Remover estas linhas de log do PR
-                //TODO: Remover estas linhas de log do PR
-                //TODO: Remover estas linhas de log do PR
-                $this->log->write_log( '', '\n ============================================================================================= \n');
-                $this->log->write_log(__FUNCTION__ . '-request', 'endpoint:' . $endpoint);
-                $this->log->write_log('', json_encode($this->args, JSON_PRETTY_PRINT));
-            
                 $response = wp_remote_post( $endpoint, $this->args );
-                $this->log->write_log(__FUNCTION__ . '-response', json_encode($response, JSON_PRETTY_PRINT));
-                $this->log->write_log( '', '\n ============================================================================================= \n');
                 return $response;
             }
         }
