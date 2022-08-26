@@ -54,8 +54,8 @@ class Settings
 
         $this->enabled_pix   = sanitize_key($wc_payments->get_option('enabled_pix'));
         $this->instructions_pix  = sanitize_text_field($wc_payments->get_option('instructions_pix'));
-        $this->discount_pix  = sanitize_key($wc_payments->get_option('discount_pix', 0.5));
-        $this->min_value_pix = sanitize_key($wc_payments->get_option('min_value_pix', 20.00));
+        $this->discount_pix  = sanitize_key($wc_payments->get_option('discount_pix', 0));
+        $this->min_value_pix = sanitize_key($wc_payments->get_option('min_value_pix', 0));
     }
 
 	public static function form_fields($current_section)
