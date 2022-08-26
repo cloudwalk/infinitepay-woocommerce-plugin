@@ -32,7 +32,7 @@ class CredentialsFields
 			),
 			'client_secret'	  => array(
 				'title'       => __( 'Client Secret', 'infinitepay-woocommerce' ),
-				'type'        => 'text',
+				'type'        => 'password',
 				'desc_tip'    => true,
 			)
 		) );
@@ -40,32 +40,6 @@ class CredentialsFields
 		return $fields;
 	}
 	
-	public static function fields_legacy() {
-	
-		$fields = apply_filters( 'wc_infinitepay_form_fields', array(
-			'api_key'			=> array(
-				'title'			=> __( 'API Key', 'infinitepay-woocommerce' ),
-				'type'        	=> 'password',
-				'description'	=> __( 'Key to connect with InfinitePay', 'infinitepay-woocommerce' ),
-				'default'     	=> '',
-			),
-			'sandbox'		  => array(
-				'title'   => 'Ativo/Inativo',
-				'type'    => 'checkbox',
-				'label'   => 'Habilitar ambiente de sandbox',
-				'default' => 'no',
-			),
-			'sandbox_api_key' => array(
-				'title'       => 'Chave de API do ambiente de Sandbox',
-				'type'        => 'password',
-				'description' => 'Chave para conexão com o ambiente de sandbox da InfinitePay',
-				'default'     => '',
-			),
-		) );
-
-		return $fields;
-	}
-
 	public static function get_desc_auth() {
 		
 		$message = sprintf(
