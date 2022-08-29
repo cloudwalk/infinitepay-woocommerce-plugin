@@ -33,9 +33,9 @@ class Log
 	public function write_log( $function, $message ) {
 		$options = get_option('woocommerce_infinitepay_settings');
 
-		//if (issrt($options['enabled_log']) && $options['enabled_log'] == 'yes') {
+		if (isset($options['enabled_log']) && $options['enabled_log'] == 'yes') {
 			$this->log->add( $this->id, '[' . $function . ']: ' . $message );
-		//}
+		}
 	}
 
 	public function set_id( $id ) {
