@@ -57,8 +57,11 @@
         }
 
         function responseHandler() {
-            infinite_pay_submit = false
-            const wooCheckoutForm = $('form.woocommerce-checkout')
+            infinite_pay_submit = false;
+            const wooCheckoutForm = $('form.woocommerce-checkout');
+            if(!wooCheckoutForm) {
+                wooCheckoutForm = document.querySelector('#order_review');
+            }
             wooCheckoutForm.off('checkout_place_order', infinitePayFormHandler)
             setTimeout(function() {
                 wooCheckoutForm.submit()
@@ -70,6 +73,9 @@
             if(document.getElementById('ip_method').value == 'cc-form') {
                 
                 var form = document.querySelector('form.woocommerce-checkout');
+                if(!form) {
+                    form = document.querySelector('#order_review');
+                }
                 var ipay = new IPay({ access_token: wc_infinitepay_params.access_token });
 
                 ipay.listeners = {
@@ -78,7 +84,6 @@
                         let session = document.querySelector("input[name='ip[session_id]']").value;
                         document.querySelector("#ip-token").value = token;
                         document.querySelector("#ip-uuid").value = session;
-
                         if(token != '') {
                             responseHandler();
                         }
@@ -111,6 +116,7 @@
         }
 
         $("form.woocommerce-checkout").on( "checkout_place_order", infinitePayFormHandler );
+        $("#order_review").on( "submit", infinitePayFormHandler );
 
         function init() {
             if(!!window["IPay"]) return;
