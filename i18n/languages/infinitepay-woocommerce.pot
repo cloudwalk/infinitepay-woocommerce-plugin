@@ -110,3 +110,68 @@ msgstr ""
 #: includes/class-wc-wooinfinitepay-init.php:363
 msgid "Ooops, an internal error has occurred, contact an administrator!"
 msgstr ""
+
+#: src/Fields/CredentialsFields.php:19
+msgid "Store environment"
+msgstr ""
+
+#: src/Fields/CredentialsFields.php:47
+msgid "Click here"
+msgstr ""
+
+#: src/Fields/CredentialsFields.php:48
+msgid "to create an account or request plugin credentials"
+msgstr ""
+
+#: src/Fields/ConfigurationsFields.php:14
+msgid "Enable InfinitePay Logo?"
+msgstr ""
+
+#: src/Fields/ConfigurationsFields.php:16
+msgid "Enable Logo"
+msgstr ""
+
+#: src/Fields/ConfigurationsFields.php:20
+msgid "Payment aproved"
+msgstr ""
+
+#: src/Fields/ConfigurationsFields.php:27
+msgid "Payment canceled"
+msgstr ""
+
+#: src/Fields/ConfigurationsFields.php:34
+msgid "Enable logs"
+msgstr ""
+
+#: src/Fields/ConfigurationsFields.php:38
+msgid "Avaliable on"
+msgstr ""
+
+#: src/Fields/PIXFields.php:14
+msgid "Enable PIX with InfinitePay"
+msgstr ""
+
+#: src/Fields/PIXFields.php:19
+msgid "Discount (%)"
+msgstr ""
+
+#: src/Fields/PIXFields.php:33
+msgid "Minimum value (R$)"
+msgstr ""
+
+#: src/InfinitePayCore.php:80
+msgid "Access the"
+msgstr ""
+
+#: src/InfinitePayCore.php:81
+msgid "to obtain your credentials"
+msgstr ""
+
+#: src/Controller/Settings.php:91
+msgid "Credentials"
+msgstr ""
+
+#: src/Controller/Settings.php:91
+msgid "Settings"
+msgstr ""
+

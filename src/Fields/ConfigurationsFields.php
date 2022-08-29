@@ -31,11 +31,11 @@ class ConfigurationsFields
 				'options' =>  wc_get_order_statuses()
 			),
 			'enabled_log'	  => array(
-				'title'   => __( 'Enable logs?', 'infinitepay-woocommerce' ),
+				'title'   => __( 'Enable logs', 'infinitepay-woocommerce' ) . '?',
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable logs', 'infinitepay-woocommerce' ),
 				'default' => 'yes',
-				'description' => __( 'Avaliable on <a href="admin.php?page=wc-status&tab=logs">"WooCommerce > Status > Logs"</a>', 'infinitepay-woocommerce' ),
+				'description' => __( 'Avaliable on', 'infinitepay-woocommerce' ) . ' <a href="admin.php?page=wc-status&tab=logs">"WooCommerce > Status > Logs"</a>',
 			),
 		) );
 

@@ -6,7 +6,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-"
 "infinitepay\n"
 "POT-Creation-Date: 2022-04-06T14:14:44+00:00\n"
-"PO-Revision-Date: 2022-06-07 13:01-0300\n"
+"PO-Revision-Date: 2022-08-29 17:07-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.1.1\n"
 "X-Domain: infinitepay-woocommerce\n"
 
 #. Plugin Name of the plugin
@@ -23,11 +23,11 @@ msgstr "Pagamentos com InfinitePay para WooCommerce"
 
 #. Author of the plugin
 msgid "Infinite Pay"
-msgstr ""
+msgstr "Infinite Pau"
 
 #. Author URI of the plugin
 msgid "https://infinitepay.io/"
-msgstr ""
+msgstr "https://infinitepay.io/"
 
 #: woocommerce-infinitepay.php:43
 msgid "Configure"
@@ -127,3 +127,67 @@ msgid "Ooops, an internal error has occurred, contact an administrator!"
 msgstr ""
 "Erro de configuração no meio de pagamento. Entre em contato com o "
 "administrador!"
+
+#: src/Fields/CredentialsFields.php:19
+msgid "Store environment"
+msgstr "Ambiente da Loja"
+
+#: src/Fields/CredentialsFields.php:47
+msgid "Click here"
+msgstr "Clique aqui"
+
+#: src/Fields/CredentialsFields.php:48
+msgid "to create an account or request plugin credentials"
+msgstr "para realizar seu cadastro ou obter as credenciais do plugin"
+
+#: src/Fields/ConfigurationsFields.php:14
+msgid "Enable InfinitePay Logo?"
+msgstr "Habilitar logo da InfinitePay?"
+
+#: src/Fields/ConfigurationsFields.php:16
+msgid "Enable Logo"
+msgstr "Habilitar logo"
+
+#: src/Fields/ConfigurationsFields.php:20
+msgid "Payment aproved"
+msgstr "Pagamento Aprovado"
+
+#: src/Fields/ConfigurationsFields.php:27
+msgid "Payment canceled"
+msgstr "Pagamento Cancelado"
+
+#: src/Fields/ConfigurationsFields.php:34
+msgid "Enable logs"
+msgstr "Habilitar logs"
+
+#: src/Fields/ConfigurationsFields.php:38
+msgid "Avaliable on"
+msgstr "Disponível em"
+
+#: src/Fields/PIXFields.php:14
+msgid "Enable PIX with InfinitePay"
+msgstr "Habilitar PIX com InfinitePay"
+
+#: src/Fields/PIXFields.php:19
+msgid "Discount (%)"
+msgstr "Desconto (%)"
+
+#: src/Fields/PIXFields.php:33
+msgid "Minimum value (R$)"
+msgstr "Valor mínimo (R$)"
+
+#: src/InfinitePayCore.php:80
+msgid "Access the"
+msgstr "Acesse"
+
+#: src/InfinitePayCore.php:81
+msgid "to obtain your credentials"
+msgstr "para obter suas credenciais do plugin"
+
+#: src/Controller/Settings.php:91
+msgid "Credentials"
+msgstr "Credenciais"
+
+#: src/Controller/Settings.php:91
+msgid "Settings"
+msgstr "Configurações"
