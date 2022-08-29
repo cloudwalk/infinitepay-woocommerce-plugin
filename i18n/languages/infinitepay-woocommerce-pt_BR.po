@@ -6,7 +6,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-"
 "infinitepay\n"
 "POT-Creation-Date: 2022-04-06T14:14:44+00:00\n"
-"PO-Revision-Date: 2022-08-29 17:07-0300\n"
+"PO-Revision-Date: 2022-08-29 17:13-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -191,3 +191,15 @@ msgstr "Credenciais"
 #: src/Controller/Settings.php:91
 msgid "Settings"
 msgstr "Configurações"
+
+#: src/Fields/CreditCardFields.php:91
+msgid "Enable Credit Card with InfinitePay"
+msgstr "Habilitar cartão de crédito com InfinitePay"
+
+#: src/InfinitePayCore.php:91
+msgid "Accept payments with InfinitePay"
+msgstr "Aceitar pagamentos com InfinitePay"
+
+#: src/Fields/CredentialsFields.php:19
+msgid "Production"
+msgstr "Produção"

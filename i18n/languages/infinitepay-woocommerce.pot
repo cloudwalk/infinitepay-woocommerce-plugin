@@ -175,3 +175,15 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
+#: src/Fields/CreditCardFields.php:91
+msgid "Enable Credit Card with InfinitePay"
+msgstr ""
+
+#: src/InfinitePayCore.php:91
+msgid "Accept payments with InfinitePay"
+msgstr ""
+
+#: src/Fields/CredentialsFields.php:19
+msgid "Production"
+msgstr ""
+
