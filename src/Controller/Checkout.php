@@ -117,6 +117,8 @@ class Checkout extends \WC_Payment_Gateway
 				'origin'         => 'woocommerce',
 				'plugin_version' => Constants::VERSION,
 				'store_url'      => $_SERVER['SERVER_NAME'],
+				'wordpress_version' => get_bloginfo('version'),
+				'woocommerce_version' => WC_VERSION,
 				'payment_method' => 'credit',
 				'risk'           => array(
 					'session_id' => $uuid,
@@ -223,6 +225,8 @@ class Checkout extends \WC_Payment_Gateway
 				'metadata'       => array(
 					'origin'         => 'woocommerce',
 					'plugin_version' => Constants::VERSION,
+					'wordpress_version' => get_bloginfo('version'),
+					'woocommerce_version' => WC_VERSION,
 					'store_url'      => $_SERVER['SERVER_NAME'],
 					'payment_method' => 'pix',
 					'callback' => array(
