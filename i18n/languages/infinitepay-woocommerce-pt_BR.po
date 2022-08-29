@@ -6,7 +6,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-"
 "infinitepay\n"
 "POT-Creation-Date: 2022-04-06T14:14:44+00:00\n"
-"PO-Revision-Date: 2022-08-29 17:38-0300\n"
+"PO-Revision-Date: 2022-08-29 18:33-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -203,3 +203,8 @@ msgstr "Aceitar pagamentos com InfinitePay"
 #: src/Fields/CredentialsFields.php:19
 msgid "Production"
 msgstr "Produção"
+
+#: templates/checkout/checkout.php:155
+msgid "The PIX QRCode for payment will be displayed after place order"
+msgstr ""
+"O QRCode para pagamento com PIX será exibido após a finalização do pedido"

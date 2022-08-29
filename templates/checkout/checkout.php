@@ -152,6 +152,7 @@ for (
                 <div class="pix-label">
                     <img src="https://confere-pix.web.app/pix.png" alt="InfinitePay Label" />
                 </div>
+                <p><?php echo __('The PIX QRCode for payment will be displayed after place order', 'infinitepay-woocommerce'); ?>
             </fieldset>
         <?php endif; ?>
     </div>
