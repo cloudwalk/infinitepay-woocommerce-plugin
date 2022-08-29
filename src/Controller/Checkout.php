@@ -205,7 +205,7 @@ class Checkout extends \WC_Payment_Gateway
 			$discount_pix = isset($options['discount_pix']) ? (float) $options['discount_pix'] : 0;
 			$min_value_pix = isset($options['min_value_pix']) ? (float) $options['min_value_pix'] : 0;
 			
-			if ( $discount_pix && $orderTotalWithDiscount > $min_value_pix ) {
+			if ( $discount_pix && $orderTotalWithDiscount >= $min_value_pix ) {
 				$discountValue          = ( $orderTotalWithDiscount * $discount_pix ) / 100;
 				$orderTotalWithDiscount = $orderTotalWithDiscount - $discountValue;
 				$this->order->set_discount_total( $discountValue );
