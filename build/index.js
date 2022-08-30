@@ -10,7 +10,6 @@
             const additionalInputs = validateAdditionalInputs()
 
             if (additionalInputs) {
-                focusInputWithError()
                 return false
             }
             return true
@@ -33,7 +32,6 @@
                     hasEmpty = true
                 }
             }
-
             return hasEmpty
         }
 
@@ -58,13 +56,17 @@
 
         function responseHandler() {
             infinite_pay_submit = false;
-            const wooCheckoutForm = $('form.woocommerce-checkout');
-            if(!wooCheckoutForm) {
-                wooCheckoutForm = document.querySelector('#order_review');
+            let wooCheckoutForm = $('form.woocommerce-checkout');
+
+            
+            if(wooCheckoutForm.length == 0) {
+                wooCheckoutForm = document.querySelector('form#order_review');
+            } else {
+                wooCheckoutForm.off('checkout_place_order', infinitePayFormHandler)
             }
-            wooCheckoutForm.off('checkout_place_order', infinitePayFormHandler)
+
             setTimeout(function() {
-                wooCheckoutForm.submit()
+                wooCheckoutForm.submit();
             }, 600)
         }
 
@@ -74,7 +76,7 @@
                 
                 var form = document.querySelector('form.woocommerce-checkout');
                 if(!form) {
-                    form = document.querySelector('#order_review');
+                    form = document.querySelector('form#order_review');
                 }
                 var ipay = new IPay({ access_token: wc_infinitepay_params.access_token });
 
@@ -89,7 +91,6 @@
                         }
                     },
                     "result:error": function(errors) {
-                        console.log(errors);
                         return false;
                     }
                 };
@@ -110,13 +111,15 @@
             if ( !document.getElementById('payment_method_infinitepay').checked ) {
                 return true;
             }
+            
 
             if (validateInputs()) return createToken()
             return false;
         }
 
         $("form.woocommerce-checkout").on( "checkout_place_order", infinitePayFormHandler );
-        $("#order_review").on( "submit", infinitePayFormHandler );
+        //$("form#order_review").on( "checkout_place_order", infinitePayFormHandler );
+        $("form#order_review").on( "submit", infinitePayFormHandler );
 
         function init() {
             if(!!window["IPay"]) return;

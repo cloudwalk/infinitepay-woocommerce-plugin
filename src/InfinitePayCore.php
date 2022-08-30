@@ -180,7 +180,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
     public function process_payment($order_id)
     {
         $order = wc_get_order($order_id);        
-
+        
         if (!isset($_POST['infinitepay_custom'])) {
             return false;
         }

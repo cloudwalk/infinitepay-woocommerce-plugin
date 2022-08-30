@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             if (data.order_status == "processing") {
             const pixQrElement = document.getElementById("qrcodepixcontent");
             pixQrElement.innerHTML = "";
-            pixQrElement.innerHTML = "<div><h2>Pagamento recebido</h2><p>Obrigado por comprar em nossa loja. Você pode consultar o andamento de seu pedido pela página do mesmo.</p><a href=\"'.$order->get_view_order_url().'\">Acessar pedido</a></div>";
+            pixQrElement.innerHTML = "<div><h2>Pagamento recebido</h2><p>Obrigado por comprar em nossa loja. Você pode consultar o andamento de seu pedido pela página do mesmo.</p><a href="<?php echo $order->get_view_order_url(); ?>">Acessar pedido</a></div>";
             }
         }
     };

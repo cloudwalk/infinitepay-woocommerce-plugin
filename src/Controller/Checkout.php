@@ -152,7 +152,12 @@ class Checkout extends \WC_Payment_Gateway
 					' . __('NSU', 'infinitepay-woocommerce') . ': ' . $body['data']['id']
 				);
 
-				add_post_meta( $this->order->get_id(), 'payment_method', 'credit' );
+				if($this->order->get_meta('payment_method')) {
+					update_post_meta( $this->order->get_id(), 'payment_method', 'credit' );
+					$this->order->update_status( 'processing' );
+				} else {
+					add_post_meta( $this->order->get_id(), 'payment_method', 'credit' );
+				}
 
 				WC()->cart->empty_cart();
 
@@ -257,7 +262,12 @@ class Checkout extends \WC_Payment_Gateway
 					// Add transaction secret to order
 					add_post_meta( $this->order->get_id(), 'transactionSecret', $transactionSecret );
 					add_post_meta( $this->order->get_id(), 'nsuHost', $pixNsuHost );
-					add_post_meta( $this->order->get_id(), 'payment_method', 'pix' );
+
+					if($this->order->get_meta('payment_method')) {
+						update_post_meta( $this->order->get_id(), 'payment_method', 'pix' );
+					} else {
+						add_post_meta( $this->order->get_id(), 'payment_method', 'pix' );
+					}
 
 					// Add br code to order object
 					$this->order->add_order_note( '
