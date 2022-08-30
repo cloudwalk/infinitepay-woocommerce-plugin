@@ -55,10 +55,10 @@ If you installed it correctly, you will see it in your list of "Installed Plugin
 
 - 2.0.0 (2022/08/26) -
 * Accepts PIX payments
-* Using a more secure authentication protocol
-* Added mechanism to configure order status from-to payment status
-* A lot of bug fixes and enhancements
-* Enjoy :)
+    - Using a more secure authentication protocol
+    - Added mechanism to configure order status from-to payment status
+    - A lot of bug fixes and enhancements
+    - Enjoy :)
 
 - 1.1.9 (2022/08/08) -
 * Bug fixes
