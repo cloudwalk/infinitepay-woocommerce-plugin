@@ -128,13 +128,10 @@ class Checkout extends \WC_Payment_Gateway
 		);
 
 		$response = $this->api->transactions( $body, 'credit');
-
-		$this->log->write_log(__FUNCTION__, $log_header . 'API response code: ' . $response['response']['code']);
 		$body = json_decode($response['body'], true);
-
-		
-
+	
 		if (!is_wp_error($response) && $response['response']['code'] < 500) {
+			$this->log->write_log(__FUNCTION__, $log_header . 'API response code: ' . $response['response']['code']);
 			$this->log->write_log(__FUNCTION__, $log_header . 'API response authorization_code: ' . $body['data']['attributes']['authorization_code']);
 			if ($body['data']['attributes']['authorization_code'] === '00') {
 
@@ -240,13 +237,12 @@ class Checkout extends \WC_Payment_Gateway
 					)
 				)
 			);
-			
-			$response = $this->api->transactions( $body,  'pix' );
 
-			$this->log->write_log( __FUNCTION__, $log_header . 'API response code: ' . $response['response']['code'] );
+			$response = $this->api->transactions( $body,  'pix' );
 
 			// Check transaction create response
 			if ( ! is_wp_error( $response ) && $response['response']['code'] < 500 ) {
+				$this->log->write_log( __FUNCTION__, $log_header . 'API response code: ' . $response['response']['code'] );
 				$this->log->write_log( __FUNCTION__, $log_header . 'API response authorization_code: ' . $body['data']['attributes']['authorization_code'] );
 				$body = json_decode( $response['body'], true );
 

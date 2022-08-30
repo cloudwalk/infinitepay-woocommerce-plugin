@@ -226,7 +226,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
 					);
                 }
             } else {
-                $this->log->write_log(__FUNCTION__, $log_header . 'Misconfiguration error on plugin ');
+                $this->log->write_log(__FUNCTION__, $log_header . ' Could not catch all form information (Pix or Credit)');
                 wc_add_notice(__( 'Please review your payment information and try again', 'infinitepay-woocommerce'), 'error');
             }
         } catch (Exception $ex) {
