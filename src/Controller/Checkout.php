@@ -1,0 +1,308 @@
+<?php
+namespace Woocommerce\InfinitePay\Controller;
+
+if ( ! function_exists( 'add_action' ) ) {
+	exit( 0 );
+}
+
+use Woocommerce\InfinitePay\Helper\ApiInfinitePay;
+use Woocommerce\InfinitePay\Helper\Log;
+use Woocommerce\InfinitePay\Helper\Utils;
+use Woocommerce\InfinitePay\Helper\Constants;
+
+use \WC_Order;
+
+class Checkout extends \WC_Payment_Gateway
+{
+
+	public $storeUrl;
+	public $order;
+	public $api;
+
+	public function __construct($_order) {
+		$this->order	= $_order;
+		$this->log 		= new Log($this);
+		$this->api 		= new ApiInfinitePay();
+	}
+
+	public function process_credit_card() {
+
+
+		$log_header = '[' . $this->order->get_id() . '] ';
+
+		$token        = sanitize_text_field($_POST['infinitepay_custom']['token']);
+		$uuid         = sanitize_key($_POST['infinitepay_custom']['uuid']);
+		$installments = sanitize_text_field($_POST['infinitepay_custom']['installments']);
+		$doc_number   = sanitize_text_field($_POST['infinitepay_custom']['doc_number']);
+		$cvv          = sanitize_text_field($_POST['infinitepay_custom']['cvv']);
+		$nsu          = Utils::generate_uuid();
+		$this->log->write_log(__FUNCTION__, $log_header . 'Starting IP payment for nsu ' . $nsu);
+
+		$order_items = [];
+		if (count($this->order->get_items()) > 0) {
+			foreach ($this->order->get_items() as $item) {
+				$order_items[] = array(
+					'id'          => (string) sanitize_key($item->get_id()),
+					'description' => sanitize_text_field($item->get_name()),
+					'amount'      => (int) sanitize_text_field($item->get_data()['total'] * 100),
+					'quantity'    => (int) sanitize_key($item->get_quantity()),
+				);
+			}
+		}
+
+		$installments_val = $this->order->get_total();
+		if (Utils::calculate_installments($this->order->get_total())[$installments - 1]['interest']) {
+			$installments_val = (int) sanitize_text_field($installments) * round(Utils::calculate_installments($this->order->get_total())[$installments - 1]['value'], 2, PHP_ROUND_HALF_UP);
+		}
+
+		$order_value = $installments == 1 ? $this->order->get_total() * 100 : $installments_val * 100;
+		$final_value = (int) explode('.', $order_value)[0];
+
+		$body = array(
+			'payment'         => array(
+				'amount'         => $final_value,
+				'installments'   => (int) sanitize_text_field($installments),
+				'capture_method' => 'ecommerce',
+				'origin'         => 'woocommerce',
+				'payment_method' => 'credit',
+				'nsu'            => $nsu,
+			),
+			'card'            => array(
+				'cvv'              => $cvv,
+				'token'            => $token,
+				'card_holder_name' => sanitize_text_field($this->order->get_billing_first_name()) . ' ' . sanitize_text_field($this->order->get_billing_last_name()),
+			),
+			'order'           => array(
+				'id'               => (string) $this->order->get_id(),
+				'amount'           => $final_value,
+				'items'            => $order_items,
+				'delivery_details' => array(
+					'email'        => sanitize_text_field($this->order->get_billing_email()),
+					'name'         => sanitize_text_field($this->order->get_shipping_first_name() ?: $this->order->get_billing_first_name()) . ' ' . sanitize_text_field($this->order->get_shipping_last_name() ?: $this->order->get_billing_last_name()),
+					'phone_number' => sanitize_text_field($this->order->get_shipping_phone()) ?: sanitize_text_field($this->order->get_billing_phone()),
+					'address'      => array(
+						'line1'   => sanitize_text_field($this->order->get_billing_address_1()),
+						'line2'   => sanitize_text_field($this->order->get_billing_address_2()),
+						'city'    => sanitize_text_field($this->order->get_billing_city()),
+						'state'   => sanitize_text_field($this->order->get_billing_state()),
+						'zip'     => sanitize_text_field($this->order->get_billing_postcode()),
+						'country' => sanitize_text_field($this->order->get_billing_country()),
+					),
+				),
+			),
+			'customer'        => array(
+				'document_number' => $doc_number,
+				'email'           => sanitize_email($this->order->get_billing_email()),
+				'first_name'      => sanitize_text_field($this->order->get_shipping_first_name() ?: $this->order->get_billing_first_name()),
+				'last_name'       => sanitize_text_field($this->order->get_shipping_last_name() ?: $this->order->get_billing_last_name()),
+				'phone_number'    => sanitize_text_field($this->order->get_billing_phone()),
+				'address'         => sanitize_text_field($this->order->get_shipping_address_1() ?: $this->order->get_billing_address_1()),
+				'complement'      => sanitize_text_field($this->order->get_shipping_address_2() ?: $this->order->get_billing_address_2()),
+				'city'            => sanitize_text_field($this->order->get_shipping_city() ?: $this->order->get_billing_city()),
+				'state'           => sanitize_text_field($this->order->get_shipping_state() ?: $this->order->get_billing_state()),
+				'zip'             => sanitize_text_field($this->order->get_shipping_postcode() ?: $this->order->get_billing_postcode()),
+				'country'         => sanitize_text_field($this->order->get_shipping_country() ?: $this->order->get_billing_country()),
+			),
+			'billing_details' => array(
+				'address' => array(
+					'line1'   => sanitize_text_field($this->order->get_billing_address_1()),
+					'line2'   => sanitize_text_field($this->order->get_billing_address_2()),
+					'city'    => sanitize_text_field($this->order->get_billing_city()),
+					'state'   => sanitize_text_field($this->order->get_billing_state()),
+					'zip'     => sanitize_key($this->order->get_billing_postcode()),
+					'country' => sanitize_text_field($this->order->get_billing_country()),
+				),
+			),
+			'metadata'        => array(
+				'origin'         => 'woocommerce',
+				'plugin_version' => Constants::VERSION,
+				'store_url'      => $_SERVER['SERVER_NAME'],
+				'wordpress_version' => get_bloginfo('version'),
+				'woocommerce_version' => WC_VERSION,
+				'payment_method' => 'credit',
+				'risk'           => array(
+					'session_id' => $uuid,
+					'payer_ip'   => isset($_SERVER['HTTP_CLIENT_IP']) ? $_SERVER['HTTP_CLIENT_IP'] : (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']),
+				),
+			),
+		);
+	
+		$this->log->write_log(__FUNCTION__, json_encode($body));
+		$response = $this->api->transactions( $body, 'credit');
+
+		$this->log->write_log(__FUNCTION__, $log_header . 'API response code: ' . $response['response']['code']);
+		$body = json_decode($response['body'], true);
+
+		
+
+		if (!is_wp_error($response) && $response['response']['code'] < 500) {
+			$this->log->write_log(__FUNCTION__, $log_header . 'API response authorization_code: ' . $body['data']['attributes']['authorization_code']);
+			if ($body['data']['attributes']['authorization_code'] === '00') {
+
+				if ($installments != 1) {
+					$this->order->set_total($installments_val);
+					$this->order->save();
+				}
+
+				$this->order->payment_complete();
+
+				$this->order->add_order_note('
+					' . __('Installments', 'infinitepay-woocommerce') . ': ' . $installments . '
+					' . __('Final amount', 'infinitepay-woocommerce') . ': R$ ' . number_format($this->order->get_total(), 2, ",", ".") . '
+					' . __('NSU', 'infinitepay-woocommerce') . ': ' . $body['data']['id']
+				);
+
+				if($this->order->get_meta('payment_method')) {
+					update_post_meta( $this->order->get_id(), 'payment_method', 'credit' );
+					$this->order->update_status( 'processing' );
+				} else {
+					add_post_meta( $this->order->get_id(), 'payment_method', 'credit' );
+				}
+
+				WC()->cart->empty_cart();
+
+				$this->log->write_log(__FUNCTION__, $log_header . 'Finished IP payment for nsu ' . $nsu . ' successfully');
+
+				return true;
+
+			} else {
+				$code = '';
+				if ($body['data'] && $body['data']['attributes'] && $body['data']['attributes']['authorization_code']) {
+					$code = $body['data']['attributes']['authorization_code'];
+				} else {
+					$code = $response['response']['code'];
+				}
+				$this->log->write_log(__FUNCTION__, $log_header . 'Error ' . $code . ' on IP payment for nsu ' . $nsu . ', error log: ' . json_encode($body));
+				wc_add_notice(__('Please review your card information and try again', 'infinitepay-woocommerce') . ' - ' . $code, 'error');
+				if (isset($this->sandbox) && $this->sandbox === 'yes') {
+					wc_add_notice(json_encode($body), 'error');
+				}
+			}
+		} else {
+			$this->log->write_log(__FUNCTION__, $log_header . 'Error 500 on IP payment for nsu ' . $nsu . ', error log: ' . json_encode($body));
+			wc_add_notice(__('Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce'), 'error');
+		}
+		return false;
+	}
+
+	public function process_pix() {
+		try {
+			// Retrieve order items
+			$log_header = '[' . $this->order->get_id() . '] ';
+			$this->log->write_log( __FUNCTION__, $log_header . 'Starting IP PIX payment' );
+			$order_items = [];
+			if ( count( $this->order->get_items() ) > 0 ) {
+				foreach ( $this->order->get_items() as $item ) {
+					$order_items[] = array(
+						'id'          => (string) sanitize_key( $item->get_id() ),
+						'description' => sanitize_text_field( $item->get_name() ),
+						'amount'      => (float) sanitize_text_field( $item->get_data()['total'] ),
+						'quantity'    => (int) sanitize_key( $item->get_quantity() )
+					);
+				}
+			}
+
+			// Generate unique uuid for transaction secret
+			$transactionSecret = sha1( $this->order->get_id() . time() );
+
+			$options = get_option('woocommerce_infinitepay_settings');
+
+			// Apply discount if it has one
+			$orderTotalWithDiscount = $this->order->get_total();
+			$discount_pix = isset($options['discount_pix']) ? (float) $options['discount_pix'] : 0;
+			$min_value_pix = isset($options['min_value_pix']) ? (float) $options['min_value_pix'] : 0;
+			
+			if ( $discount_pix && $orderTotalWithDiscount >= $min_value_pix ) {
+				$discountValue          = ( $orderTotalWithDiscount * $discount_pix ) / 100;
+				$orderTotalWithDiscount = $orderTotalWithDiscount - $discountValue;
+				$this->order->set_discount_total( $discountValue );
+				$this->order->set_total( $orderTotalWithDiscount );
+				$this->order->save();
+			}
+
+			$order_value = $orderTotalWithDiscount * 100;
+			$final_value = (int) explode( '.', $order_value )[0];
+
+			// Prepare transaction request
+			$body = array(
+				'amount'         => $final_value,
+				'capture_method' => 'pix',
+				'metadata'       => array(
+					'origin'         => 'woocommerce',
+					'plugin_version' => Constants::VERSION,
+					'wordpress_version' => get_bloginfo('version'),
+					'woocommerce_version' => WC_VERSION,
+					'store_url'      => $_SERVER['SERVER_NAME'],
+					'payment_method' => 'pix',
+					'callback' => array(
+						'validate' => '',
+						'confirm'  => Utils::getStoreUrl() . '/wp-json/wc/v3/infinitepay_pix_callback?order_id=' . $this->order->get_id(),
+						'secret'   => $transactionSecret
+					)
+				)
+			);
+			$this->log->write_log( __FUNCTION__, $log_header . 'Body:' . json_encode( $body ) );
+
+			$response = $this->api->transactions( $body,  'pix' );
+
+			$this->log->write_log( __FUNCTION__, $log_header . 'API response code: ' . $response['response']['code'] );
+
+			// Check transaction create response
+			if ( ! is_wp_error( $response ) && $response['response']['code'] < 500 ) {
+				$this->log->write_log( __FUNCTION__, $log_header . 'API response authorization_code: ' . $body['data']['attributes']['authorization_code'] );
+				$body = json_decode( $response['body'], true );
+
+				//* Validates if pix qrcode was successfully generated
+				if ( $body['data']['attributes']['br_code'] ) {
+
+					// Retrieve infinite pay response fields
+					$pixBrCode  = $body['data']['attributes']['br_code'];
+					$pixNsuHost = $body['data']['attributes']['nsu_host'];
+
+					// Add transaction secret to order
+					add_post_meta( $this->order->get_id(), 'transactionSecret', $transactionSecret );
+					add_post_meta( $this->order->get_id(), 'nsuHost', $pixNsuHost );
+
+					if($this->order->get_meta('payment_method')) {
+						update_post_meta( $this->order->get_id(), 'payment_method', 'pix' );
+					} else {
+						add_post_meta( $this->order->get_id(), 'payment_method', 'pix' );
+					}
+
+					// Add br code to order object
+					$this->order->add_order_note( '
+						' . __( 'br_code', 'infinitepay-woocommerce' ) . ': ' . $pixBrCode . '
+					' );
+
+					// Clear user cart
+					WC()->cart->empty_cart();
+
+					$this->log->write_log( __FUNCTION__, $log_header . 'Finished IP PIX payment successfully' );
+
+					// Return that your transaction was successfully created
+					return true;
+
+					//! PIX Qrcode generation failed
+				} else {
+					$code = '';
+					if ( $body['data'] && $body['data']['attributes'] && $body['data']['attributes']['authorization_code'] ) {
+						$code = $body['data']['attributes']['authorization_code'];
+					} else {
+						$code = $response['response']['code'];
+					}
+					$this->log->write_log( __FUNCTION__, $log_header . 'Error ' . $code . ' on IP PIX payment, error log: ' . json_encode( $body ) );
+					wc_add_notice( __( 'Ooops, an internal error has occurred, wait bit and try again!', 'infinitepay-woocommerce' ) . ' - ' . $code, 'error' );
+					if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
+						wc_add_notice( json_encode( $body ), 'error' );
+					}
+				}
+			} else {
+				$this->log->write_log( __FUNCTION__, $log_header . 'Error 500 on IP payment, error log: ' . json_encode( $body ) );
+				wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
+			}
+		} catch ( Exception $ex ) {
+			$this->log->write_log( __FUNCTION__, 'Caught exception: ' . $ex->getMessage() );
+		}
+		return false;
+	}
+}

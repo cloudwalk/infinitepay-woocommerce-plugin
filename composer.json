@@ -3,5 +3,10 @@
     "description": "Offer to your clients the best interest in e-Commerce by using InfinitePay as your payment method.",
     "require": {
         "php": ">=5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Woocommerce\\InfinitePay\\": "src/"
+        }
     }
 }

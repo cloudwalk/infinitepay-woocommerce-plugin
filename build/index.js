@@ -1,1 +1,134 @@
-!function(e){"use strict";e((function(){let t,o=!1,r={};function n(){return t||(t=window.iPay,t)}function c(){for(let e=0;e<document.querySelectorAll("[data-checkout]").length;e++)document.querySelectorAll("[data-checkout]")[e].classList.remove("ip-form-control-error");for(let e=0;e<document.querySelectorAll(".ip-error").length;e++)document.querySelectorAll(".ip-error")[e].style.display="none"}function i(e){const[t,o]=e.split("/");return n().cardExpirationValidate(o,t)}function a(e){if(""==(e=e.replace(/[^\d]+/g,"")))return!1;if(11!=e.length||"00000000000"==e||"11111111111"==e||"22222222222"==e||"33333333333"==e||"44444444444"==e||"55555555555"==e||"66666666666"==e||"77777777777"==e||"88888888888"==e||"99999999999"==e)return!1;let t=0;for(let o=0;o<9;o++)t+=parseInt(e.charAt(o))*(10-o);let o=11-t%11;if(10!=o&&11!=o||(o=0),o!=parseInt(e.charAt(9)))return!1;t=0;for(let o=0;o<10;o++)t+=parseInt(e.charAt(o))*(11-o);return o=11-t%11,10!=o&&11!=o||(o=0),o==parseInt(e.charAt(10))}function l(){return o?(o=!1,!0):!document.getElementById("payment_method_infinitepay").checked||!!function(){c();const e=function(){let e=!1;const t=document.querySelector("#infinitepay-form"),o=t.querySelectorAll("[data-checkout]"),r=["installments","cardSecurityCode","cardExpirationDate","cardNumber","docNumber"];for(let l=0;l<o.length;l++){const u=o[l];if(r.indexOf(u.getAttribute("data-checkout"))>-1){let o=!1;if("-1"!==u.value&&""!==u.value||(o=!0),"ip_ccNo"===u.id&&(c=u.value,o=!n().cardValidate(c).valid),"ip_expdate"===u.id&&(o=!i(u.value)),"ip_docNumber"===u.id&&(o=!a(u.value)),o){const o=t.querySelectorAll('span[data-main="#'+u.id+'"]');o.length>0&&(o[0].style.display="inline-block"),u.classList.add("ip-form-control-error"),e=!0}}}var c;return e}(),t=function(){let e=!1;if(r.cardholderIdentificationType){const t=document.getElementById("docType");"-1"!==t.value&&""!==t||(t.classList.add("ip-form-control-error"),e=!0)}if(r.cardholderIdentificationNumber){const t=document.getElementById("docNumber");"-1"!==t.value&&""!==t||(t.classList.add("ip-form-control-error"),document.getElementById("ip-error-1").style.display="inline-block",e=!0)}return e}();return!e&&!t||(function(){const e=document.querySelectorAll(".ip-form-control-error");void 0!==e&&e[0].focus()}(),!1)}()&&function(){c();const t=document.querySelector("form.woocommerce-checkout"),r=document.querySelector("#ip_ccNo"),i=document.querySelector("#cardExpirationMonth"),a=document.querySelector("#cardExpirationYear"),u=document.querySelector("#ip_cvv"),d=n(),m=d.cardValidate(r.value),p=d.cardExpirationValidate(a.value,i.value);if(!m.valid||!p)return!1;const s={form:t,"card-number":r,"card-cvv":u,"expiration-month":i,"expiration-year":a};return d.tokenize(s,(function(t,r){if(t)return console.log(t),!1;!function(t){document.querySelector("#ip-token").value=t.token,o=!1;const r=e("form.woocommerce-checkout");r.off("checkout_place_order",l),setTimeout((function(){r.submit()}),200)}(r)})),!1}()}e("form.woocommerce-checkout").on("checkout_place_order",l),function(){if(!window.IPay){var e=document.getElementsByTagName("head")[0],t=document.createElement("script");t.async=1,t.src="yes"===wc_infinitepay_params.sandbox?"https://ipayjs.infinitepay.io/development/ipay-latest.min.js":"https://ipayjs.infinitepay.io/production/ipay-latest.min.js",t.onload=function(){const e=new window.IPay({api_key:wc_infinitepay_params.api_key});e.fingerprint((function(e,t){e?console.error(e):document.querySelector("#ip-uuid").value=t})),window.iPay=e},e.parentNode.appendChild(t)}}()}))}(jQuery);
+(function ($) {
+    "use strict"
+
+    $(function () {
+        let infinite_pay_submit = false;
+        let additionalInfo = {};
+
+        function validateInputs() {
+            clearErrors()
+            const additionalInputs = validateAdditionalInputs()
+
+            if (additionalInputs) {
+                return false
+            }
+            return true
+        }
+
+        function validateAdditionalInputs() {
+            let hasEmpty = false
+            if (additionalInfo.cardholderIdentificationType) {
+                const inputDocType = document.getElementById('docType')
+                if (inputDocType.value === '-1' || inputDocType === '') {
+                    inputDocType.classList.add('ip-form-control-error')
+                    hasEmpty = true
+                }
+            }
+            if (additionalInfo.cardholderIdentificationNumber) {
+                const inputDocNumber = document.getElementById('docNumber')
+                if (inputDocNumber.value === '-1' || inputDocNumber === '') {
+                    inputDocNumber.classList.add('ip-form-control-error')
+                    document.getElementById('ip-error-1').style.display = 'inline-block'
+                    hasEmpty = true
+                }
+            }
+            return hasEmpty
+        }
+
+        function clearErrors() {
+            for (
+                let i = 0;
+                i < document.querySelectorAll('[data-checkout]').length;
+                i++
+            ) {
+                const errorElement = document.querySelectorAll('[data-checkout]')[i]
+                errorElement.classList.remove('ip-form-control-error')
+            }
+            for (
+                let j = 0;
+                j < document.querySelectorAll('.ip-error').length;
+                j++
+            ) {
+                const errorMessage = document.querySelectorAll('.ip-error')[j]
+                errorMessage.style.display = 'none'
+            }
+        }
+
+        function responseHandler() {
+            infinite_pay_submit = false;
+            let wooCheckoutForm = $('form.woocommerce-checkout');
+
+            
+            if(wooCheckoutForm.length == 0) {
+                wooCheckoutForm = document.querySelector('form#order_review');
+            } else {
+                wooCheckoutForm.off('checkout_place_order', infinitePayFormHandler)
+            }
+
+            setTimeout(function() {
+                wooCheckoutForm.submit();
+            }, 600)
+        }
+
+        function createToken() {
+            clearErrors();
+            if(document.getElementById('ip_method').value == 'cc-form') {
+                
+                var form = document.querySelector('form.woocommerce-checkout');
+                if(!form) {
+                    form = document.querySelector('form#order_review');
+                }
+                var ipay = new IPay({ access_token: wc_infinitepay_params.access_token });
+
+                ipay.listeners = {
+                    "result:success": function() {
+                        let token = document.querySelector("input[name='ip[token]']").value;
+                        let session = document.querySelector("input[name='ip[session_id]']").value;
+                        document.querySelector("#ip-token").value = token;
+                        document.querySelector("#ip-uuid").value = session;
+                        if(token != '') {
+                            responseHandler();
+                        }
+                    },
+                    "result:error": function(errors) {
+                        return false;
+                    }
+                };
+                ipay.generate(form);
+
+            } else {
+                responseHandler();
+            }
+            return false;
+        }
+
+        function infinitePayFormHandler() {
+
+            if (infinite_pay_submit) {
+                infinite_pay_submit = false;
+                return true;
+            }
+            if ( !document.getElementById('payment_method_infinitepay').checked ) {
+                return true;
+            }
+            
+
+            if (validateInputs()) return createToken()
+            return false;
+        }
+
+        $("form.woocommerce-checkout").on( "checkout_place_order", infinitePayFormHandler );
+        //$("form#order_review").on( "checkout_place_order", infinitePayFormHandler );
+        $("form#order_review").on( "submit", infinitePayFormHandler );
+
+        function init() {
+            if(!!window["IPay"]) return;
+            var head = document.getElementsByTagName("head")[0];
+            var script = document.createElement("script");
+                script.async = 1;
+                script.src = wc_infinitepay_params.script_url;
+            head.parentNode.appendChild(script);
+        }
+        init();
+    })
+})(jQuery)
