@@ -29,7 +29,20 @@ class CreditCardFields
 				'description' => __( 'Maximum number of installments that a customer can split the final amount', 'infinitepay-woocommerce' ),
 				'default'     => 12,
 				'desc_tip'    => true,
-				'options'	  => [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ] 
+				'options'	  => [ 
+					1 => 1,
+					2 => 2,
+					3 => 3,
+					4 => 4,
+					5 => 5,
+					6 => 6,
+					7 => 7,
+					8 => 8,
+					9 => 9,
+					10 => 10,
+					11 => 11,
+					12 => 12
+				 ] 
 			),
 			'max_installments_free' => array(
 				'title'       => __( 'Maximum number of installments without interest', 'infinitepay-woocommerce' ),
@@ -37,7 +50,20 @@ class CreditCardFields
 				'description' => __( 'Maximum number of installments that a customer can split the final amount without interest', 'infinitepay-woocommerce' ),
 				'default'     => 12,
 				'desc_tip'    => true,
-				'options'	  => [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ] 
+				'options'	  => [ 
+					1 => 1,
+					2 => 2,
+					3 => 3,
+					4 => 4,
+					5 => 5,
+					6 => 6,
+					7 => 7,
+					8 => 8,
+					9 => 9,
+					10 => 10,
+					11 => 11,
+					12 => 12
+				 ] 
 			)
 		) );
 

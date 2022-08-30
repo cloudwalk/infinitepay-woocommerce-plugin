@@ -63,6 +63,7 @@ class Utils
     {
 		$options = get_option('woocommerce_infinitepay_settings');
         $installments_value = [];
+		
         for (
             $i = 1;
             $i <= (int) $options['max_installments'];
