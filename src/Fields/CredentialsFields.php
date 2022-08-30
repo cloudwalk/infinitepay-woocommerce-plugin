@@ -42,11 +42,7 @@ class CredentialsFields
 	
 	public static function get_desc_auth() {
 		
-		$message = sprintf(
-			'<a href="https://www.infinitepay.io/woocommerce/" target="_blank">%s</a> %s',
-			__( 'Click here', 'infinitepay-woocommerce' ),
-			__( 'to create an account or request plugin credentials', 'infinitepay-woocommerce' ),
-		);
+		$message = 'Faça seu <a href="https://comprar.infinitepay.io/ecommerce" target="_blank">cadastro na InfinitePay</a> ou <a href="https://money.infinitepay.io/settings/credentials" target="_blank">acesse sua conta</a> para obter as credenciais do plugin.';
 
 		return $message;
 	}

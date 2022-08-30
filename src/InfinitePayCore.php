@@ -74,13 +74,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
 		<h2>InfinitePay</h2>
 		<?php if (!$this->api->has_access_token): ?>
 			<div id="message" class="notice-warning notice">
-			<?php
-			printf(
-					'<p>%s <a href="https://money.infinitepay.io/settings/credentials">InfinitePay dashboard</a> %s.</p>',
-					__('Access the', 'infinitepay-woocommerce'),
-					__('to obtain your credentials', 'infinitepay-woocommerce')
-				);
-        	?>
+                Faça seu <a href="https://comprar.infinitepay.io/ecommerce" target="_blank">cadastro na InfinitePay</a> ou <a href="https://money.infinitepay.io/settings/credentials" target="_blank">acesse sua conta</a> para obter as credenciais do plugin.
 			</div>
 		<?php endif;?>
 

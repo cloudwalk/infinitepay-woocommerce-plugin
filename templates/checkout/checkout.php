@@ -148,11 +148,13 @@ for (
         
         <?php if($enabled_pix === 'yes') : ?>
             <fieldset id="wc-<?php echo esc_attr( $id ) ?>-pix-form" class="wc-pix-form wc-payment-form wc-if-form" style="background:transparent;<?php echo ($enabled_creditcard === 'yes') ? "display:none" : "" ?>">
-            <p><?php echo $instructions_pix; ?></p>
+                <p><?php echo $instructions_pix; ?></p>
                 <div class="pix-label">
                     <img src="https://confere-pix.web.app/pix.png" alt="InfinitePay Label" />
                 </div>
-                <p><?php echo __('The PIX QRCode for payment will be displayed after place order', 'infinitepay-woocommerce'); ?>
+                <p>
+                    <br><br><?php echo __('The PIX QRCode for payment will be displayed after place order', 'infinitepay-woocommerce'); ?>
+                </p>
             </fieldset>
         <?php endif; ?>
     </div>
