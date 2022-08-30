@@ -126,8 +126,7 @@ class Checkout extends \WC_Payment_Gateway
 				),
 			),
 		);
-	
-		$this->log->write_log(__FUNCTION__, json_encode($body));
+
 		$response = $this->api->transactions( $body, 'credit');
 
 		$this->log->write_log(__FUNCTION__, $log_header . 'API response code: ' . $response['response']['code']);
@@ -241,8 +240,7 @@ class Checkout extends \WC_Payment_Gateway
 					)
 				)
 			);
-			$this->log->write_log( __FUNCTION__, $log_header . 'Body:' . json_encode( $body ) );
-
+			
 			$response = $this->api->transactions( $body,  'pix' );
 
 			$this->log->write_log( __FUNCTION__, $log_header . 'API response code: ' . $response['response']['code'] );
