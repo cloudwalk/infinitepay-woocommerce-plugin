@@ -35,6 +35,8 @@ class ApiInfinitePay
 		if ($this->environment === 'sandbox') {
 			$this->args['headers']['Env'] = 'mock';
 		}
+        $this->args['timeout'] = 30;
+        
         $this->has_access_token = false !== get_option(Constants::ACCESS_TOKEN_KEY);
         $this->log = new Log();
     }

@@ -41,10 +41,11 @@ class Checkout extends \WC_Payment_Gateway
 		$order_items = [];
 		if (count($this->order->get_items()) > 0) {
 			foreach ($this->order->get_items() as $item) {
+				$product    = $item->get_product();
 				$order_items[] = array(
 					'id'          => (string) sanitize_key($item->get_id()),
 					'description' => sanitize_text_field($item->get_name()),
-					'amount'      => (int) sanitize_text_field($item->get_data()['total'] * 100),
+					'amount'      => (int) $product->get_price() * 100,
 					'quantity'    => (int) sanitize_key($item->get_quantity()),
 				);
 			}
@@ -190,10 +191,11 @@ class Checkout extends \WC_Payment_Gateway
 			$order_items = [];
 			if ( count( $this->order->get_items() ) > 0 ) {
 				foreach ( $this->order->get_items() as $item ) {
+					$product    = $item->get_product();
 					$order_items[] = array(
 						'id'          => (string) sanitize_key( $item->get_id() ),
 						'description' => sanitize_text_field( $item->get_name() ),
-						'amount'      => (float) sanitize_text_field( $item->get_data()['total'] ),
+						'amount'      => (int) $product->get_price() * 100,
 						'quantity'    => (int) sanitize_key( $item->get_quantity() )
 					);
 				}
