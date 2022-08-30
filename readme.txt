@@ -53,7 +53,7 @@ If you installed it correctly, you will see it in your list of "Installed Plugin
 * Bug fixes
     - Displaying better error messages
 
-- 2.0.0 (2022/08/26) -
+- 2.0.0 (2022/08/30) -
 * Accepts PIX payments
     - Using a more secure authentication protocol
     - Added mechanism to configure order status from-to payment status
