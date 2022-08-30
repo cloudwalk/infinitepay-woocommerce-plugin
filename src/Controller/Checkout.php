@@ -126,16 +126,13 @@ class Checkout extends \WC_Payment_Gateway
 				),
 			),
 		);
-	
-		$this->log->write_log(__FUNCTION__, json_encode($body));
+
 		$response = $this->api->transactions( $body, 'credit');
-
-		$this->log->write_log(__FUNCTION__, $log_header . 'API response code: ' . $response['response']['code']);
-		$body = json_decode($response['body'], true);
-
-		
-
+	
 		if (!is_wp_error($response) && $response['response']['code'] < 500) {
+			
+			$body = json_decode($response['body'], true);
+			$this->log->write_log(__FUNCTION__, $log_header . 'API response code: ' . $response['response']['code']);
 			$this->log->write_log(__FUNCTION__, $log_header . 'API response authorization_code: ' . $body['data']['attributes']['authorization_code']);
 			if ($body['data']['attributes']['authorization_code'] === '00') {
 
@@ -172,14 +169,14 @@ class Checkout extends \WC_Payment_Gateway
 				} else {
 					$code = $response['response']['code'];
 				}
-				$this->log->write_log(__FUNCTION__, $log_header . 'Error ' . $code . ' on IP payment for nsu ' . $nsu . ', error log: ' . json_encode($body));
+				$this->log->write_log(__FUNCTION__, $log_header . 'Error ' . $code . ' on IP payment for nsu ' . $nsu . ' ' . json_encode($response));
 				wc_add_notice(__('Please review your card information and try again', 'infinitepay-woocommerce') . ' - ' . $code, 'error');
 				if (isset($this->sandbox) && $this->sandbox === 'yes') {
 					wc_add_notice(json_encode($body), 'error');
 				}
 			}
 		} else {
-			$this->log->write_log(__FUNCTION__, $log_header . 'Error 500 on IP payment for nsu ' . $nsu . ', error log: ' . json_encode($body));
+			$this->log->write_log(__FUNCTION__, $log_header . 'Error 500 on IP payment for nsu ' . $nsu . ', error log: ' . json_encode($response));
 			wc_add_notice(__('Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce'), 'error');
 		}
 		return false;
@@ -241,17 +238,15 @@ class Checkout extends \WC_Payment_Gateway
 					)
 				)
 			);
-			$this->log->write_log( __FUNCTION__, $log_header . 'Body:' . json_encode( $body ) );
 
 			$response = $this->api->transactions( $body,  'pix' );
 
-			$this->log->write_log( __FUNCTION__, $log_header . 'API response code: ' . $response['response']['code'] );
-
 			// Check transaction create response
 			if ( ! is_wp_error( $response ) && $response['response']['code'] < 500 ) {
-				$this->log->write_log( __FUNCTION__, $log_header . 'API response authorization_code: ' . $body['data']['attributes']['authorization_code'] );
 				$body = json_decode( $response['body'], true );
-
+				$this->log->write_log( __FUNCTION__, $log_header . 'API response code: ' . $response['response']['code'] );
+				$this->log->write_log( __FUNCTION__, $log_header . 'API response authorization_code: ' . $body['data']['attributes']['authorization_code'] );
+				
 				//* Validates if pix qrcode was successfully generated
 				if ( $body['data']['attributes']['br_code'] ) {
 
@@ -290,14 +285,14 @@ class Checkout extends \WC_Payment_Gateway
 					} else {
 						$code = $response['response']['code'];
 					}
-					$this->log->write_log( __FUNCTION__, $log_header . 'Error ' . $code . ' on IP PIX payment, error log: ' . json_encode( $body ) );
+					$this->log->write_log( __FUNCTION__, $log_header . 'Error ' . $code . ' on IP PIX payment, error log: ' . json_encode( $response ) );
 					wc_add_notice( __( 'Ooops, an internal error has occurred, wait bit and try again!', 'infinitepay-woocommerce' ) . ' - ' . $code, 'error' );
 					if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
 						wc_add_notice( json_encode( $body ), 'error' );
 					}
 				}
 			} else {
-				$this->log->write_log( __FUNCTION__, $log_header . 'Error 500 on IP payment, error log: ' . json_encode( $body ) );
+				$this->log->write_log( __FUNCTION__, $log_header . 'Error 500 on IP payment, error log: ' . json_encode( $response ) );
 				wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
 			}
 		} catch ( Exception $ex ) {

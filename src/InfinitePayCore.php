@@ -74,13 +74,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
 		<h2>InfinitePay</h2>
 		<?php if (!$this->api->has_access_token): ?>
 			<div id="message" class="notice-warning notice">
-			<?php
-			printf(
-					'<p>%s <a href="https://money.infinitepay.io/settings/credentials">InfinitePay dashboard</a> %s.</p>',
-					__('Access the', 'infinitepay-woocommerce'),
-					__('to obtain your credentials', 'infinitepay-woocommerce')
-				);
-        	?>
+                Faça seu <a href="https://comprar.infinitepay.io/ecommerce" target="_blank">cadastro na InfinitePay</a> ou <a href="https://money.infinitepay.io/settings/credentials" target="_blank">acesse sua conta</a> para obter as credenciais do plugin.
 			</div>
 		<?php endif;?>
 
@@ -226,7 +220,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
 					);
                 }
             } else {
-                $this->log->write_log(__FUNCTION__, $log_header . 'Misconfiguration error on plugin ');
+                $this->log->write_log(__FUNCTION__, $log_header . ' Could not catch all form information (Pix or Credit)');
                 wc_add_notice(__( 'Please review your payment information and try again', 'infinitepay-woocommerce'), 'error');
             }
         } catch (Exception $ex) {
