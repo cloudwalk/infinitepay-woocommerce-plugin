@@ -4,7 +4,7 @@ Tags: ecommerce, infinitepay, woocommerce, payments
 Requires at least: 5.7
 Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -49,26 +49,31 @@ Done! It will be in the "Installed Plugins" section and from there you can activ
 If you installed it correctly, you will see it in your list of "Installed Plugins" on the WordPress work area. Please enable it and input your api key on the specified field.
 
 == Changelog ==
-- 2.0.2 (2022/08/30) -
+
+= 2.0.3 (2022/08/31) -
+* Features
+    - Setting production as default environment
+
+= 2.0.2 (2022/08/30) -
 * Bug fixes
     - Handling timeout calls on payments
 
-- 2.0.1 (2022/08/30) -
+= 2.0.1 (2022/08/30) -
 * Bug fixes
     - Displaying better error messages
 
-- 2.0.0 (2022/08/30) -
+= 2.0.0 (2022/08/30) -
 * Accepts PIX payments
     - Using a more secure authentication protocol
     - Added mechanism to configure order status from-to payment status
     - A lot of bug fixes and enhancements
     - Enjoy :)
 
-- 1.1.9 (2022/08/08) -
+= 1.1.9 (2022/08/08) -
 * Bug fixes
     - Displaying the total amount in the installment field
 
-- 1.1.8 (2022/06/29) -
+= 1.1.8 (2022/06/29) -
 * Bug fixes
     - Updated order status to "processing" when payment is confirmed
 
