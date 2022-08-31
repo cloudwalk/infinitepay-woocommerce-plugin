@@ -48,7 +48,7 @@ class Settings
         $this->max_installments_free = sanitize_key($wc_payments->get_option('max_installments_free', 12));
         $this->enabled_creditcard    = sanitize_key($wc_payments->get_option('enabled_creditcard'));
 
-        $this->environment   = sanitize_key($wc_payments->get_option('environment', 'sandbox'));
+        $this->environment   = sanitize_key($wc_payments->get_option('environment', 'production'));
         $this->client_id     = $wc_payments->get_option('client_id');
         $this->client_secret = $wc_payments->get_option('client_secret');
 
