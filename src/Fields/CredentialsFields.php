@@ -19,7 +19,7 @@ class CredentialsFields
 				'title'   => __( 'Store environment', 'infinitepay-woocommerce' ),
 				'type'    => 'select',
 				'label'   => __( 'Store environment', 'infinitepay-woocommerce' ),
-				'default' => 'yes',
+				'default' => 'production',
 				'options'     => [
 					'sandbox' => 'Sandbox',
 					'production' => 'Production',
