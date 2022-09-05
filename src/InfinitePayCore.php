@@ -78,6 +78,18 @@ class InfinitePayCore extends \WC_Payment_Gateway
 			</div>
 		<?php endif;?>
 
+        
+		<?php if ( Utils::getConfig('environment') === 'sandbox' ): ?>
+            <style>.blink {animation: blinker 1s linear infinite;}@keyframes blinker {50% {opacity: 0;}}.bgwarning{ background-color:#dba61740;}.bgwarning h3 { color:#e60202;}</style>
+			<div id="message" class="notice-warning notice bgwarning">
+                <h3 class="blink">
+                    <?php echo __('NOTICE: the sandbox environment should be used for testing purposes only, sales will not be made to your InfinitePay account', 'infinitepay-woocommerce' ); ?>
+                </h3>
+			</div>
+		<?php endif;?>
+
+        
+
 		<?php
 			echo Settings::build_submenu();
 			echo '<table class="form-table">';

@@ -84,6 +84,16 @@ class Utils
         return $installments_value;
     }
 
+	public static function getConfig( $key, $default = null )
+	{
+		$options = get_option('woocommerce_infinitepay_settings');
+		if( isset($options) && isset($options[$key]) ) {
+			return $options[$key];
+		} else if( isset($default) ) {
+			return $default;
+		}
+	}
+
 	public static function getStoreUrl()
 	{
 		$protocol = (!empty($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) == 'on' || $_SERVER['HTTPS'] == '1')) ? 'https://' : 'http://';

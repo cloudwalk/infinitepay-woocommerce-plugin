@@ -3,10 +3,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: InfinitePay for WooCommerce\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-"
-"infinitepay\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-infinitepay\n"
 "POT-Creation-Date: 2022-04-06T14:14:44+00:00\n"
-"PO-Revision-Date: 2022-08-29 18:33-0300\n"
+"PO-Revision-Date: 2022-09-05 09:32-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -70,19 +69,15 @@ msgid "Instructions"
 msgstr "Instruções"
 
 #: includes/class-wc-wooinfinitepay-init.php:103
-msgid ""
-"Instructions that will be shown on thank you page and will be sent on email"
-msgstr ""
-"Instruções que será mostrado para seus clientes na página de obrigado e no "
-"e-mail"
+msgid "Instructions that will be shown on thank you page and will be sent on email"
+msgstr "Instruções que será mostrado para seus clientes na página de obrigado e no e-mail"
 
 #: includes/class-wc-wooinfinitepay-init.php:108
 msgid "Maximum number of installments"
 msgstr "Número máximo de parcelas"
 
 #: includes/class-wc-wooinfinitepay-init.php:110
-msgid ""
-"Maximum number of installments that a customer can split the final amount"
+msgid "Maximum number of installments that a customer can split the final amount"
 msgstr "Número máximo de parcelas que seu cliente pode parcelar"
 
 #: includes/class-wc-wooinfinitepay-init.php:115
@@ -90,9 +85,7 @@ msgid "Maximum number of installments without interest"
 msgstr "Número máximo de parcelas sem juros"
 
 #: includes/class-wc-wooinfinitepay-init.php:117
-msgid ""
-"Maximum number of installments that a customer can split the final amount "
-"without interest"
+msgid "Maximum number of installments that a customer can split the final amount without interest"
 msgstr "Número máximo de parcelas que seu cliente pode parcelar sem juros"
 
 #: includes/class-wc-wooinfinitepay-init.php:122
@@ -115,18 +108,13 @@ msgstr "Valor final"
 msgid "NSU"
 msgstr "NSU"
 
-#: includes/class-wc-wooinfinitepay-init.php:360
-#: includes/class-wc-wooinfinitepay-init.php:366
+#: includes/class-wc-wooinfinitepay-init.php:360 includes/class-wc-wooinfinitepay-init.php:366
 msgid "Please review your card information and try again"
-msgstr ""
-"Compra não autorizada. Verifique os dados do cartão ou entre em contato com "
-"o seu banco"
+msgstr "Compra não autorizada. Verifique os dados do cartão ou entre em contato com o seu banco"
 
 #: includes/class-wc-wooinfinitepay-init.php:363
 msgid "Ooops, an internal error has occurred, contact an administrator!"
-msgstr ""
-"Erro de configuração no meio de pagamento. Entre em contato com o "
-"administrador!"
+msgstr "Erro de configuração no meio de pagamento. Entre em contato com o administrador!"
 
 #: src/Fields/CredentialsFields.php:19
 msgid "Store environment"
@@ -206,5 +194,8 @@ msgstr "Produção"
 
 #: templates/checkout/checkout.php:155
 msgid "The PIX QRCode for payment will be displayed after place order"
-msgstr ""
-"O QRCode para pagamento com PIX será exibido após a finalização do pedido"
+msgstr "O QRCode para pagamento com PIX será exibido após a finalização do pedido"
+
+#: src/InfinitePayCore.php:86
+msgid "NOTICE: the sandbox environment should be used for testing purposes only, sales will not be made to your InfinitePay account"
+msgstr "AVISO: o ambiente de sandbox deve ser utilizado apenas para testes, as vendas não serão efetivadas na sua conta InfinitePay"

@@ -191,3 +191,7 @@ msgstr ""
 msgid "The PIX QRCode for payment will be displayed after place order"
 msgstr ""
 
+#: src/InfinitePayCore.php:86
+msgid "NOTICE: the sandbox environment should be used for testing purposes only, sales will not be made to your InfinitePay account"
+msgstr ""
+
