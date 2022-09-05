@@ -99,7 +99,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
     public function init_form_fields()
     {
-        $current_section = isset($_GET['if-tab']) ? $_GET['if-tab'] : 'if-credit-card';
+        $current_section = isset($_GET['ip-tab']) ? $_GET['ip-tab'] : 'ip-credentials';
 		$this->form_fields = Settings::form_fields($current_section); 
     }
 
