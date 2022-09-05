@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: InfinitePay for WooCommerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-infinitepay\n"
 "POT-Creation-Date: 2022-04-06T14:14:44+00:00\n"
-"PO-Revision-Date: 2022-09-05 09:32-0300\n"
+"PO-Revision-Date: 2022-09-05 17:31-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -108,7 +108,8 @@ msgstr "Valor final"
 msgid "NSU"
 msgstr "NSU"
 
-#: includes/class-wc-wooinfinitepay-init.php:360 includes/class-wc-wooinfinitepay-init.php:366
+#: includes/class-wc-wooinfinitepay-init.php:360
+#: includes/class-wc-wooinfinitepay-init.php:366
 msgid "Please review your card information and try again"
 msgstr "Compra não autorizada. Verifique os dados do cartão ou entre em contato com o seu banco"
 
@@ -196,6 +197,18 @@ msgstr "Produção"
 msgid "The PIX QRCode for payment will be displayed after place order"
 msgstr "O QRCode para pagamento com PIX será exibido após a finalização do pedido"
 
-#: src/InfinitePayCore.php:86
-msgid "NOTICE: the sandbox environment should be used for testing purposes only, sales will not be made to your InfinitePay account"
-msgstr "AVISO: o ambiente de sandbox deve ser utilizado apenas para testes, as vendas não serão efetivadas na sua conta InfinitePay"
+#: src/InfinitePayCore.php:79
+msgid "NOTICE: Before receiving payments using InfinitePay, you must:"
+msgstr "Antes de receber pagamentos utilizando a InfinitePay, você deve:"
+
+#: src/InfinitePayCore.php:82
+msgid "Configure access credentials (Client ID and Client Secret, visit the Credentials tab for more information)"
+msgstr "Configurar as credenciais de acesso (Client ID e Client Secret, visite a aba de Credenciais para mais informações)"
+
+#: src/InfinitePayCore.php:85
+msgid "Disable Sandbox mode (sandbox environment should only be used for testing, sales will not be effected on your InfinitePay account)"
+msgstr "Desabilitar o modo Sandbox (o ambiente de sandbox deve ser utilizado apenas para testes, as vendas não serão efetivadas na sua conta InfinitePay)"
+
+#: src/InfinitePayCore.php:88
+msgid "Go to configuration"
+msgstr "Ir para configuração"

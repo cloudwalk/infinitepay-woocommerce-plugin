@@ -37,7 +37,6 @@ class InfinitePayCore extends \WC_Payment_Gateway
         add_action( 'woocommerce_thankyou_' . $this->id, array($this, 'thank_you_page') );
         add_filter( 'woocommerce_payment_complete_order_status', array($this, 'change_payment_complete_order_status'), 10, 3 );
         add_action( 'woocommerce_email_before_order_table', array($this, 'email_instructions'), 10, 3 );        
-        add_action( 'admin_notices', array( $this, 'display_errors' ) );   
     }
     
     public static function load_plugin_textdomain()
@@ -70,23 +69,28 @@ class InfinitePayCore extends \WC_Payment_Gateway
         }
     }
 
-    public function display_errors()
-	{
-		if ( Utils::getConfig('environment') === 'sandbox' ): ?>
-            <style>.bgwarning{ background-color:#dba61740;}.bgwarning h3 { color:#e60202;}</style>
-			<div id="message" class="notice-warning notice bgwarning">
-                <h3>
-                    <?php echo __('NOTICE: the sandbox environment should be used for testing purposes only, sales will not be made to your InfinitePay account', 'infinitepay-woocommerce' ); ?>
-                </h3>
-			</div>
-		<?php endif;
-	}
-
 	public function admin_options()
     {
 		?>
 		<h2>InfinitePay</h2>
-		<?php if (!$this->api->has_access_token): ?>
+        <?php if ( Utils::getConfig('environment') === 'sandbox' || !Utils::getConfig('client_id') ): ?>
+            <style>.bgwarning{ background-color:#dba61740;}</style>
+			<div id="message" class="notice-warning notice bgwarning">
+                <h3>InfinitePay</h3>
+                <p><?php echo __('NOTICE: Before receiving payments using InfinitePay, you must:', 'infinitepay-woocommerce' ); ?></p>
+                <ul>
+                <?php if (!Utils::getConfig('client_id')): ?>
+                    <li>&#8227; <?php echo __('Configure access credentials (Client ID and Client Secret, visit the Credentials tab for more information)', 'infinitepay-woocommerce' ); ?></li>
+                <?php endif;?>
+                <?php if (Utils::getConfig('environment') === 'sandbox'): ?>
+                    <li>&#8227; <?php echo __('Disable Sandbox mode (sandbox environment should only be used for testing, sales will not be effected on your InfinitePay account)', 'infinitepay-woocommerce' ); ?></li>
+                <?php endif;?>
+                </ul>
+                <!-- <p><a href="<?php echo admin_url( 'admin.php?page=wc-settings&tab=checkout&section=infinitepay' ); ?>"><?php echo __('Go to configuration', 'infinitepay-woocommerce' ); ?></a> -->
+			</div>
+		<?php endif;
+
+         if (!$this->api->has_access_token): ?>
 			<div id="message" class="notice-warning notice">
                 Faça seu <a href="https://comprar.infinitepay.io/ecommerce" target="_blank">cadastro na InfinitePay</a> ou <a href="https://money.infinitepay.io/settings/credentials" target="_blank">acesse sua conta</a> para obter as credenciais do plugin.
 			</div>
