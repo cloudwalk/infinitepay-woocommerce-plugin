@@ -91,6 +91,8 @@ class Utils
 			return $options[$key];
 		} else if( isset($default) ) {
 			return $default;
+		} else {
+			return null;
 		}
 	}
 
