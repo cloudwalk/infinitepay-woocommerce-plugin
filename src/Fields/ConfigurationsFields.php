@@ -17,9 +17,9 @@ class ConfigurationsFields
 				'default' => 'yes',
 			),
 			'status_aproved' => array(
-				'title'   => __( 'Payment aproved', 'infinitepay-woocommerce' ),
+				'title'   => __( 'Payment approved', 'infinitepay-woocommerce' ),
 				'type'    => 'select',
-				'label'   => __( 'Payment aproved', 'infinitepay-woocommerce' ),
+				'label'   => __( 'Payment approved', 'infinitepay-woocommerce' ),
 				'default' => 'yes',
 				'options' =>  wc_get_order_statuses()
 			),

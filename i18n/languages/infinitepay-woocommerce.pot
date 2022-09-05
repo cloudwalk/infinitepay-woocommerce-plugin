@@ -132,7 +132,7 @@ msgid "Enable Logo"
 msgstr ""
 
 #: src/Fields/ConfigurationsFields.php:20
-msgid "Payment aproved"
+msgid "Payment approved"
 msgstr ""
 
 #: src/Fields/ConfigurationsFields.php:27
