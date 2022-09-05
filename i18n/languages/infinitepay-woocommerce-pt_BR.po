@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: InfinitePay for WooCommerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-infinitepay\n"
 "POT-Creation-Date: 2022-04-06T14:14:44+00:00\n"
-"PO-Revision-Date: 2022-09-05 17:31-0300\n"
+"PO-Revision-Date: 2022-09-05 18:12-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -70,7 +70,7 @@ msgstr "Instruções"
 
 #: includes/class-wc-wooinfinitepay-init.php:103
 msgid "Instructions that will be shown on thank you page and will be sent on email"
-msgstr "Instruções que será mostrado para seus clientes na página de obrigado e no e-mail"
+msgstr "Instruções que serão mostradas para seus clientes na página de obrigado e no e-mail"
 
 #: includes/class-wc-wooinfinitepay-init.php:108
 msgid "Maximum number of installments"
@@ -78,7 +78,7 @@ msgstr "Número máximo de parcelas"
 
 #: includes/class-wc-wooinfinitepay-init.php:110
 msgid "Maximum number of installments that a customer can split the final amount"
-msgstr "Número máximo de parcelas que seu cliente pode parcelar"
+msgstr "Número máximo de parcelas que seu cliente pode escolher"
 
 #: includes/class-wc-wooinfinitepay-init.php:115
 msgid "Maximum number of installments without interest"
