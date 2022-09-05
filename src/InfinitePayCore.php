@@ -36,7 +36,8 @@ class InfinitePayCore extends \WC_Payment_Gateway
         add_action( 'admin_enqueue_scripts', array($this, 'admin_scripts') );
         add_action( 'woocommerce_thankyou_' . $this->id, array($this, 'thank_you_page') );
         add_filter( 'woocommerce_payment_complete_order_status', array($this, 'change_payment_complete_order_status'), 10, 3 );
-        add_action( 'woocommerce_email_before_order_table', array($this, 'email_instructions'), 10, 3 );           
+        add_action( 'woocommerce_email_before_order_table', array($this, 'email_instructions'), 10, 3 );        
+        add_action( 'admin_notices', array( $this, 'display_errors' ) );   
     }
     
     public static function load_plugin_textdomain()
@@ -69,6 +70,18 @@ class InfinitePayCore extends \WC_Payment_Gateway
         }
     }
 
+    public function display_errors()
+	{
+		if ( Utils::getConfig('environment') === 'sandbox' ): ?>
+            <style>.bgwarning{ background-color:#dba61740;}.bgwarning h3 { color:#e60202;}</style>
+			<div id="message" class="notice-warning notice bgwarning">
+                <h3>
+                    <?php echo __('NOTICE: the sandbox environment should be used for testing purposes only, sales will not be made to your InfinitePay account', 'infinitepay-woocommerce' ); ?>
+                </h3>
+			</div>
+		<?php endif;
+	}
+
 	public function admin_options()
     {
 		?>
@@ -76,15 +89,6 @@ class InfinitePayCore extends \WC_Payment_Gateway
 		<?php if (!$this->api->has_access_token): ?>
 			<div id="message" class="notice-warning notice">
                 Faça seu <a href="https://comprar.infinitepay.io/ecommerce" target="_blank">cadastro na InfinitePay</a> ou <a href="https://money.infinitepay.io/settings/credentials" target="_blank">acesse sua conta</a> para obter as credenciais do plugin.
-			</div>
-		<?php endif;?>
-
-		<?php if ( Utils::getConfig('environment') === 'sandbox' ): ?>
-            <style>.blink {animation: blinker 1s linear infinite;}@keyframes blinker {50% {opacity: 0;}}.bgwarning{ background-color:#dba61740;}.bgwarning h3 { color:#e60202;}</style>
-			<div id="message" class="notice-warning notice bgwarning">
-                <h3 class="blink">
-                    <?php echo __('NOTICE: the sandbox environment should be used for testing purposes only, sales will not be made to your InfinitePay account', 'infinitepay-woocommerce' ); ?>
-                </h3>
 			</div>
 		<?php endif;?>
 
