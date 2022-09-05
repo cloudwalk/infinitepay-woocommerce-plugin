@@ -276,9 +276,6 @@ class Checkout extends \WC_Payment_Gateway
 					// Clear user cart
 					WC()->cart->empty_cart();
 
-					$status = (Utils::getConfig('status_aproved') !== null) ? Utils::getConfig('status_aproved') : 'processing';
-					$this->order->update_status( $status );
-
 					$this->log->write_log( __FUNCTION__, $log_header . 'Finished IP PIX payment successfully' );
 
 					// Return that your transaction was successfully created
