@@ -21,8 +21,8 @@ class CredentialsFields
 				'label'   => __( 'Store environment', 'infinitepay-woocommerce' ),
 				'default' => 'production',
 				'options'     => [
-					'sandbox' => 'Sandbox',
 					'production' => 'Production',
+					'sandbox' => 'Sandbox'
 				],
 			),
 			'client_id'       => array(
