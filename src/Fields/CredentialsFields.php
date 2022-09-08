@@ -21,19 +21,27 @@ class CredentialsFields
 				'label'   => __( 'Store environment', 'infinitepay-woocommerce' ),
 				'default' => 'production',
 				'options'     => [
-					'sandbox' => 'Sandbox',
 					'production' => 'Production',
+					'sandbox' => 'Sandbox'
 				],
 			),
 			'client_id'       => array(
 				'title'       => __( 'Client ID', 'infinitepay-woocommerce' ),
 				'type'        => 'text',
 				'desc_tip'    => true,
+				'placeholder' => __( 'Client ID', 'infinitepay-woocommerce' ),
+				'custom_attributes' => [
+					'required' => true
+				]
 			),
 			'client_secret'	  => array(
 				'title'       => __( 'Client Secret', 'infinitepay-woocommerce' ),
 				'type'        => 'password',
 				'desc_tip'    => true,
+				'placeholder' => __( 'Client Secret', 'infinitepay-woocommerce' ),
+				'custom_attributes' => [
+					'required' => true
+				]
 			)
 		) );
 

@@ -17,17 +17,17 @@ class ConfigurationsFields
 				'default' => 'yes',
 			),
 			'status_aproved' => array(
-				'title'   => __( 'Payment aproved', 'infinitepay-woocommerce' ),
+				'title'   => __( 'Payment approved', 'infinitepay-woocommerce' ),
 				'type'    => 'select',
-				'label'   => __( 'Payment aproved', 'infinitepay-woocommerce' ),
-				'default' => 'yes',
+				'label'   => __( 'Payment approved', 'infinitepay-woocommerce' ),
+				'default' => 'wc-processing',
 				'options' =>  wc_get_order_statuses()
 			),
 			'status_canceled' => array(
 				'title'   => __( 'Payment canceled', 'infinitepay-woocommerce' ),
 				'type'    => 'select',
 				'label'   => __( 'Payment canceled', 'infinitepay-woocommerce' ),
-				'default' => 'yes',
+				'default' => 'wc-cancelled',
 				'options' =>  wc_get_order_statuses()
 			),
 			'enabled_log'	  => array(

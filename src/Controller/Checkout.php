@@ -152,12 +152,14 @@ class Checkout extends \WC_Payment_Gateway
 
 				if($this->order->get_meta('payment_method')) {
 					update_post_meta( $this->order->get_id(), 'payment_method', 'credit' );
-					$this->order->update_status( 'processing' );
 				} else {
 					add_post_meta( $this->order->get_id(), 'payment_method', 'credit' );
 				}
 
 				WC()->cart->empty_cart();
+
+				$status = (Utils::getConfig('status_aproved') !== null) ? Utils::getConfig('status_aproved') : 'processing';
+				$this->order->update_status( $status );
 
 				$this->log->write_log(__FUNCTION__, $log_header . 'Finished IP payment for nsu ' . $nsu . ' successfully');
 

@@ -33,9 +33,10 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options') );
         add_action( 'wp_enqueue_scripts', array($this, 'payment_scripts') );
+        add_action( 'admin_enqueue_scripts', array($this, 'admin_scripts') );
         add_action( 'woocommerce_thankyou_' . $this->id, array($this, 'thank_you_page') );
         add_filter( 'woocommerce_payment_complete_order_status', array($this, 'change_payment_complete_order_status'), 10, 3 );
-        add_action( 'woocommerce_email_before_order_table', array($this, 'email_instructions'), 10, 3 );           
+        add_action( 'woocommerce_email_before_order_table', array($this, 'email_instructions'), 10, 3 );        
     }
     
     public static function load_plugin_textdomain()
@@ -72,7 +73,24 @@ class InfinitePayCore extends \WC_Payment_Gateway
     {
 		?>
 		<h2>InfinitePay</h2>
-		<?php if (!$this->api->has_access_token): ?>
+        <?php if ( Utils::getConfig('environment') === 'sandbox' || !Utils::getConfig('client_id') ): ?>
+            <style>.bgwarning{ background-color:#dba61740;}</style>
+			<div id="message" class="notice-warning notice bgwarning">
+                <h3>InfinitePay</h3>
+                <p><?php echo __('NOTICE: Before receiving payments using InfinitePay, you must:', 'infinitepay-woocommerce' ); ?></p>
+                <ul>
+                <?php if (!Utils::getConfig('client_id')): ?>
+                    <li>&#8227; <?php echo __('Configure access credentials (Client ID and Client Secret, visit the Credentials tab for more information)', 'infinitepay-woocommerce' ); ?></li>
+                <?php endif;?>
+                <?php if (Utils::getConfig('environment') === 'sandbox'): ?>
+                    <li>&#8227; <?php echo __('Disable Sandbox mode (sandbox environment should only be used for testing, sales will not be effected on your InfinitePay account)', 'infinitepay-woocommerce' ); ?></li>
+                <?php endif;?>
+                </ul>
+                <!-- <p><a href="<?php echo admin_url( 'admin.php?page=wc-settings&tab=checkout&section=infinitepay' ); ?>"><?php echo __('Go to configuration', 'infinitepay-woocommerce' ); ?></a> -->
+			</div>
+		<?php endif;
+
+         if (!$this->api->has_access_token): ?>
 			<div id="message" class="notice-warning notice">
                 Faça seu <a href="https://comprar.infinitepay.io/ecommerce" target="_blank">cadastro na InfinitePay</a> ou <a href="https://money.infinitepay.io/settings/credentials" target="_blank">acesse sua conta</a> para obter as credenciais do plugin.
 			</div>
@@ -89,8 +107,26 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
     public function init_form_fields()
     {
-        $current_section = isset($_GET['if-tab']) ? $_GET['if-tab'] : 'if-credit-card';
+        $current_section = isset($_GET['ip-tab']) ? $_GET['ip-tab'] : 'ip-credentials';
 		$this->form_fields = Settings::form_fields($current_section); 
+    }
+
+    function admin_scripts($hook) {
+        if ('woocommerce_page_wc-settings' !== $hook) {
+            return;
+        }
+        $script_path       = '/../build/admin.js';
+        $script_asset_path = dirname(__FILE__) . '/../build/index.asset.php';
+        $script_asset      = file_exists($script_asset_path) ? require $script_asset_path : array('dependencies' => array(), 'version' => filemtime($script_path));
+        $script_url 	= plugins_url($script_path, __FILE__);
+        
+        wp_register_script(
+            'woocommerce_infinitepay',
+            $script_url,
+            $script_asset['dependencies'],
+            $script_asset['version'],
+            true
+        );
     }
 
     protected function setup_properties()

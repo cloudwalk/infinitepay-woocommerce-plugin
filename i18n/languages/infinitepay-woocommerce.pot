@@ -132,7 +132,7 @@ msgid "Enable Logo"
 msgstr ""
 
 #: src/Fields/ConfigurationsFields.php:20
-msgid "Payment aproved"
+msgid "Payment approved"
 msgstr ""
 
 #: src/Fields/ConfigurationsFields.php:27
@@ -189,5 +189,21 @@ msgstr ""
 
 #: templates/checkout/checkout.php:155
 msgid "The PIX QRCode for payment will be displayed after place order"
+msgstr ""
+
+#: src/InfinitePayCore.php:79
+msgid "NOTICE: Before receiving payments using InfinitePay, you must:"
+msgstr ""
+
+#: src/InfinitePayCore.php:82
+msgid "Configure access credentials (Client ID and Client Secret, visit the Credentials tab for more information)"
+msgstr ""
+
+#: src/InfinitePayCore.php:85
+msgid "Disable Sandbox mode (sandbox environment should only be used for testing, sales will not be effected on your InfinitePay account)"
+msgstr ""
+
+#: src/InfinitePayCore.php:88
+msgid "Go to configuration"
 msgstr ""
 

@@ -63,16 +63,16 @@ class Settings
         $fiels = CreditCardFields::fields();
 
         switch ($current_section) {
-            case 'if-credentials':
+            case 'ip-credentials':
 				$fiels = CredentialsFields::fields();
                 break;
-            case 'if-credit-card':
+            case 'ip-credit-card':
 				$fiels = CreditCardFields::fields();
                 break;
-            case 'if-pix':
+            case 'ip-pix':
 				$fiels = PIXFields::fields();
                 break;
-            case 'if-settings':
+            case 'ip-settings':
 				$fiels = ConfigurationsFields::fields();
                 break;
         }
@@ -88,17 +88,17 @@ class Settings
         echo '<ul class="subsubsub">';
 
         $sections = array(
-            'if-credentials' => __('Credentials', 'infinitepay-woocommerce'),
-            'if-credit-card' => __('Credit Card', 'infinitepay-woocommerce'),
-            'if-pix'         => __('PIX', 'infinitepay-woocommerce'),
-            'if-settings'    => __('Settings', 'infinitepay-woocommerce'),
+            'ip-credentials' => __('Credentials', 'infinitepay-woocommerce'),
+            'ip-credit-card' => __('Credit Card', 'infinitepay-woocommerce'),
+            'ip-pix'         => __('PIX', 'infinitepay-woocommerce'),
+            'ip-settings'    => __('Settings', 'infinitepay-woocommerce'),
         );
 
         $array_keys      = array_keys($sections);
-        $current_section = isset($_GET['if-tab']) ? $_GET['if-tab'] : 'if-credit-card';
+        $current_section = isset($_GET['ip-tab']) ? $_GET['ip-tab'] : 'ip-credentials';
 
         foreach ($sections as $id => $label) {
-            $link = admin_url('admin.php?page=wc-settings&tab=checkout&section=infinitepay&if-tab=' . sanitize_title($id));
+            $link = admin_url('admin.php?page=wc-settings&tab=checkout&section=infinitepay&ip-tab=' . sanitize_title($id));
             $pipe = (end($array_keys) === $id ? '' : '|');
             echo '<li><a href="' . $link . '" class="' . ($current_section === $id ? 'current' : '') . '">' . $label . '</a> ' . $pipe . ' </li>';
         }
