@@ -18,7 +18,7 @@
                     <iframe width="560" height="315" src="https://www.youtube.com/embed/-T85G-RYTFE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </p>
 
-                <p><a class="button" target="_blank" href="https://metabox.io/online-generator/?utm_source=WordPress&amp;utm_medium=link&amp;utm_campaign=plugin">Para gerar suas credências clique aqui</a></p>
+                <p><a class="button" target="_blank" href="#">Para gerar suas credências clique aqui</a></p>
             </div>
         </div>
     </div>
