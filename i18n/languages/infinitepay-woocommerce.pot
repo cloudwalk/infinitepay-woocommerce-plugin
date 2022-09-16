@@ -188,7 +188,7 @@ msgid "Production"
 msgstr ""
 
 #: templates/checkout/checkout.php:155
-msgid "The PIX QRCode for payment will be displayed after place order"
+msgid "Value with discount"
 msgstr ""
 
 #: src/InfinitePayCore.php:79

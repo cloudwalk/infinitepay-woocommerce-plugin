@@ -50,7 +50,7 @@ If you installed it correctly, you will see it in your list of "Installed Plugin
 
 == Changelog ==
 
-= 2.0.5 (2022/09/17) =
+= 2.0.5 (2022/09/20) =
 * Features
     - Interfaces improvement
     - Bug fixes

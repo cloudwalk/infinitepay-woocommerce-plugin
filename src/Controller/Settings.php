@@ -46,13 +46,13 @@ class Settings
         $this->instructions          = sanitize_textarea_field($wc_payments->get_option('instructions'));
         $this->max_installments      = sanitize_key($wc_payments->get_option('max_installments', 12));
         $this->max_installments_free = sanitize_key($wc_payments->get_option('max_installments_free', 12));
-        $this->enabled_creditcard    = sanitize_key($wc_payments->get_option('enabled_creditcard'));
+        $this->enabled_creditcard    = sanitize_key($wc_payments->get_option('enabled_creditcard', 'yes'));
 
         $this->environment   = sanitize_key($wc_payments->get_option('environment', 'production'));
         $this->client_id     = $wc_payments->get_option('client_id');
         $this->client_secret = $wc_payments->get_option('client_secret');
 
-        $this->enabled_pix   = sanitize_key($wc_payments->get_option('enabled_pix'));
+        $this->enabled_pix   = sanitize_key($wc_payments->get_option('enabled_pix', 'yes'));
         $this->instructions_pix  = sanitize_text_field($wc_payments->get_option('instructions_pix'));
         $this->discount_pix  = sanitize_key($wc_payments->get_option('discount_pix', 0));
         $this->min_value_pix = sanitize_key($wc_payments->get_option('min_value_pix', 0));
