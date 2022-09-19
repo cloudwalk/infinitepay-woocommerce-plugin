@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: InfinitePay for WooCommerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-infinitepay\n"
 "POT-Creation-Date: 2022-04-06T14:14:44+00:00\n"
-"PO-Revision-Date: 2022-09-05 18:12-0300\n"
+"PO-Revision-Date: 2022-09-19 09:50-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -212,3 +212,19 @@ msgstr "Desabilitar o modo Sandbox (o ambiente de sandbox deve ser utilizado ape
 #: src/InfinitePayCore.php:88
 msgid "Go to configuration"
 msgstr "Ir para configuração"
+
+#: templates/checkout/checkout.php:185
+msgid "Discounted value"
+msgstr "Valor com desconto"
+
+#: templates/checkout/checkout.php:187
+msgid "Checkout to display the QRCode"
+msgstr "Finalize sua compra para exibir o QRCode"
+
+#: templates/checkout/checkout.php:188
+msgid "Open your bank app and select the option to pay with PIX/Scan QRCode"
+msgstr "Abra o app do seu banco e selecione a opção pagar com Pix/Escanear QRCode"
+
+#: templates/checkout/checkout.php:189
+msgid "Check the data and confirm your payment through your bank's app"
+msgstr "Confira os dados e confirme seu pagamento pelo app do seu banco"

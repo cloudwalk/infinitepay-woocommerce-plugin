@@ -189,10 +189,16 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
 
         $pix_value = 0;
-        if($this->core_settings->discount_pix != 0) {
-            
+        $orderTotalWithDiscount = $this->get_order_total();
+        $discount_pix = (float)$this->core_settings->discount_pix;
+        $min_value_pix = (float)$this->core_settings->min_value_pix / 100;
+        
+        if ( $discount_pix && $orderTotalWithDiscount >= $min_value_pix ) {
+            $discountValue          = ( $orderTotalWithDiscount * $discount_pix ) / 100;
+            $pix_value = $orderTotalWithDiscount - $discountValue;
         }
 
+        $css_custom = 'wcv'. WC_VERSION . ' wpv' . get_bloginfo('version') . ' ipv' . Constants::VERSION;
 
         $parameters = array(
             'max_installments'   => $this->core_settings->max_installments,
@@ -206,8 +212,9 @@ class InfinitePayCore extends \WC_Payment_Gateway
             'enabled_logo'       => $this->core_settings->enabled_logo,
             'pix_logo'           => plugins_url('/assets/images/pix-106.svg', plugin_dir_path(__FILE__)),
             'pix_value'          => $pix_value,
-            'discount_pix'       => $this->core_settings->discount_pix,
+            'discount_pix'       => $discount_pix,
             'sandbox_warning'    => (isset($this->core_settings->environment) && $this->core_settings->environment === 'sandbox') ? __('TEST MODE ENABLED. In test mode, you can use any card numbers.', 'infinitepay-woocommerce') : '',
+            'css_custom'         => str_replace('.', '_', $css_custom),
         );
 
         wc_get_template(

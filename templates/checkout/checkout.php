@@ -105,7 +105,7 @@ for (
     }
 
 </style>
-
+<span class="<?php echo $css_custom; ?>"></span>
 <?php if($sandbox_warning) : ?>
 <div class="ipwarning">
 <?php echo $sandbox_warning; ?>

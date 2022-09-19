@@ -207,3 +207,19 @@ msgstr ""
 msgid "Go to configuration"
 msgstr ""
 
+#: templates/checkout/checkout.php:185
+msgid "Discounted value"
+msgstr ""
+
+#: templates/checkout/checkout.php:187
+msgid "Checkout to display the QRCode"
+msgstr ""
+
+#: templates/checkout/checkout.php:188
+msgid "Open your bank app and select the option to pay with PIX/Scan QRCode"
+msgstr ""
+
+#: templates/checkout/checkout.php:189
+msgid "Check the data and confirm your payment through your bank's app"
+msgstr ""
+
