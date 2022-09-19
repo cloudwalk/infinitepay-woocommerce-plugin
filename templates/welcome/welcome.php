@@ -18,7 +18,7 @@
                     <iframe width="560" height="315" src="https://www.youtube.com/embed/-T85G-RYTFE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </p>
 
-                <p><a class="button" target="_blank" href="#">Para gerar suas credências clique aqui</a></p>
+                <p><a class="button" target="_blank" href="#">Para gerar suas credenciais clique aqui</a></p>
             </div>
         </div>
     </div>
