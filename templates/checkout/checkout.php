@@ -180,9 +180,11 @@ for (
                 <div class="pix-label">
                     <img src="<?php echo $pix_logo; ?>" alt="InfinitePay Label" />
                 </div>
+                <?php if($pix_value != 0) : ?>
                 <p>
                    <strong><?php echo __('Discounted value', 'infinitepay-woocommerce'); ?> (<?php echo $discount_pix; ?>%): R$ <?php echo $pix_value; ?></strong>
                 </p>
+                <?php endif; ?>
                 <ul>
                     <li><span>1</span> <?php echo __('Checkout to display the QRCode', 'infinitepay-woocommerce'); ?></li>
                     <li><span>2</span> <?php echo __('Open your bank app and select the option to pay with PIX/Scan QRCode', 'infinitepay-woocommerce'); ?></li>
