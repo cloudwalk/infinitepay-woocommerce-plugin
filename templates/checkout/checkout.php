@@ -18,7 +18,7 @@ for (
 	$i <= (int) $max_installments;
 	$i ++
 ) {
-	if ( $i === 1 ) {
+	if ( $i == 1 ) {
 		$installments .= '<option value="1">R$ ' . esc_attr( number_format( $installments_value[ $i - 1 ]['value'], 2, ",", "." ) ) . ' à vista</option>';
 	} else {
 		$new_value = round( $installments_value[ $i - 1 ]['value'], 2, PHP_ROUND_HALF_UP );
@@ -60,46 +60,74 @@ for (
     .button.active {
         border:1px solid #000;
     }
+    
+    a.noactive {   
+        background: #5f5f5f1a !important;     
+    }
 
     .pix-label {
         width: 100%;
         margin-top: 1rem;
     }
     .pix-label img {
-        width: 100%;
-        object-fit: cover;
-        max-height: inherit !important;
+        width: 40%;
+        float: none !important;
+        border: 0; 
+        padding: 0; 
+        margin-bottom: 2rem;
+        max-height: 40% !important;
     }
+
+    .wc-pix-form ul {
+        margin:10px 0px !important;
+        padding: 0px !important;
+    }
+
+    .wc-pix-form ul li {
+        margin:15px 0px !important;
+        padding: 0px !important;
+    }
+
+    .wc-pix-form ul li span{
+        background: #5f5f5f59;
+        border-radius: 50%;
+        width: 30px;
+        padding: 5px 0px 0px 12px;
+        height: 30px;
+        display: inline-block;
+    }
+
     .ipwarning {
         padding: 10px;
         background-color: #ff9800;
         color: #fff;
         margin-bottom: 15px;
     }
-</style>
 
+</style>
+<span class="<?php echo $css_custom; ?>"></span>
 <?php if($sandbox_warning) : ?>
 <div class="ipwarning">
 <?php echo $sandbox_warning; ?>
 </div>
 <?php endif; ?>
 
-<?php if($enabled_creditcard === 'yes') : ?>
-<a href="javascript:;" onClick="<?php echo ($enabled_pix === 'yes') ? "ifchangePaymentMethod('cc-form')" : "void(0)" ?>" id="cc-form" class="button active">
+<?php if($enabled_creditcard == 'yes') : ?>
+<a href="javascript:;" onClick="<?php echo ($enabled_pix == 'yes') ? "ifchangePaymentMethod('cc-form')" : "void(0)" ?>" id="cc-form" class="button active">
     <?php echo __('Credit Card', 'infinitepay-woocommerce'); ?>
 </a>
 <?php endif; ?>
 
-<?php if($enabled_pix === 'yes') : ?>
-<a href="javascript:;" onClick="<?php echo ($enabled_creditcard === 'yes') ? "ifchangePaymentMethod('pix-form')" : "void(0)" ?>" id="pix-form" class="button">
+<?php if($enabled_pix == 'yes') : ?>
+<a href="javascript:;" onClick="<?php echo ($enabled_creditcard == 'yes') ? "ifchangePaymentMethod('pix-form')" : "void(0)" ?>" id="pix-form" class="button noactive">
     PIX
 </a>
 <?php endif; ?>
 
-<?php if($enabled_creditcard === 'yes' || $enabled_pix === 'yes') : ?>
+<?php if($enabled_creditcard == 'yes' || $enabled_pix == 'yes') : ?>
     <div  id="infinitepay-form">
-        <input id="ip_method" name="ip_method" value="<?php echo ($enabled_pix === 'yes' && $enabled_creditcard === 'yes') ? "cc-form" : ($enabled_pix === 'yes' ? 'form-pix' : 'cc-form') ?>" type="hidden">
-        <?php if($enabled_creditcard === 'yes') : ?>
+        <input id="ip_method" name="ip_method" value="<?php echo ($enabled_pix == 'yes' && $enabled_creditcard == 'yes') ? "cc-form" : ($enabled_pix == 'yes' ? 'form-pix' : 'cc-form') ?>" type="hidden">
+        <?php if($enabled_creditcard == 'yes') : ?>
             <fieldset id="wc-<?php echo esc_attr( $id ) ?>-cc-form" class="wc-credit-card-form wc-payment-form wc-if-form" style="background:transparent;">                
                     
                 <p><?php echo $instructions; ?></p>
@@ -146,15 +174,22 @@ for (
             </fieldset>
         <?php endif; ?>
         
-        <?php if($enabled_pix === 'yes') : ?>
-            <fieldset id="wc-<?php echo esc_attr( $id ) ?>-pix-form" class="wc-pix-form wc-payment-form wc-if-form" style="background:transparent;<?php echo ($enabled_creditcard === 'yes') ? "display:none" : "" ?>">
+        <?php if($enabled_pix == 'yes') : ?>
+            <fieldset id="wc-<?php echo esc_attr( $id ) ?>-pix-form" class="wc-pix-form wc-payment-form wc-if-form" style="background:transparent;<?php echo ($enabled_creditcard == 'yes') ? "display:none" : "" ?>">
                 <p><?php echo $instructions_pix; ?></p>
                 <div class="pix-label">
-                    <img src="https://confere-pix.web.app/pix.png" alt="InfinitePay Label" />
+                    <img src="<?php echo $pix_logo; ?>" alt="InfinitePay Label" />
                 </div>
+                <?php if($pix_value != 0) : ?>
                 <p>
-                    <br><br><?php echo __('The PIX QRCode for payment will be displayed after place order', 'infinitepay-woocommerce'); ?>
+                   <strong><?php echo __('Discounted value', 'infinitepay-woocommerce'); ?> (<?php echo $discount_pix; ?>%): R$ <?php echo $pix_value; ?></strong>
                 </p>
+                <?php endif; ?>
+                <ul>
+                    <li><span>1</span> <?php echo __('Checkout to display the QRCode', 'infinitepay-woocommerce'); ?></li>
+                    <li><span>2</span> <?php echo __('Open your bank app and select the option to pay with PIX/Scan QRCode', 'infinitepay-woocommerce'); ?></li>
+                    <li><span>3</span> <?php echo __("Check the data and confirm your payment through your bank's app", 'infinitepay-woocommerce'); ?></li>
+                </ul>
             </fieldset>
         <?php endif; ?>
     </div>
@@ -162,18 +197,26 @@ for (
 
 <script type="text/javascript">
 
-    <?php if($enabled_creditcard === 'yes' && $enabled_pix === 'yes') : ?>
+    <?php if($enabled_creditcard == 'yes' && $enabled_pix == 'yes') : ?>
     function ifchangePaymentMethod(frame) {
         if(frame == 'cc-form') {
             document.getElementById('wc-<?php echo esc_attr( $id ) ?>-cc-form').style.display = 'block';
             document.getElementById('wc-<?php echo esc_attr( $id ) ?>-pix-form').style.display = 'none';
             document.getElementById('cc-form').classList.add("active");
+            document.getElementById('pix-form').classList.add("noactive"); 
+            
             document.getElementById('pix-form').classList.remove("active");
+            document.getElementById('cc-form').classList.remove("noactive");
 
         } else {
             document.getElementById('wc-<?php echo esc_attr( $id ) ?>-cc-form').style.display = 'none';
             document.getElementById('wc-<?php echo esc_attr( $id ) ?>-pix-form').style.display = 'block';
             document.getElementById('cc-form').classList.remove("active");
+            document.getElementById('pix-form').classList.add("active");
+            document.getElementById('cc-form').classList.add("noactive");
+            
+            document.getElementById('cc-form').classList.remove("active");
+            document.getElementById('pix-form').classList.remove("noactive")
             document.getElementById('pix-form').classList.add("active");
         }
         document.getElementById('ip_method').value = frame;

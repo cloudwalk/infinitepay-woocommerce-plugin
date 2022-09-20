@@ -26,7 +26,7 @@ class PIXFields
 			'discount_pix'      => array(
 				'title'       => __( 'Discount (%)', 'infinitepay-woocommerce' ),
 				'type'        => 'number',
-				'default'     => '5.0',
+				'default'     => '0',
 				'desc_tip'    => true,
 			),
 			'min_value_pix' => array(
