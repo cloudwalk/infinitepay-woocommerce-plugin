@@ -2,7 +2,7 @@
 /*
  * Plugin Name: InfinitePay for WooCommerce
  * Description: Configure the payment options and accept payments with cards.
- * Version: 2.0.5
+ * Version: 2.0.6
  * Author: Infinite Pay
  * Author URI: https://infinitepay.io/
  * Text Domain: infinitepay-woocommerce

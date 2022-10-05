@@ -23,13 +23,23 @@ if ( ! defined( 'ABSPATH' ) ) {
     <div style="word-wrap: break-word; max-width: 450px;">
       <small>Código de transação</small><br>
       <code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;"><?php echo $code; ?></code>
+      <br />
+      <input type="text" value="<?php echo $code; ?>" id="pixcode" style="display:none">
+      <button onclick="copypix()">Copiar aqui para copiar</button>
     </div>
   </div>
 </div>
 <p style="margin-top: 1rem;">Caso já tenha feito o pagamento, verifique se foi confirmado na página de <a href="<?php echo$order->get_view_order_url(); ?>">detalhes do pedido</a></p>
 
-
 <script type="text/javascript">
+  
+    function copypix() {
+      var copyText = document.getElementById("pixcode");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      console.log(copyText.value);
+      navigator.clipboard.writeText(copyText.value);
+    }
     var req = new XMLHttpRequest();
     var lastStatus = "";
     req.onreadystatechange = function() {
