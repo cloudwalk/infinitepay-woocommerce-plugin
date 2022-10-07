@@ -19,13 +19,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div id="qrcodepixcontent" style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">
   <img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode=<?php echo urlencode($code); ?>" alt="QR Code"/>
   <div>
-    <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ <?php echo $order->get_total(); ?></strong></p>
+    <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ <?php echo number_format( $order->get_total(), 2, ',', '.'); ?></strong></p>
     <div style="word-wrap: break-word; max-width: 450px;">
       <small>Código de transação</small><br>
       <code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;"><?php echo $code; ?></code>
       <br />
       <input type="text" value="<?php echo $code; ?>" id="pixcode" style="display:none">
-      <button onclick="copypix()">Copiar aqui para copiar</button>
+      <button onclick="copypix()">Clique aqui para copiar</button>
     </div>
   </div>
 </div>

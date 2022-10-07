@@ -190,12 +190,12 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
         $pix_value = 0;
         $orderTotalWithDiscount = $this->get_order_total();
-        $discount_pix = (float)$this->core_settings->discount_pix;
-        $min_value_pix = (float)$this->core_settings->min_value_pix / 100;
+        $discount_pix  = (float)$this->core_settings->discount_pix;
+        $min_value_pix = (float)$this->core_settings->min_value_pix;
         
         if ( $discount_pix && $orderTotalWithDiscount >= $min_value_pix ) {
-            $discountValue          = ( $orderTotalWithDiscount * $discount_pix ) / 100;
-            $pix_value = number_format( ($orderTotalWithDiscount - $discountValue), 2, ',', '.');
+            $discountValue  = ( $orderTotalWithDiscount * $discount_pix ) / 100;
+            $pix_value      = number_format( ($orderTotalWithDiscount - $discountValue), 2, ',', '.');
         }
 
         $css_custom = 'wcv'. WC_VERSION . ' wpv' . get_bloginfo('version') . ' ipv' . Constants::VERSION;
