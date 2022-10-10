@@ -50,11 +50,11 @@ If you installed it correctly, you will see it in your list of "Installed Plugin
 
 == Changelog ==
 
-= 2.0.6 (2022/10/05) =
+= 2.0.6 (2022/10/10) =
 * Features
     - Interfaces Pix Copy & paste buttom
 * Bug fixes
-    - Fixing pix discount value 
+    - Fixing the displaying pix discount value 
 
 = 2.0.5 (2022/09/20) =
 * Features
