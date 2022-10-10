@@ -30,16 +30,16 @@ add_filter( 'woocommerce_rest_api_get_rest_namespaces', 'woo_custom_api');
 // add_action( 'admin_init', 'ip_redirect');
 // register_activation_hook( __FILE__, 'plugin_activate' );
 
-function register_welcomehidemenu() {
-	add_submenu_page(
-		'woocommerce',
-		'InfinitePay',
-		'InfinitePay',
-		'manage_woocommerce',
-		'ip-welcome',
-		'welcome_render'
-	);
-}
+// function register_welcomehidemenu() {
+// 	add_submenu_page(
+// 		'woocommerce',
+// 		'InfinitePay',
+// 		'InfinitePay',
+// 		'manage_woocommerce',
+// 		'ip-welcome',
+// 		'welcome_render'
+// 	);
+// }
 
 
 function welcome_render() {
