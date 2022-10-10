@@ -22,9 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ <?php echo number_format( $order->get_total(), 2, ',', '.'); ?></strong></p>
     <div style="word-wrap: break-word; max-width: 450px;">
       <small>Código de transação</small><br>
-      <code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;"><?php echo $code; ?></code>
+      <code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;"><?php echo esc_html($code); ?></code>
       <br />
-      <input type="text" value="<?php echo $code; ?>" id="pixcode" style="display:none">
+      <input type="text" value="<?php echo esc_html($code); ?>" id="pixcode" style="display:none">
       <button onclick="copypix()">Clique aqui para copiar</button>
     </div>
   </div>
