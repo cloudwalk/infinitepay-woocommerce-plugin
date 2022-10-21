@@ -19,17 +19,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div id="qrcodepixcontent" style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">
   <img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode=<?php echo urlencode($code); ?>" alt="QR Code"/>
   <div>
-    <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ <?php echo $order->get_total(); ?></strong></p>
+    <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ <?php echo number_format( $order->get_total(), 2, ',', '.'); ?></strong></p>
     <div style="word-wrap: break-word; max-width: 450px;">
       <small>Código de transação</small><br>
-      <code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;"><?php echo $code; ?></code>
+      <code id="pixcodestr" style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;"><?php echo esc_html($code); ?></code>
+      <br />
+      <input type="text" id="pixcode" style="display:none;">
+      <button onclick="copypix()">Clique aqui para copiar</button>
     </div>
   </div>
 </div>
 <p style="margin-top: 1rem;">Caso já tenha feito o pagamento, verifique se foi confirmado na página de <a href="<?php echo$order->get_view_order_url(); ?>">detalhes do pedido</a></p>
 
-
 <script type="text/javascript">
+
+    document.getElementById('pixcode').value = document.getElementById('pixcodestr').innerHTML;
+  
+    function copypix() {
+      var copyText = document.getElementById("pixcode");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      console.log(copyText.value);
+      navigator.clipboard.writeText(copyText.value);
+    }
     var req = new XMLHttpRequest();
     var lastStatus = "";
     req.onreadystatechange = function() {
