@@ -228,3 +228,7 @@ msgstr "Abra o app do seu banco e selecione a opção pagar com Pix/Escanear QRC
 #: templates/checkout/checkout.php:189
 msgid "Check the data and confirm your payment through your bank's app"
 msgstr "Confira os dados e confirme seu pagamento pelo app do seu banco"
+
+#: templates/checkout/checkout.php:229
+msgid "The minimum amount for the PIX is BRL 1.00"
+msgstr "O Valor mínimo para o PIX é de R$ 1,00"

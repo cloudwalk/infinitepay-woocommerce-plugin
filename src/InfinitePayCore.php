@@ -266,6 +266,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
                     );
                 }
             } else if ( $is_pix ) {
+
                 $result = $checkout->process_pix();
                 if($result) {
                     return array(

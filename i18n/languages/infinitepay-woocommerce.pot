@@ -223,3 +223,7 @@ msgstr ""
 msgid "Check the data and confirm your payment through your bank's app"
 msgstr ""
 
+#: templates/checkout/checkout.php:229
+msgid "The minimum amount for the PIX is BRL 1.00"
+msgstr ""
+
