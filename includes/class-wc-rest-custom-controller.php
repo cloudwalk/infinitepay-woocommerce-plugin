@@ -45,7 +45,8 @@ class WC_REST_Custom_Controller {
 		}
 
 		// Update order status to payment received
-		$paymentReceivedStatus = 'processing';
+		$options = get_option('woocommerce_infinitepay_settings');
+		$paymentReceivedStatus = ($options['status_aproved'] !== null) ? $options['status_aproved'] : 'processing';
 		$order->update_status($paymentReceivedStatus);
 
 		// Returning
