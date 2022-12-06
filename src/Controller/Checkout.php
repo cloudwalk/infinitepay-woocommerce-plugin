@@ -224,7 +224,7 @@ class Checkout extends \WC_Payment_Gateway
 			$order_value = $orderTotalWithDiscount * 100;
 			$final_value = (int) explode( '.', $order_value )[0];
 
-			if( $final_value < 101 ) {
+			if( $final_value < 100 ) {
 				$this->log->write_log(__FUNCTION__, $log_header . ' Could not process pix payment, value < R$ 1,00');
                 wc_add_notice(__( 'The minimum amount for the PIX is BRL 1.00', 'infinitepay-woocommerce'), 'error');
 				return false;
