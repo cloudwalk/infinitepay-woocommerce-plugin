@@ -163,7 +163,7 @@ for (
 
                     <div class="form-row form-row-wide">
                         <label for="ip_docNumber">CPF do portador do cartão <span class="required">*</span></label>
-                        <input id="ip_docNumber" onkeyup="ipCreditMaskDate(this, ipDoc);"  data-ip="card-holder-document" type="text" autocomplete="off" name="infinitepay_custom[doc_number]" maxlength="14" class="input-text">
+                        <input id="ip_docNumber" onkeyup="ipCreditMaskDate(this, ipDoc);"  data-ip="card-holder-document" type="tel" autocomplete="off" name="infinitepay_custom[doc_number]" maxlength="14" class="input-text">
                         <span id="ip-error-5" class="ip-error" data-main="#ip_docNumber">Documento inválido</span>
                     </div>
                     <input type="hidden" id="ip-token" name="infinitepay_custom[token]"/>

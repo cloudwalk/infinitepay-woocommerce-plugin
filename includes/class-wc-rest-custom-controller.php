@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Part of Woo InfinitePay Module
  * Author - InfinitePay
@@ -8,6 +9,8 @@
  *
  *  @package InfinitePay
  */
+
+
 class WC_REST_Custom_Controller {
 	/**
 	 * You can extend this class with
@@ -21,6 +24,9 @@ class WC_REST_Custom_Controller {
 	// Callback handler
 	public function infinite_pay_callback(WP_REST_Request $data) {
 		global $woocommerce;
+
+		
+		
 
 		// Retrieve parameters
 		$orderId = $data['order_id'];
@@ -48,6 +54,12 @@ class WC_REST_Custom_Controller {
 		$options = get_option('woocommerce_infinitepay_settings');
 		$paymentReceivedStatus = ($options['status_aproved'] !== null) ? $options['status_aproved'] : 'processing';
 		$order->update_status($paymentReceivedStatus);
+
+
+		if (isset($options['enabled_log']) && $options['enabled_log'] == 'yes') {
+			$log = new \WC_Logger();
+			$log->add( 'Webhook_InfinitePay',  'Update order status to payment received: status 200');
+		}
 
 		// Returning
 		return array(
