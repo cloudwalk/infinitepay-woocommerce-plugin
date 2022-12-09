@@ -25,47 +25,54 @@ class WC_REST_Custom_Controller {
 	public function infinite_pay_callback(WP_REST_Request $data) {
 		global $woocommerce;
 
-		
-		
+		try {
+			//code...
+			// Retrieve parameters
+			$orderId = $data['order_id'];
+			$safetyHash = $data->get_header('X-Callback-Signature');
 
-		// Retrieve parameters
-		$orderId = $data['order_id'];
-		$safetyHash = $data->get_header('X-Callback-Signature');
+			// Retrieve order
+			$order = wc_get_order($orderId);
+			$transactionSecrets = get_post_meta($orderId, 'transactionSecret');
+			//$nsu = get_post_meta($orderId, 'nsuHost');
+			$body = json_encode($data->get_json_params(), JSON_UNESCAPED_LINE_TERMINATORS | JSON_UNESCAPED_UNICODE);
+			$transactionSignature = hash_hmac('sha256', $body, $transactionSecrets[0]);
 
-		// Retrieve order
-		$order = wc_get_order($orderId);
-		$transactionSecrets = get_post_meta($orderId, 'transactionSecret');
-		//$nsu = get_post_meta($orderId, 'nsuHost');
-		$body = json_encode($data->get_json_params(), JSON_UNESCAPED_LINE_TERMINATORS | JSON_UNESCAPED_UNICODE);
-		$transactionSignature = hash_hmac('sha256', $body, $transactionSecrets[0]);
+			// Validate if the request is valid
+			if ($transactionSignature != $safetyHash) {
+				// Return bad request
+				return array(
+					'status' => 400,
+					//'transactionId' => $nsu[0],
+					'signature' => $safetyHash,
+					'generatedHash' => $transactionSignature
+				);
+			}
 
-		// Validate if the request is valid
-		if ($transactionSignature != $safetyHash) {
-			// Return bad request
+			// Update order status to payment received
+			$options = get_option('woocommerce_infinitepay_settings');
+			$paymentReceivedStatus = ($options['status_aproved'] !== null) ? $options['status_aproved'] : 'processing';
+			$order->update_status($paymentReceivedStatus);
+
+
+			if (isset($options['enabled_log']) && $options['enabled_log'] == 'yes') {
+				$log = new \WC_Logger();
+				$log->add( 'Webhook_InfinitePay',  'Update order status to payment received: status 200');
+			}
+
+			// Returning
 			return array(
-				'status' => 400,
-				//'transactionId' => $nsu[0],
-				'signature' => $safetyHash,
-				'generatedHash' => $transactionSignature
+				'status' => 200,
+				'message' => 'Transaction successfully validated'
 			);
+		} catch (\Throwable $th) {
+			
+			$options = get_option('woocommerce_infinitepay_settings');
+			if (isset($options['enabled_log']) && $options['enabled_log'] == 'yes') {
+				$log = new \WC_Logger();
+				$log->add( 'Webhook_InfinitePay',  'Error on PIX Webhok: ' .  $th->getMessage());
+			}
 		}
-
-		// Update order status to payment received
-		$options = get_option('woocommerce_infinitepay_settings');
-		$paymentReceivedStatus = ($options['status_aproved'] !== null) ? $options['status_aproved'] : 'processing';
-		$order->update_status($paymentReceivedStatus);
-
-
-		if (isset($options['enabled_log']) && $options['enabled_log'] == 'yes') {
-			$log = new \WC_Logger();
-			$log->add( 'Webhook_InfinitePay',  'Update order status to payment received: status 200');
-		}
-
-		// Returning
-		return array(
-			'status' => 200,
-			'message' => 'Transaction successfully validated'
-		);
 	}
 
 	// Validate order status

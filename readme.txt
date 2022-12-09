@@ -50,9 +50,12 @@ If you installed it correctly, you will see it in your list of "Installed Plugin
 
 == Changelog ==
 
-= 2.0.7 (2022/11/30) =
+= 2.0.7 (2022/12/09) =
 * Bug fixes
     - Added a warning when the payment amount is less than BRL 1.00 in the PIX
+    - Added Log on Pix callback
+    - Fixed some UX issues
+    - Fixed checkout fields for a better mobile experience
 
 = 2.0.6 (2022/10/10) =
 * Features
