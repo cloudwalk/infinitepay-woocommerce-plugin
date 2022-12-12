@@ -51,8 +51,8 @@ class WC_REST_Custom_Controller {
 
 			// Update order status to payment received
 			$options = get_option('woocommerce_infinitepay_settings');
-			$paymentReceivedStatus = ($options['status_aproved'] !== null) ? $options['status_aproved'] : 'processing';
-			$order->update_status($paymentReceivedStatus);
+			$paymStatus = ($options['status_aproved'] !== null) ? $options['status_aproved'] : 'processing';
+			$order->update_status($paymStatus);
 
 
 			if (isset($options['enabled_log']) && $options['enabled_log'] == 'yes') {
@@ -66,7 +66,7 @@ class WC_REST_Custom_Controller {
 				'message' => 'Transaction successfully validated'
 			);
 		} catch (\Throwable $th) {
-			
+
 			$options = get_option('woocommerce_infinitepay_settings');
 			if (isset($options['enabled_log']) && $options['enabled_log'] == 'yes') {
 				$log = new \WC_Logger();
