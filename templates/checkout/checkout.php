@@ -134,24 +134,24 @@ for (
 
                     <div class="form-row form-row-wide">
                         <label for="ip_ccNo">Número do Cartão <span class="required">*</span></label>
-                        <input id="ip_ccNo" onkeyup="ipCreditMaskDate(this, ipMcc);" type="text" data-ip="card-number" autocomplete="off" maxlength="19" class="input-text">
+                        <input id="ip_ccNo" onkeyup="ipCreditMaskDate(this, ipMcc);" type="tel" data-ip="card-number" autocomplete="off" maxlength="19" class="input-text">
                         <span id="ip-error-1" class="ip-error" data-main="#ip_ccNo">Número do cartão inválido</span>
                     </div>
 
                     <div class="form-row form-row-first">
                         <label for="cardExpirationMonth">Mês de validade <span class="required">*</span></label>
-                        <input id="cardExpirationMonth" data-ip="card-expiration-month" onkeyup="ipCreditMaskDate(this, ipInteger);" type="text" autocomplete="off" placeholder="MM" maxlength="2" class="input-text">
+                        <input id="cardExpirationMonth" data-ip="card-expiration-month" onkeyup="ipCreditMaskDate(this, ipInteger);" type="tel" autocomplete="off" placeholder="MM" maxlength="2" class="input-text">
                         <span id="ip-error-2" class="ip-error" data-main="#ip_expdate">Data inválida</span>
                     </div>
 
                     <div class="form-row form-row-last">
                         <label for="cardExpirationYear">Ano de validade <span class="required">*</span></label>
-                        <input id="cardExpirationYear" data-ip="card-expiration-year" onkeyup="ipCreditMaskDate(this, ipInteger);" type="text" autocomplete="off" placeholder="AA" maxlength="2" class="input-text">
+                        <input id="cardExpirationYear" data-ip="card-expiration-year" onkeyup="ipCreditMaskDate(this, ipInteger);" type="tel" autocomplete="off" placeholder="AA" maxlength="2" class="input-text">
                     </div>
 
                     <div class="form-row form-row-wide">
                         <label for="ip_cvv">CVV<span class="required">*</span></label>
-                        <input id="ip_cvv" onkeyup="ipCreditMaskDate(this, ipInteger);" type="text" data-ip="card-cvv" autocomplete="off" placeholder="CVV" name="infinitepay_custom[cvv]" maxlength="4" class="input-text">
+                        <input id="ip_cvv" onkeyup="ipCreditMaskDate(this, ipInteger);" type="tel" data-ip="card-cvv" autocomplete="off" placeholder="CVV" name="infinitepay_custom[cvv]" maxlength="4" class="input-text">
                         <span id="ip-error-3" class="ip-error" data-main="#ip_cvv">CVV inválido</span>
                     </div>
 
@@ -163,7 +163,7 @@ for (
 
                     <div class="form-row form-row-wide">
                         <label for="ip_docNumber">CPF do portador do cartão <span class="required">*</span></label>
-                        <input id="ip_docNumber" onkeyup="ipCreditMaskDate(this, ipDoc);"  data-ip="card-holder-document" type="text" autocomplete="off" name="infinitepay_custom[doc_number]" maxlength="14" class="input-text">
+                        <input id="ip_docNumber" onkeyup="ipCreditMaskDate(this, ipDoc);"  data-ip="card-holder-document" type="tel" autocomplete="off" name="infinitepay_custom[doc_number]" maxlength="14" class="input-text">
                         <span id="ip-error-5" class="ip-error" data-main="#ip_docNumber">Documento inválido</span>
                     </div>
                     <input type="hidden" id="ip-token" name="infinitepay_custom[token]"/>
