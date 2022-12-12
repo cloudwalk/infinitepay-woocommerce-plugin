@@ -14,9 +14,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <style>
-   
+   #qrcodepixcontent {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    padding: 1rem;
+   }
+
+   @media only screen and (max-width: 600px) {
+    #qrcodepixcontent {
+      display:block;
+    }
+}
 </style>
-<div id="qrcodepixcontent" style="display: flex;flex-direction: column;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">
+<div id="qrcodepixcontent">
   <img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode=<?php echo urlencode($code); ?>" alt="QR Code"/>
   <div>
     <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ <?php echo number_format( $order->get_total(), 2, ',', '.'); ?></strong></p>
