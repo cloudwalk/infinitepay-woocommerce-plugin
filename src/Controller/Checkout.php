@@ -234,6 +234,24 @@ class Checkout extends \WC_Payment_Gateway
 			$body = array(
 				'amount'         => $final_value,
 				'capture_method' => 'pix',
+				'order'           => array(
+					'id'               => (string) $this->order->get_id(),
+					'amount'           => $final_value,
+					'items'            => $order_items,
+					'delivery_details' => array(
+						'email'        => sanitize_text_field($this->order->get_billing_email()),
+						'name'         => sanitize_text_field($this->order->get_shipping_first_name() ?: $this->order->get_billing_first_name()) . ' ' . sanitize_text_field($this->order->get_shipping_last_name() ?: $this->order->get_billing_last_name()),
+						'phone_number' => sanitize_text_field($this->order->get_shipping_phone()) ?: sanitize_text_field($this->order->get_billing_phone()),
+						'address'      => array(
+							'line1'   => sanitize_text_field($this->order->get_billing_address_1()),
+							'line2'   => sanitize_text_field($this->order->get_billing_address_2()),
+							'city'    => sanitize_text_field($this->order->get_billing_city()),
+							'state'   => sanitize_text_field($this->order->get_billing_state()),
+							'zip'     => sanitize_text_field($this->order->get_billing_postcode()),
+							'country' => sanitize_text_field($this->order->get_billing_country()),
+						),
+					),
+				),
 				'metadata'       => array(
 					'origin'         => 'woocommerce',
 					'plugin_version' => Constants::VERSION,
