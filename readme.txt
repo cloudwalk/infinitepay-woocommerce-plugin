@@ -50,6 +50,10 @@ If you installed it correctly, you will see it in your list of "Installed Plugin
 
 == Changelog ==
 
+= 2.0.8 (2023/01/17) =
+* Bug fixes
+    - Adjustments on Pix API
+
 = 2.0.7 (2022/12/09) =
 * Bug fixes
     - Added a warning when the payment amount is less than BRL 1.00 in the PIX
