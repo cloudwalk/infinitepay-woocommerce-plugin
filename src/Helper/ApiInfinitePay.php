@@ -30,6 +30,7 @@ class ApiInfinitePay
 				'Content-Type'  => 'application/json',
                 'Accept'        => 'application/json',
 			),
+            'user-agent' => 'ecommerce/infinitepay'
 		);
         
 		if ($this->environment === 'sandbox') {
