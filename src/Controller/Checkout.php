@@ -204,7 +204,7 @@ class Checkout extends \WC_Payment_Gateway
 			}
 
 			// Generate unique uuid for transaction secret
-			$transactionSecret = sha1( $this->order->get_id() . random_int(-9999,9999) );
+			$transactionSecret = sha1( $this->order->get_id() . random_bytes(10) );
 
 			$options = get_option('woocommerce_infinitepay_settings');
 
