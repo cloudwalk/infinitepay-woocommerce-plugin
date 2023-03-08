@@ -26,30 +26,21 @@ class WC_REST_Custom_Controller {
 		global $woocommerce;
 
 		try {
-			//code...
-			// Retrieve parameters
 			$orderId = $data['order_id'];
 			$safetyHash = $data->get_header('X-Callback-Signature');
 
-			// Retrieve order
 			$order = wc_get_order($orderId);
 			$transactionSecrets = get_post_meta($orderId, 'transactionSecret');
-			//$nsu = get_post_meta($orderId, 'nsuHost');
+			
 			$body = json_encode($data->get_json_params(), JSON_UNESCAPED_LINE_TERMINATORS | JSON_UNESCAPED_UNICODE);
 			$transactionSignature = hash_hmac('sha256', $body, $transactionSecrets[0]);
 
-			// Validate if the request is valid
 			if ($transactionSignature != $safetyHash) {
-				// Return bad request
 				return array(
 					'status' => 400,
-					//'transactionId' => $nsu[0],
-					'signature' => $safetyHash,
-					'generatedHash' => $transactionSignature
 				);
 			}
 
-			// Update order status to payment received
 			$options = get_option('woocommerce_infinitepay_settings');
 			$paymStatus = ($options['status_aproved'] !== null) ? $options['status_aproved'] : 'processing';
 			$order->update_status($paymStatus);
@@ -60,7 +51,6 @@ class WC_REST_Custom_Controller {
 				$log->add( 'Webhook_InfinitePay',  'Update order status to payment received: status 200');
 			}
 
-			// Returning
 			return array(
 				'status' => 200,
 				'message' => 'Transaction successfully validated'
@@ -75,17 +65,13 @@ class WC_REST_Custom_Controller {
 		}
 	}
 
-	// Validate order status
 	public function get_order_status(WP_REST_Request $data) {
 		global $woocommerce;
 
-		// Retrieve parameters
 		$orderId = $data['order_id'];
 
-		// Retrieve order
 		$order = wc_get_order($orderId);
 
-		// Returning
 		return array(
 			'status' => 200,
 			'order_status' => $order->get_status()
@@ -93,9 +79,7 @@ class WC_REST_Custom_Controller {
 	}
 	
 
-	// API Router
 	public function register_routes() {
-		// Register webhook route
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->pix_callback_endpoint,
@@ -105,7 +89,6 @@ class WC_REST_Custom_Controller {
 				'permission_callback' => '__return_true'
 			)
 		);
-		// Register order status route
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->order_status_endpoint,
