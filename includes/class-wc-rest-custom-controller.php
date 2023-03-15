@@ -24,10 +24,13 @@ class WC_REST_Custom_Controller {
 	// Callback handler
 	public function infinite_pay_callback(WP_REST_Request $data) {
 		global $woocommerce;
+		$log = new \WC_Logger();
 
 		try {
 			$orderId = $data['order_id'];
 			$safetyHash = $data->get_header('X-Callback-Signature');
+
+			$log->add( 'Webhook_InfinitePay', 'Update order status to payment received for ID' . $orderId);
 
 			$order = wc_get_order($orderId);
 			$transactionSecrets = get_post_meta($orderId, 'transactionSecret');
@@ -36,6 +39,7 @@ class WC_REST_Custom_Controller {
 			$transactionSignature = hash_hmac('sha256', $body, $transactionSecrets[0]);
 
 			if ($transactionSignature != $safetyHash) {
+				$log->add( 'Webhook_InfinitePay',  'Update order status to payment received: status 400');
 				return array(
 					'status' => 400,
 				);
@@ -45,11 +49,7 @@ class WC_REST_Custom_Controller {
 			$paymStatus = ($options['status_aproved'] !== null) ? $options['status_aproved'] : 'processing';
 			$order->update_status($paymStatus);
 
-
-			if (isset($options['enabled_log']) && $options['enabled_log'] == 'yes') {
-				$log = new \WC_Logger();
-				$log->add( 'Webhook_InfinitePay',  'Update order status to payment received: status 200');
-			}
+			$log->add( 'Webhook_InfinitePay',  'Update order status to payment received: status 200');
 
 			return array(
 				'status' => 200,
@@ -58,10 +58,8 @@ class WC_REST_Custom_Controller {
 		} catch (\Throwable $th) {
 
 			$options = get_option('woocommerce_infinitepay_settings');
-			if (isset($options['enabled_log']) && $options['enabled_log'] == 'yes') {
-				$log = new \WC_Logger();
-				$log->add( 'Webhook_InfinitePay',  'Error on PIX Webhok: ' .  $th->getMessage());
-			}
+			
+			$log->add( 'Webhook_InfinitePay',  'Error on PIX Webhok: ' .  $th->getMessage());
 		}
 	}
 
@@ -71,6 +69,9 @@ class WC_REST_Custom_Controller {
 		$orderId = $data['order_id'];
 
 		$order = wc_get_order($orderId);
+		
+		$log = new \WC_Logger();
+		$log->add( 'Webhook_InfinitePay', 'get_order_status for ID ' .  $orderId .  ' - status: '. $order->get_status());
 
 		return array(
 			'status' => 200,

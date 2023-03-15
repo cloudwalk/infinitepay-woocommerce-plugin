@@ -21,7 +21,7 @@ class Checkout extends \WC_Payment_Gateway
 
 	public function __construct($_order) {
 		$this->order	= $_order;
-		$this->log 		= new Log($this);
+		$this->log 		= new Log();
 		$this->api 		= new ApiInfinitePay();
 	}
 
@@ -173,7 +173,12 @@ class Checkout extends \WC_Payment_Gateway
 					$code = $response['response']['code'];
 				}
 				$this->log->write_log(__FUNCTION__, $log_header . 'Error ' . $code . ' on IP payment for nsu ' . $nsu . ' ' . json_encode($response));
-				wc_add_notice(__('Please review your card information and try again', 'infinitepay-woocommerce') . ' - ' . $code, 'error');
+				
+				$error = Utils::getErrorByCode($code);
+				$this->log->write_log(__FUNCTION__, $error);
+				
+				wc_add_notice(__($error['content'], 'infinitepay-woocommerce') . ' - ' . $code, 'error');
+				
 				if (isset($this->sandbox) && $this->sandbox === 'yes') {
 					wc_add_notice(json_encode($body), 'error');
 				}
@@ -313,7 +318,9 @@ class Checkout extends \WC_Payment_Gateway
 					} else {
 						$code = $response['response']['code'];
 					}
+					
 					$this->log->write_log( __FUNCTION__, $log_header . 'Error ' . $code . ' on IP PIX payment, error log: ' . json_encode( $response ) );
+					
 					wc_add_notice( __( 'Ooops, an internal error has occurred, wait bit and try again!', 'infinitepay-woocommerce' ) . ' - ' . $code, 'error' );
 					if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
 						wc_add_notice( json_encode( $body ), 'error' );

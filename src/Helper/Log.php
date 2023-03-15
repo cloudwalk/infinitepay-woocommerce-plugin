@@ -1,6 +1,8 @@
 <?php
 namespace Woocommerce\InfinitePay\Helper;
 
+use Woocommerce\InfinitePay\Helper\Constants;
+
 if ( ! function_exists( 'add_action' ) ) {
 	exit( 0 );
 }
@@ -13,11 +15,8 @@ class Log
 	public $log;
 	public $id;
 
-	public function __construct( $payment = null ) {
-		if ( ! empty( $payment ) ) {
-			$this->id = get_class( $payment );
-		}
-
+	public function __construct() {
+		$this->id = Constants::SLUG;
 		return $this->init_log();
 	}
 
@@ -32,9 +31,10 @@ class Log
 
 	public function write_log( $function, $message ) {
 		$options = get_option('woocommerce_infinitepay_settings');
-
+		
 		if (isset($options['enabled_log']) && $options['enabled_log'] == 'yes') {
 			$this->log->add( $this->id, '[' . $function . ']: ' . $message );
+			$this->log->add( $this->id, '=============================================================================================');
 		}
 	}
 

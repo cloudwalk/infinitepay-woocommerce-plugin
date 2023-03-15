@@ -103,4 +103,18 @@ class Utils
 		$port = $_SERVER['SERVER_PORT'] ? ':'.$_SERVER['SERVER_PORT'] : '';
 		return $protocol.$server.$port;
 	}
+
+	public static function getErrorByCode($code) {
+		$error = array_filter(Constants::ERROR_CODES, function ($var) {
+			return ( in_array($code,  $var['code']));
+		});
+		if(!$error) {
+			$error = [
+				'title'   => 'Payment fail',
+				'content' => 'Please review your card information and try again',
+				'code'    => [$code],
+			];
+		}
+		return $error;
+	}
 }

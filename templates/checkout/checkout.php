@@ -57,6 +57,10 @@ for (
         color: #000 !important;
     }
 
+    .payment_method_infinitepay img {
+        max-height: 1.3em !important;
+    }
+
     .button.active {
         border:1px solid #000;
     }
