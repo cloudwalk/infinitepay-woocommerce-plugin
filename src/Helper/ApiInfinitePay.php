@@ -110,6 +110,9 @@ class ApiInfinitePay
                 if(isset($body['card'])) {
                     unset($body['card']);
                 }
+                if(isset($body['customer'])) {
+                    unset($body['customer']);
+                }
                 $contentTolog = ['endpoint' => $endpoint, 'body' => $body];
 
                 $this->log->write_log(__FUNCTION__ . '-request', json_encode($contentTolog, JSON_PRETTY_PRINT));
