@@ -25,9 +25,9 @@ class InfinitePayCore extends \WC_Payment_Gateway
 		$this->init_form_fields();
     
 		$this->core_settings = new Settings($this);
-        $this->title         = 'InfinitePay';
+        $this->title         = 'Cartão de crédito & Pix';
         $this->icon			 = $this->get_ip_icon();
-		$this->log			 = new Log($this);
+		$this->log			 = new Log();
 
 		$this->api = new ApiInfinitePay();
 
@@ -133,7 +133,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
     {
         $this->id                 = 'infinitepay';
         $this->icon               = apply_filters('woocommerce_offline_icon', '');
-        $this->method_title       = 'InfinitePay';
+        $this->method_title       = 'Cartão de crédito & Pix | by InfinitePay';
         $this->method_description = __('Accept payments with InfinitePay', 'infinitepay-woocommerce');
         $this->has_fields         = true;
         $this->supports           = [ 'products' ];
@@ -186,8 +186,6 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
     public function payment_fields()
     {
-
-
         $pix_value = 0;
         $orderTotalWithDiscount = $this->get_order_total();
         $discount_pix  = (float)$this->core_settings->discount_pix;

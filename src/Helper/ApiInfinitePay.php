@@ -107,7 +107,20 @@ class ApiInfinitePay
                 $this->args['headers']['Authorization'] = 'Bearer ' . $bodyAuth['access_token'];
                 $this->args['body'] = json_encode($body, JSON_UNESCAPED_UNICODE);
 
+                if(isset($body['card'])) {
+                    unset($body['card']);
+                }
+                if(isset($body['customer'])) {
+                    unset($body['customer']);
+                }
+                $contentTolog = ['endpoint' => $endpoint, 'body' => $body];
+
+                $this->log->write_log(__FUNCTION__ . '-request', json_encode($contentTolog, JSON_PRETTY_PRINT));
+
                 $response = wp_remote_post( $endpoint, $this->args );
+
+                $this->log->write_log(__FUNCTION__ . '-response', json_encode($response, JSON_PRETTY_PRINT));
+
                 return $response;
             }
         }
