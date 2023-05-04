@@ -138,8 +138,12 @@ msgid "Enable Logo"
 msgstr "Habilitar logo"
 
 #: src/Fields/ConfigurationsFields.php:20
-msgid "Payment approved"
-msgstr "Pagamento Aprovado"
+msgid "Credit Card Payment approved"
+msgstr "Pagamento Aprovado (Cartão de Crédito)"
+
+#: src/Fields/ConfigurationsFields.php:27
+msgid "PIX Payment approved"
+msgstr "Pagamento Aprovado (PIX)"
 
 #: src/Fields/ConfigurationsFields.php:27
 msgid "Payment canceled"

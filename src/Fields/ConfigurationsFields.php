@@ -17,9 +17,16 @@ class ConfigurationsFields
 				'default' => 'yes',
 			),
 			'status_aproved' => array(
-				'title'   => __( 'Payment approved', 'infinitepay-woocommerce' ),
+				'title'   => __( 'Credit Card Payment approved', 'infinitepay-woocommerce' ),
 				'type'    => 'select',
-				'label'   => __( 'Payment approved', 'infinitepay-woocommerce' ),
+				'label'   => __( 'Credit Card Payment approved', 'infinitepay-woocommerce' ),
+				'default' => 'wc-processing',
+				'options' =>  wc_get_order_statuses()
+			),
+			'status_aproved_pix' => array(
+				'title'   => __( 'PIX Payment approved', 'infinitepay-woocommerce' ),
+				'type'    => 'select',
+				'label'   => __( 'PIX Payment approved', 'infinitepay-woocommerce' ),
 				'default' => 'wc-processing',
 				'options' =>  wc_get_order_statuses()
 			),
