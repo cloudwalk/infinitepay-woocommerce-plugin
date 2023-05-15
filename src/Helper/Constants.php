@@ -9,7 +9,7 @@ class Constants
 {
     const TEXT_DOMAIN      = 'infinitepay-woocommerce';
     const SLUG             = 'infinitepay';
-    const VERSION          = '2.0.12';
+    const VERSION          = '2.0.13';
     const MIN_PHP          = 5.6;
     const API_IP_BASE_URL  = 'https://api.infinitepay.io';
     const ACCESS_TOKEN_KEY = 'infinitepay_access_token';
