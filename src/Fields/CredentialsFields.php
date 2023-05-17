@@ -16,9 +16,9 @@ class CredentialsFields
 				'description' => self::get_desc_auth(),
 			),
 			'environment' => array(
-				'title'   => __( 'Store environment', 'infinitepay-woocommerce' ),
+				'title'   => _e( 'Store environment', 'infinitepay-woocommerce' ),
 				'type'    => 'select',
-				'label'   => __( 'Store environment', 'infinitepay-woocommerce' ),
+				'label'   => _e( 'Store environment', 'infinitepay-woocommerce' ),
 				'default' => 'production',
 				'options'     => [
 					'production' => 'Production',
@@ -26,19 +26,19 @@ class CredentialsFields
 				],
 			),
 			'client_id'       => array(
-				'title'       => __( 'Client ID', 'infinitepay-woocommerce' ),
+				'title'       => _e( 'Client ID', 'infinitepay-woocommerce' ),
 				'type'        => 'text',
 				'desc_tip'    => true,
-				'placeholder' => __( 'Client ID', 'infinitepay-woocommerce' ),
+				'placeholder' => _e( 'Client ID', 'infinitepay-woocommerce' ),
 				'custom_attributes' => [
 					'required' => true
 				]
 			),
 			'client_secret'	  => array(
-				'title'       => __( 'Client Secret', 'infinitepay-woocommerce' ),
+				'title'       => _e( 'Client Secret', 'infinitepay-woocommerce' ),
 				'type'        => 'password',
 				'desc_tip'    => true,
-				'placeholder' => __( 'Client Secret', 'infinitepay-woocommerce' ),
+				'placeholder' => _e( 'Client Secret', 'infinitepay-woocommerce' ),
 				'custom_attributes' => [
 					'required' => true
 				]

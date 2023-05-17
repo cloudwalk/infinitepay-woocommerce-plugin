@@ -11,22 +11,22 @@ class CreditCardFields
 	
         $fields = apply_filters( 'wc_infinitepay_form_fields', array(
 			'enabled_creditcard'               => array(
-				'title'   => __( 'Enabled/Disabled', 'infinitepay-woocommerce' ),
+				'title'   => _e( 'Enabled/Disabled', 'infinitepay-woocommerce' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'Enable Credit Card with InfinitePay', 'infinitepay-woocommerce' ),
+				'label'   => _e( 'Enable Credit Card with InfinitePay', 'infinitepay-woocommerce' ),
 				'default' => 'yes',
 			),
 			'instructions'          => array(
-				'title'       => __( 'Instructions', 'infinitepay-woocommerce' ),
+				'title'       => _e( 'Instructions', 'infinitepay-woocommerce' ),
 				'type'        => 'textarea',
-				'description' => __( 'Instructions that will be shown on thank you page and will be sent on email', 'infinitepay-woocommerce' ),
-				'default'     => __( '', 'infinitepay-woocommerce' ),
+				'description' => _e( 'Instructions that will be shown on thank you page and will be sent on email', 'infinitepay-woocommerce' ),
+				'default'     => _e( '', 'infinitepay-woocommerce' ),
 				'desc_tip'    => true,
 			),
 			'max_installments'      => array(
-				'title'       => __( 'Maximum number of installments', 'infinitepay-woocommerce' ),
+				'title'       => _e( 'Maximum number of installments', 'infinitepay-woocommerce' ),
 				'type'        => 'select',
-				'description' => __( 'Maximum number of installments that a customer can split the final amount', 'infinitepay-woocommerce' ),
+				'description' => _e( 'Maximum number of installments that a customer can split the final amount', 'infinitepay-woocommerce' ),
 				'default'     => 12,
 				'desc_tip'    => true,
 				'options'	  => [ 
@@ -45,9 +45,9 @@ class CreditCardFields
 				 ] 
 			),
 			'max_installments_free' => array(
-				'title'       => __( 'Maximum number of installments without interest', 'infinitepay-woocommerce' ),
+				'title'       => _e( 'Maximum number of installments without interest', 'infinitepay-woocommerce' ),
 				'type'        => 'select',
-				'description' => __( 'Maximum number of installments that a customer can split the final amount without interest', 'infinitepay-woocommerce' ),
+				'description' => _e( 'Maximum number of installments that a customer can split the final amount without interest', 'infinitepay-woocommerce' ),
 				'default'     => 12,
 				'desc_tip'    => true,
 				'options'	  => [ 

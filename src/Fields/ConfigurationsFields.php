@@ -11,38 +11,38 @@ class ConfigurationsFields
 	
         $fields = apply_filters( 'wc_infinitepay_form_fields', array(
 			'enabled_logo'	  => array(
-				'title'   => __( 'Enable InfinitePay Logo?', 'infinitepay-woocommerce' ),
+				'title'   => _e( 'Enable InfinitePay Logo?', 'infinitepay-woocommerce' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'Enable Logo', 'infinitepay-woocommerce' ),
+				'label'   => _e( 'Enable Logo', 'infinitepay-woocommerce' ),
 				'default' => 'yes',
 			),
 			'status_aproved' => array(
-				'title'   => __( 'Credit Card Payment approved', 'infinitepay-woocommerce' ),
+				'title'   => _e( 'Credit Card Payment approved', 'infinitepay-woocommerce' ),
 				'type'    => 'select',
-				'label'   => __( 'Credit Card Payment approved', 'infinitepay-woocommerce' ),
+				'label'   => _e( 'Credit Card Payment approved', 'infinitepay-woocommerce' ),
 				'default' => 'wc-processing',
 				'options' =>  wc_get_order_statuses()
 			),
 			'status_aproved_pix' => array(
-				'title'   => __( 'PIX Payment approved', 'infinitepay-woocommerce' ),
+				'title'   => _e( 'PIX Payment approved', 'infinitepay-woocommerce' ),
 				'type'    => 'select',
-				'label'   => __( 'PIX Payment approved', 'infinitepay-woocommerce' ),
+				'label'   => _e( 'PIX Payment approved', 'infinitepay-woocommerce' ),
 				'default' => 'wc-processing',
 				'options' =>  wc_get_order_statuses()
 			),
 			'status_canceled' => array(
-				'title'   => __( 'Payment canceled', 'infinitepay-woocommerce' ),
+				'title'   => _e( 'Payment canceled', 'infinitepay-woocommerce' ),
 				'type'    => 'select',
-				'label'   => __( 'Payment canceled', 'infinitepay-woocommerce' ),
+				'label'   => _e( 'Payment canceled', 'infinitepay-woocommerce' ),
 				'default' => 'wc-cancelled',
 				'options' =>  wc_get_order_statuses()
 			),
 			'enabled_log'	  => array(
-				'title'   => __( 'Enable logs', 'infinitepay-woocommerce' ) . '?',
+				'title'   => _e( 'Enable logs', 'infinitepay-woocommerce' ) . '?',
 				'type'    => 'checkbox',
-				'label'   => __( 'Enable logs', 'infinitepay-woocommerce' ),
+				'label'   => _e( 'Enable logs', 'infinitepay-woocommerce' ),
 				'default' => 'yes',
-				'description' => __( 'Avaliable on', 'infinitepay-woocommerce' ) . ' <a href="admin.php?page=wc-status&tab=logs">"WooCommerce > Status > Logs"</a>',
+				'description' => _e( 'Avaliable on', 'infinitepay-woocommerce' ) . ' <a href="admin.php?page=wc-status&tab=logs">"WooCommerce > Status > Logs"</a>',
 			),
 		) );
 

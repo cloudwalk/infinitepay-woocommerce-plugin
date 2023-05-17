@@ -88,14 +88,15 @@ class Settings
         echo '<ul class="subsubsub">';
 
         $sections = array(
-            'ip-credentials' => __('Credentials', 'infinitepay-woocommerce'),
-            'ip-credit-card' => __('Credit Card', 'infinitepay-woocommerce'),
-            'ip-pix'         => __('PIX', 'infinitepay-woocommerce'),
-            'ip-settings'    => __('Settings', 'infinitepay-woocommerce'),
+            'ip-credentials' => _e('Credentials', 'infinitepay-woocommerce'),
+            'ip-credit-card' => _e('Credit Card', 'infinitepay-woocommerce'),
+            'ip-pix'         => _e('PIX', 'infinitepay-woocommerce'),
+            'ip-settings'    => _e('Settings', 'infinitepay-woocommerce'),
         );
 
         $array_keys      = array_keys($sections);
-        $current_section = isset($_GET['ip-tab']) ? $_GET['ip-tab'] : 'ip-credentials';
+        $tab = filter_input( INPUT_GET, 'ip-tab' );
+        $current_section = isset($tab) ? $tab : 'ip-credentials';
 
         foreach ($sections as $id => $label) {
             $link = admin_url('admin.php?page=wc-settings&tab=checkout&section=infinitepay&ip-tab=' . sanitize_title($id));

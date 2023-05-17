@@ -25,16 +25,21 @@ class Checkout extends \WC_Payment_Gateway
 		$this->api 		= new ApiInfinitePay();
 	}
 
-	public function process_credit_card() {
-
+	public function process_credit_card($post) {
 
 		$log_header = '[' . $this->order->get_id() . '] ';
 
-		$token        = sanitize_text_field($_POST['infinitepay_custom']['token']);
-		$uuid         = sanitize_key($_POST['infinitepay_custom']['uuid']);
-		$installments = sanitize_text_field($_POST['infinitepay_custom']['installments']);
-		$doc_number   = sanitize_text_field($_POST['infinitepay_custom']['doc_number']);
-		$cvv          = sanitize_text_field($_POST['infinitepay_custom']['cvv']);
+		if ( empty( $post ) ) {
+			$this->log->write_log( __FUNCTION__, $log_header . 'Error 500 on IP payment, error log: ' . json_encode( $response ) );
+			wc_add_notice( _e( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
+			return false;
+		}
+
+		$token        = sanitize_text_field($post['token']);
+		$uuid         = sanitize_key($post['uuid']);
+		$installments = sanitize_text_field($post['installments']);
+		$doc_number   = sanitize_text_field($post['doc_number']);
+		$cvv          = sanitize_text_field($post['cvv']);
 		$nsu          = Utils::generate_uuid();
 		$this->log->write_log(__FUNCTION__, $log_header . 'Starting IP payment for nsu ' . $nsu);
 
@@ -117,13 +122,13 @@ class Checkout extends \WC_Payment_Gateway
 			'metadata'        => array(
 				'origin'         => 'woocommerce',
 				'plugin_version' => Constants::VERSION,
-				'store_url'      => $_SERVER['SERVER_NAME'],
+				'store_url'      => filter_input(INPUT_SERVER, 'SERVER_NAME'),
 				'wordpress_version' => get_bloginfo('version'),
 				'woocommerce_version' => WC_VERSION,
 				'payment_method' => 'credit',
 				'risk'           => array(
 					'session_id' => $uuid,
-					'payer_ip'   => isset($_SERVER['HTTP_CLIENT_IP']) ? $_SERVER['HTTP_CLIENT_IP'] : (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']),
+					'payer_ip'   => Utils::payer_ip(),
 				),
 			),
 		);
@@ -145,9 +150,9 @@ class Checkout extends \WC_Payment_Gateway
 				$this->order->payment_complete();
 
 				$this->order->add_order_note('
-					' . __('Installments', 'infinitepay-woocommerce') . ': ' . $installments . '
-					' . __('Final amount', 'infinitepay-woocommerce') . ': R$ ' . number_format($this->order->get_total(), 2, ",", ".") . '
-					' . __('NSU', 'infinitepay-woocommerce') . ': ' . $body['data']['id']
+					' . _e('Installments', 'infinitepay-woocommerce') . ': ' . $installments . '
+					' . _e('Final amount', 'infinitepay-woocommerce') . ': R$ ' . number_format($this->order->get_total(), 2, ",", ".") . '
+					' . _e('NSU', 'infinitepay-woocommerce') . ': ' . $body['data']['id']
 				);
 
 				if($this->order->get_meta('payment_method')) {
@@ -177,7 +182,7 @@ class Checkout extends \WC_Payment_Gateway
 				$error = Utils::getErrorByCode($code);
 				$this->log->write_log(__FUNCTION__, $error);
 				
-				wc_add_notice(__($error['content'], 'infinitepay-woocommerce') . ' - ' . $code, 'error');
+				wc_add_notice(_e($error['content'], 'infinitepay-woocommerce') . ' - ' . $code, 'error');
 				
 				if (isset($this->sandbox) && $this->sandbox === 'yes') {
 					wc_add_notice(json_encode($body), 'error');
@@ -185,7 +190,7 @@ class Checkout extends \WC_Payment_Gateway
 			}
 		} else {
 			$this->log->write_log(__FUNCTION__, $log_header . 'Error 500 on IP payment for nsu ' . $nsu . ', error log: ' . json_encode($response));
-			wc_add_notice(__('Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce'), 'error');
+			wc_add_notice(_e('Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce'), 'error');
 		}
 		return false;
 	}
@@ -231,7 +236,7 @@ class Checkout extends \WC_Payment_Gateway
 
 			if( $final_value < 100 ) {
 				$this->log->write_log(__FUNCTION__, $log_header . ' Could not process pix payment, value < R$ 1,00');
-                wc_add_notice(__( 'The minimum amount for the PIX is BRL 1.00', 'infinitepay-woocommerce'), 'error');
+                wc_add_notice(_e( 'The minimum amount for the PIX is BRL 1.00', 'infinitepay-woocommerce'), 'error');
 				return false;
 			}
 
@@ -239,30 +244,12 @@ class Checkout extends \WC_Payment_Gateway
 			$body = array(
 				'amount'         => $final_value,
 				'capture_method' => 'pix',
-				// 'order'           => array(
-				// 	'id'               => (string) $this->order->get_id(),
-				// 	'amount'           => $final_value,
-				// 	'items'            => $order_items,
-				// 	'delivery_details' => array(
-				// 		'email'        => sanitize_text_field($this->order->get_billing_email()),
-				// 		'name'         => sanitize_text_field($this->order->get_shipping_first_name() ?: $this->order->get_billing_first_name()) . ' ' . sanitize_text_field($this->order->get_shipping_last_name() ?: $this->order->get_billing_last_name()),
-				// 		'phone_number' => sanitize_text_field($this->order->get_shipping_phone()) ?: sanitize_text_field($this->order->get_billing_phone()),
-				// 		'address'      => array(
-				// 			'line1'   => sanitize_text_field($this->order->get_billing_address_1()),
-				// 			'line2'   => sanitize_text_field($this->order->get_billing_address_2()),
-				// 			'city'    => sanitize_text_field($this->order->get_billing_city()),
-				// 			'state'   => sanitize_text_field($this->order->get_billing_state()),
-				// 			'zip'     => sanitize_text_field($this->order->get_billing_postcode()),
-				// 			'country' => sanitize_text_field($this->order->get_billing_country()),
-				// 		),
-				// 	),
-				// ),
 				'metadata'       => array(
 					'origin'         => 'woocommerce',
 					'plugin_version' => Constants::VERSION,
 					'wordpress_version' => get_bloginfo('version'),
 					'woocommerce_version' => WC_VERSION,
-					'store_url'      => $_SERVER['SERVER_NAME'],
+					'store_url'      => filter_input(INPUT_SERVER, 'SERVER_NAME'),
 					'payment_method' => 'pix',
 					'callback' => array(
 						'validate' => '',
@@ -299,7 +286,7 @@ class Checkout extends \WC_Payment_Gateway
 
 					// Add br code to order object
 					$this->order->add_order_note( '
-						' . __( 'br_code', 'infinitepay-woocommerce' ) . ': ' . $pixBrCode . '
+						' . _e( 'br_code', 'infinitepay-woocommerce' ) . ': ' . $pixBrCode . '
 					' );
 
 					// Clear user cart
@@ -321,18 +308,19 @@ class Checkout extends \WC_Payment_Gateway
 					
 					$this->log->write_log( __FUNCTION__, $log_header . 'Error ' . $code . ' on IP PIX payment, error log: ' . json_encode( $response ) );
 					
-					wc_add_notice( __( 'Ooops, an internal error has occurred, wait bit and try again!', 'infinitepay-woocommerce' ) . ' - ' . $code, 'error' );
+					wc_add_notice( _e( 'Ooops, an internal error has occurred, wait bit and try again!', 'infinitepay-woocommerce' ) . ' - ' . $code, 'error' );
 					if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
 						wc_add_notice( json_encode( $body ), 'error' );
 					}
 				}
 			} else {
 				$this->log->write_log( __FUNCTION__, $log_header . 'Error 500 on IP payment, error log: ' . json_encode( $response ) );
-				wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
+				wc_add_notice( _e( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
 			}
 		} catch ( Exception $ex ) {
 			$this->log->write_log( __FUNCTION__, 'Caught exception: ' . $ex->getMessage() );
 		}
 		return false;
 	}
+	
 }
