@@ -31,7 +31,7 @@ class Checkout extends \WC_Payment_Gateway
 
 		if ( empty( $post ) ) {
 			$this->log->write_log( __FUNCTION__, $log_header . 'Error 500 on IP payment, error log: ' . json_encode( $response ) );
-			wc_add_notice( _e( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
+			wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
 			return false;
 		}
 
@@ -150,9 +150,9 @@ class Checkout extends \WC_Payment_Gateway
 				$this->order->payment_complete();
 
 				$this->order->add_order_note('
-					' . _e('Installments', 'infinitepay-woocommerce') . ': ' . $installments . '
-					' . _e('Final amount', 'infinitepay-woocommerce') . ': R$ ' . number_format($this->order->get_total(), 2, ",", ".") . '
-					' . _e('NSU', 'infinitepay-woocommerce') . ': ' . $body['data']['id']
+					' . __('Installments', 'infinitepay-woocommerce') . ': ' . $installments . '
+					' . __('Final amount', 'infinitepay-woocommerce') . ': R$ ' . number_format($this->order->get_total(), 2, ",", ".") . '
+					' . __('NSU', 'infinitepay-woocommerce') . ': ' . $body['data']['id']
 				);
 
 				if($this->order->get_meta('payment_method')) {
@@ -182,7 +182,7 @@ class Checkout extends \WC_Payment_Gateway
 				$error = Utils::getErrorByCode($code);
 				$this->log->write_log(__FUNCTION__, $error);
 				
-				wc_add_notice(_e($error['content'], 'infinitepay-woocommerce') . ' - ' . $code, 'error');
+				wc_add_notice(__($error['content'], 'infinitepay-woocommerce') . ' - ' . $code, 'error');
 				
 				if (isset($this->sandbox) && $this->sandbox === 'yes') {
 					wc_add_notice(json_encode($body), 'error');
@@ -190,7 +190,7 @@ class Checkout extends \WC_Payment_Gateway
 			}
 		} else {
 			$this->log->write_log(__FUNCTION__, $log_header . 'Error 500 on IP payment for nsu ' . $nsu . ', error log: ' . json_encode($response));
-			wc_add_notice(_e('Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce'), 'error');
+			wc_add_notice(__('Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce'), 'error');
 		}
 		return false;
 	}
@@ -236,7 +236,7 @@ class Checkout extends \WC_Payment_Gateway
 
 			if( $final_value < 100 ) {
 				$this->log->write_log(__FUNCTION__, $log_header . ' Could not process pix payment, value < R$ 1,00');
-                wc_add_notice(_e( 'The minimum amount for the PIX is BRL 1.00', 'infinitepay-woocommerce'), 'error');
+                wc_add_notice(__( 'The minimum amount for the PIX is BRL 1.00', 'infinitepay-woocommerce'), 'error');
 				return false;
 			}
 
@@ -286,7 +286,7 @@ class Checkout extends \WC_Payment_Gateway
 
 					// Add br code to order object
 					$this->order->add_order_note( '
-						' . _e( 'br_code', 'infinitepay-woocommerce' ) . ': ' . $pixBrCode . '
+						' . __( 'br_code', 'infinitepay-woocommerce' ) . ': ' . $pixBrCode . '
 					' );
 
 					// Clear user cart
@@ -308,14 +308,14 @@ class Checkout extends \WC_Payment_Gateway
 					
 					$this->log->write_log( __FUNCTION__, $log_header . 'Error ' . $code . ' on IP PIX payment, error log: ' . json_encode( $response ) );
 					
-					wc_add_notice( _e( 'Ooops, an internal error has occurred, wait bit and try again!', 'infinitepay-woocommerce' ) . ' - ' . $code, 'error' );
+					wc_add_notice( __( 'Ooops, an internal error has occurred, wait bit and try again!', 'infinitepay-woocommerce' ) . ' - ' . $code, 'error' );
 					if ( isset( $this->sandbox ) && $this->sandbox === 'yes' ) {
 						wc_add_notice( json_encode( $body ), 'error' );
 					}
 				}
 			} else {
 				$this->log->write_log( __FUNCTION__, $log_header . 'Error 500 on IP payment, error log: ' . json_encode( $response ) );
-				wc_add_notice( _e( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
+				wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
 			}
 		} catch ( Exception $ex ) {
 			$this->log->write_log( __FUNCTION__, 'Caught exception: ' . $ex->getMessage() );

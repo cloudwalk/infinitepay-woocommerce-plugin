@@ -88,10 +88,10 @@ class Settings
         echo '<ul class="subsubsub">';
 
         $sections = array(
-            'ip-credentials' => _e('Credentials', 'infinitepay-woocommerce'),
-            'ip-credit-card' => _e('Credit Card', 'infinitepay-woocommerce'),
-            'ip-pix'         => _e('PIX', 'infinitepay-woocommerce'),
-            'ip-settings'    => _e('Settings', 'infinitepay-woocommerce'),
+            'ip-credentials' => __('Credentials', 'infinitepay-woocommerce'),
+            'ip-credit-card' => __('Credit Card', 'infinitepay-woocommerce'),
+            'ip-pix'         => __('PIX', 'infinitepay-woocommerce'),
+            'ip-settings'    => __('Settings', 'infinitepay-woocommerce'),
         );
 
         $array_keys      = array_keys($sections);

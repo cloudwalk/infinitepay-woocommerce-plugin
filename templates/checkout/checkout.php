@@ -118,7 +118,7 @@ for (
 
 <?php if($enabled_creditcard == 'yes') : ?>
 <a href="javascript:;" onClick="<?php echo ($enabled_pix == 'yes') ? "ifchangePaymentMethod('cc-form')" : "void(0)" ?>" id="cc-form" class="button active">
-    <?php echo _e('Credit Card', 'infinitepay-woocommerce'); ?>
+    <?php echo __('Credit Card', 'infinitepay-woocommerce'); ?>
 </a>
 <?php endif; ?>
 
@@ -186,13 +186,13 @@ for (
                 </div>
                 <?php if($pix_value != 0) : ?>
                 <p>
-                   <strong><?php echo _e('Discounted value', 'infinitepay-woocommerce'); ?> (<?php echo $discount_pix; ?>%): R$ <?php echo $pix_value; ?></strong>
+                   <strong><?php echo __('Discounted value', 'infinitepay-woocommerce'); ?> (<?php echo $discount_pix; ?>%): R$ <?php echo $pix_value; ?></strong>
                 </p>
                 <?php endif; ?>
                 <ul>
-                    <li><span>1</span> <?php echo _e('Checkout to display the QRCode', 'infinitepay-woocommerce'); ?></li>
-                    <li><span>2</span> <?php echo _e('Open your bank app and select the option to pay with PIX/Scan QRCode', 'infinitepay-woocommerce'); ?></li>
-                    <li><span>3</span> <?php echo _e("Check the data and confirm your payment through your bank's app", 'infinitepay-woocommerce'); ?></li>
+                    <li><span>1</span> <?php echo __('Checkout to display the QRCode', 'infinitepay-woocommerce'); ?></li>
+                    <li><span>2</span> <?php echo __('Open your bank app and select the option to pay with PIX/Scan QRCode', 'infinitepay-woocommerce'); ?></li>
+                    <li><span>3</span> <?php echo __("Check the data and confirm your payment through your bank's app", 'infinitepay-woocommerce'); ?></li>
                 </ul>
             </fieldset>
         <?php endif; ?>

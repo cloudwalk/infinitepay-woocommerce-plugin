@@ -80,7 +80,7 @@ function wc_infinitepay_add_to_gateway( $gateways ) {
 
 function wc_infinitepay_plugin_links( $links ) {
 	$plugins_links = array(
-		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=infinitepay' ) . '">' . _e( 'Configure', 'infinitepay-woocommerce' ) . '</a>',
+		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=infinitepay' ) . '">' . __( 'Configure', 'infinitepay-woocommerce' ) . '</a>',
 		'<a href="https://ajuda.infinitepay.io/pt-BR/collections/3609678-e-commerce" target="_blank">Ajuda</a>'
 	);
 	return array_merge( $plugins_links, $links );
