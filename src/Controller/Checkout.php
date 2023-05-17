@@ -64,6 +64,8 @@ class Checkout extends \WC_Payment_Gateway
 		$order_value = $installments == 1 ? $this->order->get_total() * 100 : $installments_val * 100;
 		$final_value = (int) explode('.', $order_value)[0];
 
+		$payer_ip = Utils::payer_ip();
+
 		$body = array(
 			'payment'         => array(
 				'amount'         => $final_value,
@@ -128,7 +130,7 @@ class Checkout extends \WC_Payment_Gateway
 				'payment_method' => 'credit',
 				'risk'           => array(
 					'session_id' => $uuid,
-					'payer_ip'   => Utils::payer_ip(),
+					'payer_ip'   => $payer_ip,
 				),
 			),
 		);
