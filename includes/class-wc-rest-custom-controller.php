@@ -47,6 +47,8 @@ class WC_REST_Custom_Controller {
 
 			$options = get_option('woocommerce_infinitepay_settings');
 			$paymStatus = ($options['status_aproved_pix'] !== null) ? $options['status_aproved_pix'] : 'processing';
+			
+			$order->payment_complete();
 			$order->update_status($paymStatus);
 
 			$log->add( 'Webhook_InfinitePay',  'Update order status to payment received: status 200');

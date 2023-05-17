@@ -30,7 +30,7 @@ class Checkout extends \WC_Payment_Gateway
 		$log_header = '[' . $this->order->get_id() . '] ';
 
 		if ( empty( $post ) ) {
-			$this->log->write_log( __FUNCTION__, $log_header . 'Error 500 on IP payment, error log: ' . json_encode( $response ) );
+			$this->log->write_log( __FUNCTION__, $log_header . 'Error $_POST');
 			wc_add_notice( __( 'Ooops, an internal error has occurred, contact an administrator!', 'infinitepay-woocommerce' ), 'error' );
 			return false;
 		}
