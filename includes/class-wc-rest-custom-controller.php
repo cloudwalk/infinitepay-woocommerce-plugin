@@ -45,6 +45,8 @@ class WC_REST_Custom_Controller {
 				);
 			}
 
+			$order->payment_complete();
+			
 			$options = get_option('woocommerce_infinitepay_settings');
 			$paymStatus = ($options['status_aproved_pix'] !== null) ? $options['status_aproved_pix'] : 'processing';
 			
@@ -72,9 +74,6 @@ class WC_REST_Custom_Controller {
 
 		$order = wc_get_order($orderId);
 		
-		$log = new \WC_Logger();
-		$log->add( 'Webhook_InfinitePay', 'get_order_status for ID ' .  $orderId .  ' - status: '. $order->get_status());
-
 		return array(
 			'status' => 200,
 			'order_status' => $order->get_status()

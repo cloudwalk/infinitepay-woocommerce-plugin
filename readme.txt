@@ -50,9 +50,9 @@ If you installed it correctly, you will see it in your list of "Installed Plugin
 
 == Changelog ==
 
-= 2.0.13 (2023/05/20) =
+= 2.0.13 (2023/05/19) =
 * Bug fixes
-    - Security enhancements
+    - PIX Payment status updated
 
 = 2.0.12 (2023/05/05) =
 * Features
