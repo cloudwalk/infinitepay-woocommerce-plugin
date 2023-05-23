@@ -98,9 +98,12 @@ class Utils
 
 	public static function getStoreUrl()
 	{
-		$protocol = (!empty($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) == 'on' || $_SERVER['HTTPS'] == '1')) ? 'https://' : 'http://';
-		$server = $_SERVER['SERVER_NAME'];
-		$port = $_SERVER['SERVER_PORT'] ? ':'.$_SERVER['SERVER_PORT'] : '';
+		$https = filter_input(INPUT_SERVER, 'HTTPS');
+		$server = filter_input(INPUT_SERVER, 'SERVER_NAME');
+		$server_post = filter_input(INPUT_SERVER, 'SERVER_PORT');
+
+		$protocol = (!empty($https) && (strtolower($https) == 'on' || $https == '1')) ? 'https://' : 'http://';
+		$port = $server_post ? ':'.$server_post : '';
 		return $protocol.$server.$port;
 	}
 
