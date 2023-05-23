@@ -125,7 +125,7 @@ class Checkout extends \WC_Payment_Gateway
 				'payment_method' => 'credit',
 				'risk'           => array(
 					'session_id' => $uuid,
-					'payer_ip'   => Utils::payer_ip(),
+					'payer_ip'   => $this->payer_ip(),
 				),
 			),
 		);
@@ -318,5 +318,14 @@ class Checkout extends \WC_Payment_Gateway
 			$this->log->write_log( __FUNCTION__, 'Caught exception: ' . $ex->getMessage() );
 		}
 		return false;
+	}
+	
+	protected function payer_ip() {
+
+		$http_client_ip = filter_input( INPUT_SERVER, 'HTTP_CLIENT_IP' );
+		$http_x_foward = filter_input( INPUT_SERVER, 'HTTP_X_FORWARDED_FOR' );
+		$remote_addr = filter_input( INPUT_SERVER, 'REMOTE_ADDR' );
+
+		return isset( $http_client_ip ) ? $http_client_ip : ( isset($http_x_foward) ? $http_x_foward : $remote_addr );
 	}
 }

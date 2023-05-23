@@ -107,15 +107,6 @@ class Utils
 		return $protocol.$server.$port;
 	}
 
-	public static function payer_ip() {
-
-		$http_client_ip = filter_input( INPUT_SERVER, 'HTTP_CLIENT_IP' );
-		$http_x_foward = filter_input( INPUT_SERVER, 'HTTP_X_FORWARDED_FOR' );
-		$remote_addr = filter_input( INPUT_SERVER, 'REMOTE_ADDR' );
-
-		return isset( $http_client_ip ) ? $http_client_ip : ( isset($http_x_foward) ? $http_x_foward : $remote_addr );
-	}
-
 	public static function getErrorByCode($code) {
 		$error = array_filter(Constants::ERROR_CODES, function ($var) {
 			return ( in_array($code,  $var['code']));
