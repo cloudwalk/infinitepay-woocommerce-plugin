@@ -107,7 +107,8 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
     public function init_form_fields()
     {
-        $current_section = isset($_GET['ip-tab']) ? $_GET['ip-tab'] : 'ip-credentials';
+        $tab = filter_input(INPUT_GET, 'ip-tab');
+        $current_section = isset($tab) ? $tab : 'ip-credentials';
 		$this->form_fields = Settings::form_fields($current_section); 
     }
 
@@ -145,7 +146,7 @@ class InfinitePayCore extends \WC_Payment_Gateway
             (
                 !is_cart()
                 && !is_checkout()
-                && !isset($_GET['pay_for_order'])
+                && !empty(filter_input(INPUT_GET, 'pay_for_order'))
             )
             || $this->core_settings->enabled_creditcard === 'no'
             || empty($this->core_settings->client_id ?: $this->core_settings->client_secret)
@@ -226,8 +227,9 @@ class InfinitePayCore extends \WC_Payment_Gateway
     public function process_payment($order_id)
     {
         $order = wc_get_order($order_id);        
-        
-        if (!isset($_POST['infinitepay_custom'])) {
+        $infinitepay_custom = filter_input( INPUT_POST, 'infinitepay_custom',  FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+
+        if ( empty( $infinitepay_custom ) ) {
             return false;
         }
 
@@ -245,17 +247,19 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
 			$checkout = new Checkout($order);
 
-            $is_creditcard = ( isset($_POST['infinitepay_custom']) &&
-                isset($_POST['infinitepay_custom']['token']) && !empty($_POST['infinitepay_custom']['token']) &&
-                isset($_POST['infinitepay_custom']['uuid']) && !empty($_POST['infinitepay_custom']['uuid']) &&
-                isset($_POST['infinitepay_custom']['doc_number']) && !empty($_POST['infinitepay_custom']['doc_number']) &&
-                isset($_POST['infinitepay_custom']['installments']) && !empty($_POST['infinitepay_custom']['installments']) &&
-                -1 !== (int) $_POST['infinitepay_custom']['installments'] );
+            $post = filter_input( INPUT_POST, 'infinitepay_custom',  FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+		    $ip_method = filter_input( INPUT_POST, 'ip_method', FILTER_SANITIZE_STRING );
 
-            $is_pix = (isset($_POST['infinitepay_custom']) && $_POST['ip_method'] == 'pix-form');
+            $is_creditcard = ( !empty($post) &&
+                isset($post['token']) && !empty($post['token']) &&
+                isset($post['uuid']) && !empty($post['uuid']) &&
+                isset($post['doc_number']) && !empty($post['doc_number']) &&
+                isset($post['installments']) && !empty($post['installments']) && -1 !== (int) $post['installments'] );
+
+            $is_pix = ( $ip_method == 'pix-form');
 
             $log_header = '[' . $order->get_id() . '] ';
-            if ( $is_creditcard ) {
+            if ( $is_creditcard && !$is_pix ) {
 				$result = $checkout->process_credit_card();
                 if($result) {
                     return array(
@@ -333,8 +337,6 @@ class InfinitePayCore extends \WC_Payment_Gateway
 
         $code = ltrim( rtrim( str_replace( "br_code: ", "", $orderComments[0]->comment_content ) ) );
         $storeUrl = Utils::getStoreUrl();
-
-
 
         $parameters = array(
             'order' => $order,
