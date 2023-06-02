@@ -196,6 +196,9 @@ class Checkout extends \WC_Payment_Gateway
 		try {
 			// Retrieve order items
 			$log_header = '[' . $this->order->get_id() . '] ';
+
+			//$nsu          = Utils::generate_uuid();
+
 			$this->log->write_log( __FUNCTION__, $log_header . 'Starting IP PIX payment' );
 			$order_items = [];
 			if ( count( $this->order->get_items() ) > 0 ) {
