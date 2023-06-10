@@ -1,0 +1,38 @@
+# Arquivo de configuração para testes E2E
+description: E-commerce E2E tests
+# Definição das etapas do trabalho
+jobs:
+    test:
+      # Definição do executor
+      runs-on: ubuntu-latest
+      timeout-minutes: 20
+      
+      # Etapas do trabalho
+      steps:
+      - name: Verificar o repositório
+        uses: actions/checkout@v3
+  
+      - name: Configurar o ambiente
+        run: |
+          # Comandos para configurar o ambiente de teste
+          # Por exemplo, instalação de dependências
+          
+      - name: Executar os testes E2E
+        run: |
+          # Comandos para executar os testes E2E
+          # Por exemplo, comandos para executar um framework de testes como Cypress ou Selenium
+          
+      - name: Gerar relatório dos testes
+        run: |
+          # Comandos para gerar relatórios dos testes
+          # Por exemplo, geração de arquivos HTML ou exportação de resultados
+  
+  # Definição dos eventos que acionarão os testes
+  on:
+    push:
+      branches:
+        - main
+    pull_request:
+      branches:
+        - main
+  
