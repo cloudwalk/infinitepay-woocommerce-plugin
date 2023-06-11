@@ -1,38 +1,41 @@
-# Arquivo de configuração para testes E2E
-description: E-commerce E2E tests
-# Definição das etapas do trabalho
+
+name: E-commerce E2E tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+    labels:
+      - run-e2e-ecommerce
 jobs:
-    test:
-      # Definição do executor
-      runs-on: ubuntu-latest
-      timeout-minutes: 20
+   run_tests:
+     runs-on: ubuntu-latest
+     timeout-minutes: 20
       
-      # Etapas do trabalho
-      steps:
-      - name: Verificar o repositório
+     steps:
+      - name: Checkout Repository
         uses: actions/checkout@v3
   
-      - name: Configurar o ambiente
-        run: |
-          # Comandos para configurar o ambiente de teste
-          # Por exemplo, instalação de dependências
-          
-      - name: Executar os testes E2E
-        run: |
-          # Comandos para executar os testes E2E
-          # Por exemplo, comandos para executar um framework de testes como Cypress ou Selenium
-          
-      - name: Gerar relatório dos testes
-        run: |
-          # Comandos para gerar relatórios dos testes
-          # Por exemplo, geração de arquivos HTML ou exportação de resultados
+      - name: Set up Tailscale VPN
+        uses: tailscale/github-action@v1
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+
+      - name: Run tests configuration 
+        uses: ruby/setup-ruby@v1
+        with:
+          working-directory: infinitepay-woocommerce-plugin/
+          ruby-version: 2.7.3
+          bundler-cache: true
+          run: |
+            cd e2e_tests_api
+            bundle install
+            bundle exec cucumber -t @full --format pretty --format AllureCucumber::CucumberFormatter --out allure-results
+      
+      - name: Download test results
+        uses: actions/download-artifact@v3
   
-  # Definição dos eventos que acionarão os testes
-  on:
-    push:
-      branches:
-        - main
-    pull_request:
-      branches:
-        - main
+  
   
