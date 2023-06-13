@@ -23,18 +23,16 @@ jobs:
      timeout-minutes: 20
       
      steps:
-      - name: Set up Tailscale VPN
+      - name: Tailscale
         uses: tailscale/github-action@v1
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
 
-      - name: Config to run the tests
-        uses: uses: actions/checkout@v3
-        uses: ruby/setup-ruby@v1
-        with: 
-          ruby-version: 2.7.3
-          bundler-cache: true
-      - name: "[test] Run card minimal suite"
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - name: "Exec tests"
         run: bundle exec cucumber -t @full
     
   
