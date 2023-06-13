@@ -9,34 +9,33 @@ on:
     types: [opened, synchronize, reopened, labeled]
     labels:
       - run-e2e-ecommerce
+
+  workflow_dispatch:
+    inputs:
+      is_full:
+        description: "Run tests"
+        type: boolean
+        required: true
+        default: false
 jobs:
    run_tests:
      runs-on: ubuntu-latest
      timeout-minutes: 20
       
      steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-  
       - name: Set up Tailscale VPN
         uses: tailscale/github-action@v1
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
 
-      - name: Run tests configuration 
+      - name: Config to run the tests
+        uses: uses: actions/checkout@v3
         uses: ruby/setup-ruby@v1
-        with:
-          working-directory: infinitepay-woocommerce-plugin/
+        with: 
           ruby-version: 2.7.3
           bundler-cache: true
-      - name: Set up tests and run it
-        run: |
-            cd e2e_tests_api
-            bundle install
-            bundle exec cucumber -t @full --format pretty --format AllureCucumber::CucumberFormatter --out allure-results
-      
-      - name: Download test results
-        uses: actions/download-artifact@v3
-  
+      - name: "[test] Run card minimal suite"
+        run: bundle exec cucumber -t @full
+    
   
   
