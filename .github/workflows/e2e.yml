@@ -29,7 +29,8 @@ jobs:
           working-directory: infinitepay-woocommerce-plugin/
           ruby-version: 2.7.3
           bundler-cache: true
-          run: |
+      - name: Set up tests and run it
+        run: |
             cd e2e_tests_api
             bundle install
             bundle exec cucumber -t @full --format pretty --format AllureCucumber::CucumberFormatter --out allure-results

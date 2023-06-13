@@ -1,7 +1,0 @@
-name: CI 
-
-on:
-    pull_request:
-      types: [opened, synchronize, reopened, labeled]
-      labels:
-        - 'run-e2e-ecommerce'
