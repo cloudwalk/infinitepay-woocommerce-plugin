@@ -37,7 +37,11 @@ jobs:
           ruby-version: 2.7.3
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - name: "Exec tests"
-        run: cucumber -t @full
+        run: |
+         cd e2e_tests_api
+         gem install cucumber
+         cucumber -t @full
+         
     
   
   
