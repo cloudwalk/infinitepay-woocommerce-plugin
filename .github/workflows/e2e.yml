@@ -45,6 +45,7 @@ jobs:
          gem install httparty 
          gem install rspec
          gem install json
+         gem install faker
          cucumber -t @full
          
     
