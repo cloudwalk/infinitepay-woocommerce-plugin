@@ -84,7 +84,7 @@ class Pix
     def pix_transaction
         
         CreateTransactionPix.post('/transactions', body: {
-                "amount": 1440,
+                "amount": 140,
                 "capture_method": "pix",
                 "metadata": {
                     "origin": "woocommerce",
