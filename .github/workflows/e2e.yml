@@ -42,6 +42,7 @@ jobs:
         run: |
          cd e2e_tests_api
          gem install cucumber
+         gem install httparty -v 0.13.7
          cucumber -t @full
          
     
