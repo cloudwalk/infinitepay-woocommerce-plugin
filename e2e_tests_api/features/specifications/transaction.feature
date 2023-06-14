@@ -1,14 +1,15 @@
 #language: en
 @full
-Feature: Make transaction
-As a user I need to make a transaction 
 
-Scenario: Transaction flow
+Feature: Make transaction
+As a user I need to make a transaction using Pix and credit card
+
+Scenario: Transaction with credit card 
   Given I request a transaction
   When I sent the transaction data
   Then the transaction has success
 
-Scenario: Let the card data field blank 
+Scenario: Let the credit card data field blank and try to pay anyway
   Given I request a transaction without card token
   When I send the transaction 
   Then the transaction cannot be approved
