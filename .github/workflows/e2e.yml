@@ -38,7 +38,7 @@ jobs:
       - name: Check current directory
         run: pwd
         
-      - name: "Configuration to run the tests"
+      - name: "Exec tests"
         run: |
          cd e2e_tests_api
          gem install cucumber
@@ -46,9 +46,6 @@ jobs:
          gem install rspec
          gem install json
          gem install faker
-         
-      - name: Exec tests
-        run: |
          cucumber -t @full
          
     
