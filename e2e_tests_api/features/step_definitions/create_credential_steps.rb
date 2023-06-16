@@ -11,7 +11,15 @@ Then('I have success on this flow') do
   puts @user_create_credential.response.body
 end
 
+Given('I dont have e-commerce product allowed') do
+  @request_error = CreateCredential.new
+end
+  
+When('I send request to create my credential without this permission') do
+  @send_request = @request_error.credential_invalid_user
+end
+
 Then('the request failed') do
-  expect(@user_create_credential.code).to eq 401
-  puts @user_create_credential.response.body
+  expect(@send_request.code).to eq 401
+  puts @send_request.response.body
 end
