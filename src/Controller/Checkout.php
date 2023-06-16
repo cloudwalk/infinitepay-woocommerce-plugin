@@ -62,6 +62,7 @@ class Checkout extends \WC_Payment_Gateway
 		$final_value = (int) explode('.', $order_value)[0];
 
 		$body = array(
+			'origin'         => 'ecommerce',
 			'payment'         => array(
 				'amount'         => $final_value,
 				'installments'   => (int) sanitize_text_field($installments),
@@ -118,6 +119,7 @@ class Checkout extends \WC_Payment_Gateway
 			),
 			'metadata'        => array(
 				'origin'         => 'woocommerce',
+				'platform'       => 'woocommerce',
 				'plugin_version' => Constants::VERSION,
 				'store_url'      => filter_input(INPUT_SERVER, 'SERVER_NAME'),
 				'wordpress_version' => get_bloginfo('version'),
@@ -197,6 +199,9 @@ class Checkout extends \WC_Payment_Gateway
 			// Retrieve order items
 			$log_header = '[' . $this->order->get_id() . '] ';
 			$this->log->write_log( __FUNCTION__, $log_header . 'Starting IP PIX payment' );
+			
+			$nsu          = Utils::generate_uuid();
+
 			$order_items = [];
 			if ( count( $this->order->get_items() ) > 0 ) {
 				foreach ( $this->order->get_items() as $item ) {
@@ -241,8 +246,12 @@ class Checkout extends \WC_Payment_Gateway
 			$body = array(
 				'amount'         => $final_value,
 				'capture_method' => 'pix',
+				'payment_method' => 'pix',
+				'origin'		 => 'ecommerce',
+				'nsu'			 => $nsu,
 				'metadata'       => array(
 					'origin'         => 'woocommerce',
+					'platform'       => 'woocommerce',
 					'plugin_version' => Constants::VERSION,
 					'wordpress_version' => get_bloginfo('version'),
 					'woocommerce_version' => WC_VERSION,
