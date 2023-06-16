@@ -1,5 +1,5 @@
 #language: en
-#@full
+@full
 
 Feature: Create token to tokenize a card
 As a user I want to create a token to tokenize my credit card
