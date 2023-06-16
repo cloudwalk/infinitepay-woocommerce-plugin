@@ -11,6 +11,7 @@ Then('I have success on this flow') do
   puts @user_create_credential.response.body
 end
 
+
 Given('I dont have e-commerce product allowed') do
   @request_error = CreateCredential.new
 end
