@@ -8,7 +8,6 @@ end
 
 Then('I have success on this flow') do
   expect(@user_create_credential.code).to eq 201
-  puts @user_create_credential.response.body
 end
 
 
@@ -22,5 +21,4 @@ end
 
 Then('the request failed') do
   expect(@send_request.code).to eq 401
-  puts @send_request.response.body
 end
