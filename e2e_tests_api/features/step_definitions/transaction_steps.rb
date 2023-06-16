@@ -11,15 +11,6 @@ And('the transaction has success') do
   expect(@response_transaction.code).to eql 200
 end
 
-And('I request to cancel this sale') do
-  @nsu = "8358efb5-9501-4df1-a237-a99d89efbfff".hex
-  @cancel_sale = HTTParty.post("https://api-staging.infinitepay.io/v2/transactions/#{@response_transaction}/refund",
-{ 
-        :headers => {'Content-type': 'application/json', 'Authorization': 'USC5mpz105BwRWjSVawzWa6OQbo4Lh', 'Env': 'mock', 'Response-Type': 'ResponseType/json'},
-        :body => {"nsu": @nsu}
-})
-end
-
 Then('the transaction have been cancelled') do
   expect(@cancel_sale.code).to eq 200
   puts @cancel_sale.response.body
