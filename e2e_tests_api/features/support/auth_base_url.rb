@@ -5,8 +5,8 @@ module BaseAuth
         def access_token(scope)
             @token = HTTParty.post('https://api-staging.infinitepay.io/v2/oauth/token' ,:body => {
                 "grant_type": "client_credentials", 
-                "client_id": "7851d7ef6cbf0b496cf84235492052c1",
-                "client_secret": "8d188f11489e80db162cd1f2b3a38b5b3ead315bc226b63e7d10a977b96a3e84",
+                "client_id": ENV['CLIENT_ID'],
+                "client_secret": ENV['CLIENT_SECRET'],
                 "scope": scope
             })
             response = JSON.parse(@token.response.body)
