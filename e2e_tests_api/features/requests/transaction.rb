@@ -118,10 +118,6 @@ class Pix
             }
             }.to_json)
     end
-          
-
-
-       
 end
 
 class TransactionDenied
