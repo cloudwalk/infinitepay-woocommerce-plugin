@@ -43,6 +43,8 @@ jobs:
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET}}
+          API_KEY: ${{ secrets.API_KEY}}
+          API_KEY_INVALID: ${{ secrets. API_KEY_INVALID}}
         run: |
          cd e2e_tests_api
          gem install cucumber
