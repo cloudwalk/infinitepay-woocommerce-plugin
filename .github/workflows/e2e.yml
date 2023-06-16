@@ -38,7 +38,11 @@ jobs:
       - name: Check current directory
         run: pwd
         
+        
       - name: "Exec tests"
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET}}
         run: |
          cd e2e_tests_api
          gem install cucumber
