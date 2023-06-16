@@ -11,11 +11,6 @@ And('the transaction has success') do
   expect(@response_transaction.code).to eql 200
 end
 
-Then('the transaction have been cancelled') do
-  expect(@cancel_sale.code).to eq 200
-  puts @cancel_sale.response.body
-end
-
 Given('I request a transaction without card token') do
   @transaction_denied = TransactionDenied.new
   puts @transaction_denied
