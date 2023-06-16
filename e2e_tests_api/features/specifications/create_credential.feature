@@ -1,5 +1,5 @@
 #language: en
-
+@full
 @credential
 
 Feature: Create user credential 
