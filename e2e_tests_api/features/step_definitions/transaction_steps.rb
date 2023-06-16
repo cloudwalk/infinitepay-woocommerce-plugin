@@ -36,6 +36,7 @@ When('I input all the transaction information') do
 end
 
 Then('the pix transaction is approved') do
+  @pix_response = @create_pix.pix_payment
   expect(@pix_response.code).to eql 200
   puts @pix_response.code
 end
