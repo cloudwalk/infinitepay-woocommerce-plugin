@@ -1,0 +1,57 @@
+
+name: E-commerce E2E tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+    labels:
+      - run-e2e-ecommerce
+
+  workflow_dispatch:
+    inputs:
+      is_full:
+        description: "Run tests"
+        type: boolean
+        required: true
+        default: false
+
+jobs:
+   run_tests:
+     runs-on: ubuntu-latest
+     timeout-minutes: 20
+      
+     steps:
+      - name: Tailscale
+        uses: tailscale/github-action@v1
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.3
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
+      - name: Check current directory
+        run: pwd
+        
+        
+      - name: "Exec tests"
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET}}
+        run: |
+         cd e2e_tests_api
+         gem install cucumber
+         gem install httparty 
+         gem install rspec
+         gem install json
+         gem install faker
+         cucumber -t @full
+         
+    
+  
+  
