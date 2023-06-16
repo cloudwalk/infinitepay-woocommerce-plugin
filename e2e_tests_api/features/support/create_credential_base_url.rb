@@ -5,7 +5,7 @@ module Credentials
       def create_credential_user
         base_uri 'https://infinitepay-api-v2-dot-infinitepay-staging.rj.r.appspot.com/users/'
         format :json
-        headers 'Content-type': 'application/json', 'Authorization': ENV['API_KEY']
+        headers 'Content-type': 'application/json', 'Authorization': ENV['API_KEY'], 'Connection': 'keep-alive'
       end
 
     end
