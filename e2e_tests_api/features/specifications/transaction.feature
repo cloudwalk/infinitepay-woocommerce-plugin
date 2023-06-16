@@ -1,5 +1,5 @@
 #language: en
-#@full
+@full
 
 Feature: Make transaction
 As a user I need to make a transaction using Pix and credit card
