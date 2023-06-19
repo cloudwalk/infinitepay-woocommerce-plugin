@@ -1,22 +1,32 @@
-module Credentials
-    include HTTParty
-    class << self
+require 'httparty'
+
+class EcommerceUser
+  
+    def valid_user
+    response = HTTParty.post('https://infinitepay-api-v2.services.staging.capybaras.dev/users/credentials', headers: {
+      'Content-Type' => 'application/json',
+      'Authorization' => ENV['API_KEY']
+    }, body: {
+      "source": "woocommerce",
+      "site": "www.infiniteshop.io",
+      "ecommerce_platform": "woocommerce",
+      "ecommerce_payment": "infinitepay"
+    }.to_json)
     
-      def create_credential_user
-        base_uri 'https://infinitepay-api-v2-dot-infinitepay-staging.rj.r.appspot.com/users/'
-        format :json
-        headers 'Content-type': 'application/json', 'Authorization': ENV['API_KEY'], 'Connection': 'keep-alive', 'Accept-Encoding': 'gzip, deflate, br', 'User-Agent': 'PostmanRuntime/7.29.0'
-      end
-
-    end
-end
-
-module ErrorCredential
-    include HTTParty
-    def create_credential_invalid_user
-        base_uri 'https://infinitepay-api-v2-dot-infinitepay-staging.rj.r.appspot.com/users/'
-        format :json
-        headers 'Content-type': 'application/json', 'Authorization': ENV['API_KEY_INVALID'], 'Connection': 'keep-alive', 'Accept-Encoding': 'gzip, deflate, br', 'User-Agent': 'PostmanRuntime/7.29.0'
+    response.parsed_response
     end
 
+    def invalid_user
+      response = HTTParty.post('https://infinitepay-api-v2.services.staging.capybaras.dev/users/credentials', headers: {
+      'Content-Type' => 'application/json',
+      'Authorization' => ENV['API_KEY_INVALID']
+     }, body: {
+      "source": "woocommerce",
+      "site": "www.infiniteshop.io",
+      "ecommerce_platform": "woocommerce",
+      "ecommerce_payment": "infinitepay"
+     }.to_json)
+    
+    response.parsed_response
+    end
 end
