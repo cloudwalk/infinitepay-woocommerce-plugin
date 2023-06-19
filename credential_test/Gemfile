@@ -1,0 +1,7 @@
+source "https://rubygems.org"
+
+gem 'bundle'
+gem 'httparty'
+gem 'faker'
+gem 'rspec'
+gem 'cucumber'
