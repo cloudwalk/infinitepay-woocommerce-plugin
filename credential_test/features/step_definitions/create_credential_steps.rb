@@ -8,7 +8,8 @@ When('I send request to create my credential') do
 end
 
 Then('I have success on this flow') do
-  puts @user_create_credential
+  expect(@user_create_credential.code).to eql 201
+  puts @user_create_credential.response.body
 end
 
 Given('I am an user without E-commerce product') do
@@ -20,5 +21,6 @@ When('I send request to create my credential without this permission') do
 end
 
 Then('the request failed') do
-  puts @send_request
+  expect(@send_request.code).to eql 401
+  puts @send_request.response.body
 end
