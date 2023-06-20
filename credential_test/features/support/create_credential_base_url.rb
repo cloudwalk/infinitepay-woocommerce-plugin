@@ -14,6 +14,12 @@ class EcommerceUser
     }.to_json)
     
     response.parsed_response
+    expected_status = 200
+      if response.code.to_i == expected_status
+        puts "Status code is as expected: #{expected_status}"
+      else
+        puts "Status code is not as expected. Expected: #{expected_status}, Actual: #{response.code}"
+      end
     end
 
     def invalid_user
@@ -28,5 +34,11 @@ class EcommerceUser
      }.to_json)
     
     response.parsed_response
+    expected_body = "error=>{message=>Not Authorize}"
+      if response.body.include?(expected_body)
+        puts "Response body contains the expected text: #{expected_body}"
+      else
+        puts "Response body does not contain the expected text: #{expected_body}"
+      end
     end
 end
