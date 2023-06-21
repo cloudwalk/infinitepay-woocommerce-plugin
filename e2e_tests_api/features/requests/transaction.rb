@@ -101,6 +101,23 @@ class Pix
                 }
             }.to_json)
     end
+
+    def pix_payment
+        CreateTransactionPix.post('/transactions', body: {
+                "amount": 140,
+                "capture_method": "pix",
+                "metadata": {
+                  "origin": "woocommerce",
+                 "payment_method": "pix",
+                "order_id": "830",
+                "callback": {
+                    "validate": "https://infiniteshop.io/validation_callback?order_id=830",
+                    "confirm": "https://infiniteshop.io/confirmation_callback?order_id=830",
+                    "secret": "073936ce894959c38a4fb9bef5091e1d177a6d71"
+              }
+            }
+            }.to_json)
+    end
 end
 
 class TransactionDenied
