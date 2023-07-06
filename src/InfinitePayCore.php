@@ -388,15 +388,13 @@ class InfinitePayCore extends \WC_Payment_Gateway
 		$code = ltrim( rtrim( str_replace( "br_code: ", "", $orderComments[0]->comment_content ) ) );
 
 		// Create html structure
-		$html = '<div id="qrcodepixcontent" style="display: flex;flex-direction: row;justify-content: flex-start;align-items: center;background-color: #f8f8f8;border-radius: 8px; padding: 1rem;">';
+		$html = '<div id="qrcodepixcontent">';
 		$html .= '  <img id="copy-code" style="cursor:pointer; display: initial;margin-right: 1rem;" class="wcpix-img-copy-code" src="https://gerarqrcodepix.com.br/api/v1?brcode=' . urlencode( $code ) . '"	alt="QR Code"/>';
-		$html .= '  <div>';
-		$html .= '    <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ ' . $order->get_total() . '</strong></p>';
+        $html .= '    <p style="font-size: 19px;margin-bottom: 0.5rem;">Pix: <strong>R$ ' . $order->get_total() . '</strong></p>';
 		$html .= '    <div style="word-wrap: break-word; max-width: 450px;">';
 		$html .= '      <small>Código de transação</small><br>';
 		$html .= '      <code style="font-size: 87.5%; color: #e83e8c; word-wrap: break-word;">' . $code . '</code>';
 		$html .= '    </div>';
-		$html .= '  </div>';
 		$html .= '</div>';
 
 		// Return html
