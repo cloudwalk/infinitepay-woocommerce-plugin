@@ -2,7 +2,7 @@
 /*
  * Plugin Name: InfinitePay for WooCommerce
  * Description: Configure the payment options and accept payments with cards.
- * Version: 2.0.16
+ * Version: 2.0.17
  * Author: Infinite Pay
  * Author URI: https://infinitepay.io/
  * Text Domain: infinitepay-woocommerce
@@ -26,20 +26,18 @@ add_filter( 'woocommerce_payment_gateways', 'wc_infinitepay_add_to_gateway');
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wc_infinitepay_plugin_links');
 add_filter( 'woocommerce_rest_api_get_rest_namespaces', 'woo_custom_api');
 
-// add_action( 'admin_menu', 'register_welcomehidemenu', 90 );
-// add_action( 'admin_init', 'ip_redirect');
-// register_activation_hook( __FILE__, 'plugin_activate' );
-
-// function register_welcomehidemenu() {
-// 	add_submenu_page(
-// 		'woocommerce',
-// 		'InfinitePay',
-// 		'InfinitePay',
-// 		'manage_woocommerce',
-// 		'ip-welcome',
-// 		'welcome_render'
-// 	);
-// }
+function shutdown_notice() {
+    ?>
+    <div class="notice notice-warning is-dismissible">
+        <h3>Descontinuação do Plugin InfinitePay - [Ação necessária]</h3>
+		<p>Importante: Estamos <strong>descontinuando</strong> o plugin InfinitePay for WooCommerce até o final de agosto. 
+		Informações adicionais foram enviadas para o seu email cadastrado na InfinitePay.</p>
+		<p>Recomendamos a desinstalação imediata do plugin "InfinitePay for WooCommerce" para evitar inconvenientes.</p>
+		Para qualquer dúvida ou questão adicional, não hesite em nos contatar através de <a href="mailto:atendimento@infinitepay.io">atendimento@infinitepay.io</a>.</p>
+    </div>
+    <?php
+}
+add_action( 'admin_notices', 'shutdown_notice' );
 
 
 function welcome_render() {
