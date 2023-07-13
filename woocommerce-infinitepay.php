@@ -32,7 +32,7 @@ function shutdown_notice() {
         <h3>Descontinuação do Plugin InfinitePay - [Ação necessária]</h3>
 		<p>Importante: Estamos <strong>descontinuando</strong> o plugin InfinitePay for WooCommerce até o final de agosto.</p>
 		<p>Recomendamos a desinstalação imediata do plugin "InfinitePay for WooCommerce" para evitar inconvenientes.</p>
-		Para qualquer dúvida ou questão adicional, não hesite em nos contatar através de <a href="mailto:ajuda@infinitepay.io">ajuda@infinitepay.io</a>.</p>
+		<p>Para qualquer dúvida ou questão adicional, não hesite em nos contatar através de <a href="mailto:ajuda@infinitepay.io">ajuda@infinitepay.io</a>.</p>
     </div>
     <?php
 }
