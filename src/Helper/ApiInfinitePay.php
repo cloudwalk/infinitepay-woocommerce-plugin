@@ -75,6 +75,34 @@ class ApiInfinitePay
     }
 
 
+    public function gettransaction($nsu) {
+
+        $body = [
+            "grant_type"    => "client_credentials",
+            "client_id"     =>  $this->client_id,
+            "client_secret" =>  $this->client_secret,
+            "scope"         => 'card_tokenization'
+        ];
+
+        $this->args['body'] = json_encode($body, JSON_UNESCAPED_UNICODE);
+
+        $response = wp_remote_post(($this->environment == 'sandbox') ? "https://infiniteshop.io/get-transaction-fake.php?nsu=$nsu" : "https://infiniteshop.io/get-transaction-fake.php?nsu=$nsu", $this->args );
+        if (is_wp_error($response)) {
+            return null;
+        }
+
+        $body = json_decode($response['body'], true);
+        if (!is_wp_error($response) && $response['response']['code'] < 500) {
+            if (!is_wp_error($response) && $response['response']['code'] == 401) {
+                $this->log->write_log(__FUNCTION__, json_encode($response['response']));
+                return $body;
+            }
+        }
+        $this->log->write_log(__FUNCTION__, json_encode($response['response']));
+        return null;
+    }
+
+
     public function transactions($body, $payment_method) {
 
         $bodyAuth = [

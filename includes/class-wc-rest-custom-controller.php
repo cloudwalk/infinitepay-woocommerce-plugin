@@ -45,6 +45,18 @@ class WC_REST_Custom_Controller {
 				);
 			}
 
+			//TODO: Inicio da validação do pagamento via api
+			$nsuHost = get_post_meta($orderId, 'nsuHost');
+
+			$api = new \Woocommerce\InfinitePay\Helper\ApiInfinitePay();
+			$transaction = $api->gettransaction($nsuHost);
+
+			$order->add_order_note( json_encode($transaction) );
+
+			if($transaction && $transaction->status == 'complete') {
+				$order->add_order_note('DEBUG:Pagamento confirmado via GET');
+			}
+
 			$order->payment_complete();
 			
 			$options = get_option('woocommerce_infinitepay_settings');
@@ -57,6 +69,7 @@ class WC_REST_Custom_Controller {
 				'status' => 200,
 				'message' => 'Transaction successfully validated'
 			);
+
 		} catch (\Throwable $th) {
 
 			$options = get_option('woocommerce_infinitepay_settings');
